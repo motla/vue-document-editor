@@ -1,11 +1,11 @@
 <div align="center">
-  <img width="305" height="25" src="https://github.com/motla/vue-document-editor/raw/master/img/logo.png" alt="vue-document-editor">
+  <img width="304" height="24" src="https://github.com/motla/vue-document-editor/raw/master/img/logo.png" alt="vue-document-editor">
 </div>
 <div align="center">
-  <img src="https://github.com/motla/vue-document-editor/raw/master/img/preview.png">
+  <img width="500" height="210" src="https://github.com/motla/vue-document-editor/raw/master/img/preview.png">
 </div>
 
-**vue-document-editor** is a rich-text editor built on top of [Vue.js](https://vuejs.org/), using the native [*contenteditable*](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Editable_content) browser implementation and some JavaScript trickery to spread the content over paper-sized pages. It is mainly designed to allow **targeted modifications** to pre-formatted documents using HTML or **interactive templates**.
+**vue-document-editor** is a rich-text editor built on top of [Vue.js](https://vuejs.org/), using the native [*contenteditable*](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Editable_content) browser implementation and some JavaScript trickery to spread content over paper-sized pages. It is mainly designed to allow **targeted modifications** to pre-formatted documents using HTML or **interactive templates**.
 
 ###### :speech_balloon: This package does not intend to replace a proper document editor with full functionality. If you're looking for a powerful word processor, check out [CKEditor for Vue.js](https://github.com/ckeditor/ckeditor5-vue).
 
