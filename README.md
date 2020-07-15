@@ -1,8 +1,8 @@
 <div align="center">
-  <img width="305" height="25" src="img/logo.png" alt="vue-document-editor">
+  <img width="305" height="25" src="https://github.com/motla/vue-document-editor/raw/master/img/logo.png" alt="vue-document-editor">
 </div>
 <div align="center">
-  <img src="img/preview.png">
+  <img src="https://github.com/motla/vue-document-editor/raw/master/img/preview.png">
 </div>
 
 **vue-document-editor** is a rich-text editor built on top of [Vue.js](https://vuejs.org/), using the native [*contenteditable*](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Editable_content) browser implementation and some JavaScript trickery to spread the content over paper-sized pages. It is mainly designed to allow **targeted modifications** to pre-formatted documents using HTML or **interactive templates**.
@@ -10,7 +10,7 @@
 ###### :speech_balloon: This package does not intend to replace a proper document editor with full functionality. If you're looking for a powerful word processor, check out [CKEditor for Vue.js](https://github.com/ckeditor/ckeditor5-vue).
 
 ## Features
-### :rocket: [See live demo](https://motla.github.io/vue-document-editor)
+### :rocket: [See live demo](https://motla.github.io/vue-document-editor/)
 - Use your Vue.js components as interactive page templates
 - Word-by-word page splitting with forward and backward propagation (*still experimental*)
 - Predefined page breaks
@@ -61,12 +61,12 @@ export default {
 ```
 
 ## Complete example
-See the [Demo.vue](src/Demo/Demo.vue) file and the [InvoiceTemplate.vue](src/Demo.InvoiceTemplate.vue) file corresponding to the [live demo](https://motla.github.io/vue-document-editor).
+See the [Demo.vue](src/Demo/Demo.vue) file and the [InvoiceTemplate.vue](src/Demo/InvoiceTemplate.vue) file corresponding to the [live demo](https://motla.github.io/vue-document-editor/).
 
 ## Props
 - **content**: `Array` (required)
 
-*Contains the initial document content. Each array item is a new set of pages containing the item. An item can either be an HTML string or this object `{ template: YourComponent, props: {} }` for interactive templates (see [Demo.vue](src/Demo/Demo.vue) and [InvoiceTemplate.vue](src/Demo.InvoiceTemplate.vue) for an example). If an HTML content is too large, it will be split over multiple pages. On the contrary, interactive templates take one full page and any overflow is hidden. The `content` you provide should be synced to user modifications using the [.sync modifier](https://vuejs.org/v2/guide/components-custom-events.html#sync-Modifier) (you have to enable .sync for undo/redo support).*
+*Contains the initial document content. Each array item is a new set of pages containing the item. An item can either be an HTML string or this object `{ template: YourComponent, props: {} }` for interactive templates (see [Demo.vue](src/Demo/Demo.vue) and [InvoiceTemplate.vue](src/Demo/InvoiceTemplate.vue) for an example). If an HTML content is too large, it will be split over multiple pages. On the contrary, interactive templates take one full page and any overflow is hidden. The `content` you provide should be synced to user modifications using the [.sync modifier](https://vuejs.org/v2/guide/components-custom-events.html#sync-Modifier) (you have to enable .sync for undo/redo support).*
 
 - **display**: `["auto"(default), "horizontal", "vertical"]` - *Display mode for the pages*
 - **page_format_mm**: `[width, height] (default:[210, 297])` - *Page format in mm*
