@@ -1,0 +1,60 @@
+::v-deep.editor {
+  display: block;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  cursor: default;
+
+  ::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+  }
+
+  ::-webkit-scrollbar-track {
+    display: none;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 5px solid transparent;
+    border-radius: 16px;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  &.hide_children > * {
+    display: none;
+  }
+
+  & > .content {
+    position: relative;
+    outline: none;
+    margin: 0;
+    padding: 0;
+    min-width: 100%;
+    pointer-events: none;
+
+    & > .page {
+      position: absolute;
+      box-sizing: border-box;
+      left: 50%;
+      transform-origin: center top;
+      background: var(--page-background, white);
+      box-shadow: var(--page-box-shadow, 0 1px 3px 1px rgba(60, 64, 67, 0.15));
+      border: var(--page-border);
+      border-radius: var(--page-border-radius);
+      transition: left .3s, top .3s;
+      overflow: hidden;
+      pointer-events: all;
+    }
+
+    &[contenteditable=true], & *[contenteditable=true] {
+      cursor: text;
+    }
+    & *[contenteditable=false] {
+      cursor: default;
+    }
+  }
+}
