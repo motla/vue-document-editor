@@ -29,7 +29,7 @@ In your Vue.js project:
 npm install vue-document-editor
 ```
 
-###### :speech_balloon: You also need to install [`sass`](https://www.npmjs.com/package/sass) and [`sass-loader`](https://www.npmjs.com/package/sass-loader) if not already present in your project
+###### :warning: Your Vue.js project must have [`scss`](https://vue-loader.vuejs.org/guide/pre-processors.html#sass) support
 
 ###### :speech_balloon: If you prefer static files, import assets from the `dist` folder
 

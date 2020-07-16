@@ -50,7 +50,6 @@
     "vue-template-compiler": "^2.6.11"
   },
   "peerDependencies": {
-    "sass": ">=1.26.5",
     "sass-loader": ">=8.0.2"
   },
   "eslintConfig": {
