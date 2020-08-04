@@ -3,7 +3,7 @@
     <div class="header">
       <div>
         <h1><span class="hide-in-print">INTERACTIVE </span>INVOICE</h1>
-        <div class="hide-in-print" style="margin-bottom:10px">This page is rendered from a "template" Vue.js component.<br>You can modify the green highlighted fields only and interact with the buttons without having them in the print. Check out <a href="https://github.com/motla/vue-document-editor/blob/master/src/Demo/InvoiceTemplate.vue" target="_blank">InvoiceTemplate.vue</a></div>
+        <div class="hide-in-print" style="margin-bottom:10px">This page is rendered from a "template" Vue.js component.<br>You can modify the fields highlighted in green and interact with the buttons without having them in the print. Check out <a href="https://github.com/motla/vue-document-editor/blob/master/src/Demo/InvoiceTemplate.vue" target="_blank">InvoiceTemplate.vue</a></div>
       </div>
       <div><img src="../../img/vue-logo.png" style="width:80px"></div>
     </div>

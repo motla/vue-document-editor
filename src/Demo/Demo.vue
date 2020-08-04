@@ -28,7 +28,7 @@ export default {
       // This is where the pages content is stored and synced
       content: [
         // Every item below produce a page break
-        '<h1>Hello world!</h1><p>This is a rich-text editor built on top of <span contenteditable="false"><a href="https://vuejs.org/" target="_blank">Vue.js</a></span> using the native <span contenteditable="false"><a href="https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Editable_content" target="_blank"><i>contenteditable</i></a></span> browser implementation and some JavaScript trickery to spread content over paper-sized pages.</p><p>Built-in functionality includes:</p><ul><li>Using your Vue.js components as interactive page templates (see next page)</li><li>Word-by-word page splitting with forward and backward propagation (<u>still experimental</u>)</li><li>Predefined page breaks</li><li>Native Print compatible</li><li>Dynamic document format and margins in millimeters</li><li>Smart zoom and page display modes</li><li>Computes text style at caret position</li><li>Rewritten history stack (undo/redo) compatible with native commands</li></ul><p>This library may be useful if you design an application that generate documents and you would let the user to modify them slightly before printing / saving, but with limited / interactive possibilities. It does not intend to replace a proper document editor with full functionality.<br>Make sure this project is suitable to your needs before using it.</p><p style="text-align:center" contenteditable="false"><a href="https://github.com/motla/vue-document-editor">View docs on Github</a></p><p>This demo adds:</p><ul><li>The top bar (<span contenteditable="false"><a href="https://github.com/motla/vue-file-toolbar-menu" target="_blank">vue-file-toolbar-menu</a></span> component) and the functions associated with it</li><li>Pinch and trackpad zooming</li></ul><p>Check out the <span contenteditable="false"><a href="https://github.com/motla/vue-document-editor/blob/master/src/Demo/Demo.vue" target="_blank">Demo.vue</a></span> file if you need to add these functionalities to your application.</p>',
+        '<h1>Hello world!</h1><p>This is a rich-text editor built on top of <span contenteditable="false"><a href="https://vuejs.org/" target="_blank">Vue.js</a></span> using the native <span contenteditable="false"><a href="https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Editable_content" target="_blank"><i>contenteditable</i></a></span> browser implementation and some JavaScript trickery to spread content over paper-sized pages.</p><p>Built-in functionality includes:</p><ul><li>Using your Vue.js components as interactive page templates (see next page)</li><li>Word-by-word page splitting with forward and backward propagation (<u>still experimental</u>)</li><li>Predefined page breaks</li><li>Native Print compatible</li><li>Dynamic document format and margins in millimeters</li><li>Smart zoom and page display modes</li><li>Computes text style at caret position</li></ul><p>This library may be useful if you design an application that generate documents and you would let the user to modify them slightly before printing / saving, but with limited / interactive possibilities. It does not intend to replace a proper document editor with full functionality.<br>Make sure this project is suitable to your needs before using it.</p><p style="text-align:center" contenteditable="false"><a href="https://github.com/motla/vue-document-editor">View docs on Github</a></p><p>This demo adds:</p><ul><li>The top bar (<span contenteditable="false"><a href="https://github.com/motla/vue-file-toolbar-menu" target="_blank">vue-file-toolbar-menu</a></span> component) and the functions associated with it</li><li>Rewritten history stack (undo/redo) compatible with native commands</li><li>Pinch and trackpad zooming</li></ul><p>Check out the <span contenteditable="false"><a href="https://github.com/motla/vue-document-editor/blob/master/src/Demo/Demo.vue" target="_blank">Demo.vue</a></span> file if you need to add these functionalities to your application.</p>',
         { template: InvoiceTemplate, props: { invoice_number: "AB38052985" } },
         '<h1>«</h1><div style="width:80%; text-align:justify; margin:auto"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit.</p><p>Ut velit mauris, egestas sed, gravida nec, ornare ut, mi. Aenean ut orci vel massa suscipit pulvinar. Nulla sollicitudin. Fusce varius, ligula non tempus aliquam, nunc turpis ullamcorper nibh, in tempus sapien eros vitae ligula. Pellentesque rhoncus nunc et augue. Integer id felis. Curabitur aliquet pellentesque diam. Integer quis metus vitae elit lobortis egestas. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi vel erat non mauris convallis vehicula. Nulla et sapien. Integer tortor tellus, aliquam faucibus, convallis id, congue eu, quam. Mauris ullamcorper felis vitae erat. Proin feugiat, augue non elementum posuere, metus purus iaculis lectus, et tristique ligula justo vitae magna.</p><p>Aliquam convallis sollicitudin purus. Praesent aliquam, enim at fermentum mollis, ligula massa adipiscing nisl, ac euismod nibh nisl eu lectus. Fusce vulputate sem at sapien. Vivamus leo. Aliquam euismod libero eu enim. Nulla nec felis sed leo placerat imperdiet. Aenean suscipit nulla in justo. Suspendisse cursus rutrum augue. Nulla tincidunt tincidunt mi. Curabitur iaculis, lorem vel rhoncus faucibus, felis magna fermentum augue, et ultricies lacus lorem varius purus. Curabitur eu amet.</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit.</p><p>Ut velit mauris, egestas sed, gravida nec, ornare ut, mi. Aenean ut orci vel massa suscipit pulvinar. Nulla sollicitudin. Fusce varius, ligula non tempus aliquam, nunc turpis ullamcorper nibh, in tempus sapien eros vitae ligula. Pellentesque rhoncus nunc et augue. Integer id felis. Curabitur aliquet pellentesque diam. Integer quis metus vitae elit lobortis egestas. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Morbi vel erat non mauris convallis vehicula. Nulla et sapien. Integer tortor tellus, aliquam faucibus, convallis id, congue eu, quam. Mauris ullamcorper felis vitae erat. Proin feugiat, augue non elementum posuere, metus purus iaculis lectus, et tristique ligula justo vitae magna.</p><p>Aliquam convallis sollicitudin purus. Praesent aliquam, enim at fermentum mollis, ligula massa adipiscing nisl, ac euismod nibh nisl eu lectus. Fusce vulputate sem at sapien. Vivamus leo. Aliquam euismod libero eu enim. Nulla nec felis sed leo placerat imperdiet. Aenean suscipit nulla in justo. Suspendisse cursus rutrum augue. Nulla tincidunt tincidunt mi. Curabitur iaculis, lorem vel rhoncus faucibus, felis magna fermentum augue, et ultricies lacus lorem varius purus. Curabitur eu amet.</p></div><h1 style="text-align:right">»</h1>',
         '<div style="text-align:center">--- This is a page break. ---</div>'
@@ -40,6 +40,8 @@ export default {
       page_margins: "10mm 15mm",
       display: "auto", // ["auto", "vertical", "horizontal"]
       mounted: false, // will be true after this component is mounted
+      undo_count: -1, // contains the number of times user can undo (= current position in content_history)
+      content_history: [] // contains the content states for undo/redo operations
     }
   },
 
@@ -98,6 +100,16 @@ export default {
       start_zoom_touch = false;
     }, { passive: false });
 
+    // Manage history undo/redo events
+    const manage_undo_redo = (e) => {
+      switch(e && e.inputType){
+        case "historyUndo": e.preventDefault(); e.stopPropagation(); this.undo(); break;
+        case "historyRedo": e.preventDefault(); e.stopPropagation(); this.redo(); break;
+      }
+    }
+    window.addEventListener("beforeinput", manage_undo_redo);
+    window.addEventListener("input", manage_undo_redo); // in case of beforeinput event is not implemented (Firefox)
+
     // If your component is susceptible to be destroyed, don't forget to
     // use window.removeEventListener in the Vue.js beforeDestroy handler
   },
@@ -116,8 +128,8 @@ export default {
         { is: "spacer" },
 
         // Undo / redo commands
-        { title: "Undo", icon: "undo", disabled: !this.can_undo, hotkey: this.isMacLike ? "command+z" : "ctrl+z", click: () => this.$refs.editor.undo() }, // document.execCommand("undo") works as well and hotkey is optional
-        { title: "Redo", icon: "redo", disabled: !this.can_redo, hotkey: this.isMacLike ? "shift+command+z" : "ctrl+y", click: () => this.$refs.editor.redo() }, // document.execCommand("redo") works as well and hotkey is optional
+        { title: "Undo", icon: "undo", disabled: !this.can_undo, hotkey: this.isMacLike ? "command+z" : "ctrl+z", click: () => this.undo() },
+        { title: "Redo", icon: "redo", disabled: !this.can_redo, hotkey: this.isMacLike ? "shift+command+z" : "ctrl+y", click: () => this.redo() },
 
         { is: "spacer" },
 
@@ -256,9 +268,9 @@ export default {
 
     // Current text style management
     current_text_style () { return this.mounted ? this.$refs.editor.current_text_style : false; },
-    isLeftAligned () { return ["start", "left"].includes(this.current_text_style.textAlign); },
-    isRightAligned () { return ["end", "right"].includes(this.current_text_style.textAlign); },
-    isCentered () { return this.current_text_style.textAlign == "center"; },
+    isLeftAligned () { return ["start", "left", "-moz-left"].includes(this.current_text_style.textAlign); },
+    isRightAligned () { return ["end", "right", "-moz-right"].includes(this.current_text_style.textAlign); },
+    isCentered () { return ["center", "-moz-center"].includes(this.current_text_style.textAlign); },
     isJustified () { return ["justify", "justify-all"].includes(this.current_text_style.textAlign); },
     isBold () {
       const fontWeight = this.current_text_style.fontWeight;
@@ -280,12 +292,31 @@ export default {
     isH3 () { return this.current_text_style.headerLevel == 3; },
     curColor () { return this.current_text_style.color || "transparent"; },
 
-    // Undo / redo management
-    can_undo () { return this.mounted ? this.$refs.editor.can_undo : false; },
-    can_redo () { return this.mounted ? this.$refs.editor.can_redo : false; },
-
     // Platform management
     isMacLike: () => /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform),
+
+    // Undo / redo flags
+    can_undo () { return this.undo_count > 0; },
+    can_redo () { return this.content_history.length - this.undo_count - 1 > 0; }
+  },
+
+  methods: {
+    // Undo / redo functions
+    undo () { if(this.can_undo){ this._mute_next_content_watcher = true; this.content = this.content_history[--this.undo_count]; } },
+    redo () { if(this.can_redo){ this._mute_next_content_watcher = true; this.content = this.content_history[++this.undo_count]; } }
+  },
+
+  watch: {
+    content: {
+      immediate: true,
+      handler (new_content) {
+        if(!this._mute_next_content_watcher) {
+          this.content_history[++this.undo_count] = new_content;
+          this.content_history.length = this.undo_count + 1; // remove all redo items
+        }
+        this._mute_next_content_watcher = false;
+      }
+    }
   }
 }
 </script>
@@ -302,21 +333,34 @@ body {
   color: black;
   background: rgb(248, 249, 250);
 }
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+::-webkit-scrollbar-track {
+  display: none;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 5px solid transparent;
+  border-radius: 16px;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
 </style>
 
 <style scoped>
   .main {
-    display: flex;
-    flex-direction: column;
     width: fit-content;
     min-width: 100%;
-    height: 100%;
   }
   .bar {
     position: sticky;
     left: 0;
     top: 0;
-    width: 100vw;
+    width: calc(100vw - 16px);
     z-index: 1;
     background: rgba(248, 249, 250, 0.8);
     border-bottom: solid 1px rgb(248, 249, 250);
@@ -325,8 +369,5 @@ body {
     --bar-button-open-color: #188038;
     --bar-button-active-bkg: #e6f4ea;
     --bar-button-open-bkg: #e6f4ea;
-  }
-  .editor {
-    flex-grow: 1;
   }
 </style>

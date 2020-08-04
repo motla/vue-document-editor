@@ -189,6 +189,13 @@ exports.f = DESCRIPTORS ? nativeGetOwnPropertyDescriptor : function getOwnProper
 
 /***/ }),
 
+/***/ "0c49":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
 /***/ "0cfb":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1049,6 +1056,17 @@ module.exports = function (bitmap, value) {
   };
 };
 
+
+/***/ }),
+
+/***/ "5cc0":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_e0fe9952_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0c49");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_e0fe9952_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_e0fe9952_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_e0fe9952_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
@@ -2560,13 +2578,6 @@ try {
   Function("r", "regeneratorRuntime = r")(runtime);
 }
 
-
-/***/ }),
-
-/***/ "979d":
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
 
 /***/ }),
 
@@ -4348,17 +4359,6 @@ module.exports = function (it) {
 
 /***/ }),
 
-/***/ "ed5d":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_865af966_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("979d");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_865af966_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_865af966_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_865af966_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-
 /***/ "f5df":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4438,12 +4438,12 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"788fb7fa-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=865af966&scoped=true&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"editor",staticClass:"editor"},[_c('div',{ref:"content",staticClass:"content",style:(_vm.page_style(-1)),attrs:{"contenteditable":_vm.editable},on:{"beforeinput":_vm.before_input,"input":_vm.input,"keyup":_vm.process_current_text_style}},[_c('div',{ref:"dummy_page",staticClass:"page",style:(_vm.page_style(0))}),_vm._l((_vm.pages),function(page,page_idx){return _c('div',{key:page.uuid,ref:page.uuid,refInFor:true,staticClass:"page",style:(_vm.page_style(page_idx, page.template ? true : false)),attrs:{"data-content-idx":page.content_idx,"contenteditable":!page.template ? true : false}},[(page.template)?_c(page.template,_vm._b({tag:"component"},'component',page.props,false,true)):_vm._e()],1)})],2)])}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"788fb7fa-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=e0fe9952&scoped=true&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"editor",staticClass:"editor"},[_c('div',{ref:"content",staticClass:"content",style:(_vm.page_style(-1)),attrs:{"contenteditable":_vm.editable},on:{"input":_vm.input,"keyup":_vm.process_current_text_style}},[_c('div',{ref:"dummy_page",staticClass:"page",style:(_vm.page_style(0))}),_vm._l((_vm.pages),function(page,page_idx){return _c('div',{key:page.uuid,ref:page.uuid,refInFor:true,staticClass:"page",style:(_vm.page_style(page_idx, page.template ? true : false)),attrs:{"data-content-idx":page.content_idx,"contenteditable":!page.template ? true : false}},[(page.template)?_c(page.template,_vm._b({tag:"component"},'component',page.props,false,true)):_vm._e()],1)})],2)])}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=865af966&scoped=true&
+// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=e0fe9952&scoped=true&
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.filter.js
 var es_array_filter = __webpack_require__("4de4");
@@ -4968,18 +4968,14 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
       // real measured with of an empty editor <div> in px
       prevent_next_content_update_from_parent: false,
       // workaround for infinite update loop
-      current_text_style: false,
-      // contains the style at caret position
-      undo_count: -1,
-      // contains the number of times user can undo (= current position in content_history)
-      content_history: [] // contains the content states for undo/redo operations
+      current_text_style: false // contains the style at caret position
 
     };
   },
   mounted: function mounted() {
     this.update_editor_width();
     this.update_css_media_style();
-    this.reset_content(true);
+    this.reset_content();
     window.addEventListener("resize", this.update_editor_width);
     window.addEventListener("click", this.process_current_text_style);
     window.addEventListener("beforeprint", this.before_print);
@@ -5003,17 +4999,11 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
       var style = document.createElement("style");
       document.head.appendChild(style);
       return style;
-    },
-    can_undo: function can_undo() {
-      return this.undo_count > 0;
-    },
-    can_redo: function can_redo() {
-      return this.content_history.length - this.undo_count - 1 > 0;
     }
   },
   methods: {
     // Resets all content from the content property
-    reset_content: function reset_content(initialize_history) {
+    reset_content: function reset_content() {
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
@@ -5070,8 +5060,8 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
                 return _this.fit_content_over_pages();
 
               case 12:
-                // initialize undo/redo history for the document
-                if (initialize_history) _this.store_new_content();
+                // remove the text cursor from the content, if any (its position is lost anyway)
+                _this.$refs.content.blur();
 
               case 13:
               case "end":
@@ -5086,7 +5076,7 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
       var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-        var page_idx, page, page_elt, prev_page_modified_flag, _loop, _page_idx;
+        var page_idx, page, page_elt, selection, start_marker, end_marker, range, prev_page_modified_flag, _loop, _page_idx, _range, _iterator2, _step2, _page, _page_elt;
 
         return regeneratorRuntime.wrap(function _callee2$(_context3) {
           while (1) {
@@ -5106,12 +5096,24 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
                   page_elt = _this2.$refs[page.uuid][0]; // if user deleted the page from the DOM, then remove it from this.pages array
 
                   if (!document.body.contains(page_elt)) _this2.pages.splice(page_idx, 1);
+                } // Save current selection by inserting empty HTML elements at the start and the end of it
+
+
+                selection = window.getSelection();
+                start_marker = document.createElement("null");
+                end_marker = document.createElement("null");
+
+                if (selection.rangeCount) {
+                  range = selection.getRangeAt(0);
+                  range.insertNode(start_marker);
+                  range.collapse(false);
+                  range.insertNode(end_marker);
                 } // browse every remaining page
 
 
                 prev_page_modified_flag = false;
                 _loop = /*#__PURE__*/regeneratorRuntime.mark(function _loop(_page_idx) {
-                  var page, page_elt, next_page, next_page_elt, caretPositionElt, selection, old_anchorNode, old_anchorOffset;
+                  var page, page_elt, next_page, next_page_elt;
                   return regeneratorRuntime.wrap(function _loop$(_context2) {
                     while (1) {
                       switch (_context2.prev = _context2.next) {
@@ -5123,23 +5125,12 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
                           next_page_elt = next_page ? _this2.$refs[next_page.uuid][0] : null; // check if this page, the next page, or any previous page content has been modified by the user (don't apply to template pages)
 
                           if (!(!page.template && (prev_page_modified_flag || page_elt.innerHTML != page.prev_innerHTML || next_page_elt && !next_page.template && next_page_elt.innerHTML != next_page.prev_innerHTML))) {
-                            _context2.next = 22;
+                            _context2.next = 15;
                             break;
                           }
 
-                          prev_page_modified_flag = true; // Check if caret is in this page. If so, save its position by inserting an empty element at the caret
-
-                          caretPositionElt = false;
-                          selection = window.getSelection();
-                          old_anchorNode = selection.anchorNode;
-                          old_anchorOffset = selection.anchorOffset;
-
-                          if (selection.rangeCount) {
-                            caretPositionElt = document.createElement("null");
-                            selection.getRangeAt(0).insertNode(caretPositionElt);
-                          } // BACKWARD-PROPAGATION
+                          prev_page_modified_flag = true; // BACKWARD-PROPAGATION
                           // check if content doesn't overflow, and that next page exists and has the same content_idx
-
 
                           if (page_elt.clientHeight <= _this2.pages_height && next_page && next_page.content_idx == page.content_idx) {
                             // try to append every node from the next page until it doesn't fit
@@ -5153,12 +5144,12 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
 
 
                           if (!(page_elt.clientHeight > _this2.pages_height)) {
-                            _context2.next = 20;
+                            _context2.next = 15;
                             break;
                           }
 
                           if (!(!next_page || next_page.content_idx != page.content_idx)) {
-                            _context2.next = 19;
+                            _context2.next = 14;
                             break;
                           }
 
@@ -5169,40 +5160,20 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
 
                           _this2.pages.splice(_page_idx + 1, 0, next_page);
 
-                          _context2.next = 18;
+                          _context2.next = 13;
                           return _this2.$nextTick();
 
-                        case 18:
+                        case 13:
                           // wait for DOM update
                           next_page_elt = _this2.$refs[next_page.uuid][0];
 
-                        case 19:
+                        case 14:
                           // move the content step by step to the next page, until it fits
                           move_children_forward_recursively(page_elt, next_page_elt, function () {
                             return page_elt.clientHeight <= _this2.pages_height;
                           });
 
-                        case 20:
-                          // restore caret position and remove empty element
-                          if (caretPositionElt && document.body.contains(caretPositionElt)) {
-                            selection = window.getSelection();
-
-                            if (selection.anchorNode != old_anchorNode || selection.anchorOffset != old_anchorOffset) {
-                              selection.collapse(caretPositionElt, 0);
-                            }
-
-                            caretPositionElt.parentElement.removeChild(caretPositionElt);
-                            selection.collapseToStart();
-                          } // normalize HTML (merge text nodes)
-
-
-                          page_elt.normalize();
-
-                        case 22:
-                          // store current pages innerHTML for next call
-                          page.prev_innerHTML = page_elt.innerHTML;
-
-                        case 23:
+                        case 15:
                         case "end":
                           return _context2.stop();
                       }
@@ -5211,20 +5182,53 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
                 });
                 _page_idx = 0;
 
-              case 6:
+              case 10:
                 if (!(_page_idx < _this2.pages.length)) {
-                  _context3.next = 11;
+                  _context3.next = 15;
                   break;
                 }
 
-                return _context3.delegateYield(_loop(_page_idx), "t0", 8);
+                return _context3.delegateYield(_loop(_page_idx), "t0", 12);
 
-              case 8:
+              case 12:
                 _page_idx++;
-                _context3.next = 6;
+                _context3.next = 10;
                 break;
 
-              case 11:
+              case 15:
+                // restore selection and remove empty elements
+                if (document.body.contains(start_marker)) {
+                  _range = document.createRange();
+
+                  _range.setStart(start_marker, 0);
+
+                  if (document.body.contains(end_marker)) _range.setEnd(end_marker, 0);
+                  selection.removeAllRanges();
+                  selection.addRange(_range);
+                }
+
+                if (start_marker.parentElement) start_marker.parentElement.removeChild(start_marker);
+                if (end_marker.parentElement) end_marker.parentElement.removeChild(end_marker); // normalize and store current page HTML content
+
+                _iterator2 = _createForOfIteratorHelper(_this2.pages);
+
+                try {
+                  for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+                    _page = _step2.value;
+                    _page_elt = _this2.$refs[_page.uuid][0];
+
+                    _page_elt.normalize(); // normalize HTML (merge text nodes)
+
+
+                    _page.prev_innerHTML = _page_elt.innerHTML; // store current pages innerHTML for next call
+                  }
+                } catch (err) {
+                  _iterator2.e(err);
+                } finally {
+                  _iterator2.f();
+                }
+
+              case 20:
               case "end":
                 return _context3.stop();
             }
@@ -5232,22 +5236,7 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
         }, _callee2);
       }))();
     },
-    // Beforeinput handler
-    before_input: function before_input(e) {
-      // manage history undo/redo events
-      switch (e && e.inputType) {
-        case "historyUndo":
-          e.preventDefault();
-          this.undo();
-          break;
-
-        case "historyRedo":
-          e.preventDefault();
-          this.redo();
-          break;
-      }
-    },
-    // Input handler
+    // Input event
     input: function input(e) {
       var _this3 = this;
 
@@ -5256,32 +5245,25 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                _context4.t0 = e && e.inputType;
-                _context4.next = _context4.t0 === "historyUndo" ? 3 : _context4.t0 === "historyRedo" ? 5 : 7;
-                break;
-
-              case 3:
-                _this3.undo();
+                if (!(!e || !e.inputType)) {
+                  _context4.next = 2;
+                  break;
+                }
 
                 return _context4.abrupt("return");
 
-              case 5:
-                _this3.redo();
-
-                return _context4.abrupt("return");
-
-              case 7:
-                _context4.next = 9;
+              case 2:
+                _context4.next = 4;
                 return _this3.fit_content_over_pages();
 
-              case 9:
-                // store content to history
-                _this3.store_new_content(); // update current style if it has changed
+              case 4:
+                // fit content according to modifications
+                _this3.emit_new_content(); // emit content modification
 
 
-                if (e && e.inputType != "insertText") _this3.process_current_text_style();
+                if (e.inputType != "insertText") _this3.process_current_text_style(); // update current style if it has changed
 
-              case 11:
+              case 6:
               case "end":
                 return _context4.stop();
             }
@@ -5289,16 +5271,8 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
         }, _callee3);
       }))();
     },
-    // Undo function
-    undo: function undo() {
-      if (this.can_undo) this.$emit("update:content", this.content_history[--this.undo_count]);
-    },
-    // Redo function
-    redo: function redo() {
-      if (this.can_redo) this.$emit("update:content", this.content_history[++this.undo_count]);
-    },
-    // Store new content to history and emit content change to parent
-    store_new_content: function store_new_content() {
+    // Emit content change to parent
+    emit_new_content: function emit_new_content() {
       var _this4 = this;
 
       var new_content = this.content.map(function (item, content_idx) {
@@ -5311,9 +5285,6 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
           props: _objectSpread2({}, item.props)
         };
       });
-      this.content_history[++this.undo_count] = new_content;
-      this.content_history.length = this.undo_count + 1; // remove all redo items
-
       this.prevent_next_content_update_from_parent = true; // avoid infinite loop
 
       this.$emit("update:content", new_content);
@@ -5323,8 +5294,8 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
       var style = false;
       var sel = window.getSelection();
 
-      if (sel.anchorNode) {
-        var element = sel.anchorNode.tagName ? sel.anchorNode : sel.anchorNode.parentElement;
+      if (sel.focusNode) {
+        var element = sel.focusNode.tagName ? sel.focusNode : sel.focusNode.parentElement;
 
         if (element && element.isContentEditable) {
           style = window.getComputedStyle(element); // compute additional properties
@@ -5436,14 +5407,14 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
 
       var print_body = document.createElement("body"); // clone each page to the print body
 
-      var _iterator2 = _createForOfIteratorHelper(this.pages.entries()),
-          _step2;
+      var _iterator3 = _createForOfIteratorHelper(this.pages.entries()),
+          _step3;
 
       try {
-        for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-          var _step2$value = _slicedToArray(_step2.value, 2),
-              page_idx = _step2$value[0],
-              page = _step2$value[1];
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var _step3$value = _slicedToArray(_step3.value, 2),
+              page_idx = _step3$value[0],
+              page = _step3$value[1];
 
           var page_elt = this.$refs[page.uuid][0];
           var page_clone = page_elt.cloneNode(true);
@@ -5455,9 +5426,9 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
         } // replace current body by the print body
 
       } catch (err) {
-        _iterator2.e(err);
+        _iterator3.e(err);
       } finally {
-        _iterator2.f();
+        _iterator3.f();
       }
 
       document.body = print_body;
@@ -5549,8 +5520,8 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
 });
 // CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js&
  /* harmony default export */ var DocumentEditor_DocumentEditorvue_type_script_lang_js_ = (DocumentEditorvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=865af966&lang=scss&scoped=true&
-var DocumentEditorvue_type_style_index_0_id_865af966_lang_scss_scoped_true_ = __webpack_require__("ed5d");
+// EXTERNAL MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=e0fe9952&lang=scss&scoped=true&
+var DocumentEditorvue_type_style_index_0_id_e0fe9952_lang_scss_scoped_true_ = __webpack_require__("5cc0");
 
 // CONCATENATED MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
 /* globals __VUE_SSR_CONTEXT__ */
@@ -5667,7 +5638,7 @@ var component = normalizeComponent(
   staticRenderFns,
   false,
   null,
-  "865af966",
+  "e0fe9952",
   null
   
 )

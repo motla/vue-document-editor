@@ -2,7 +2,7 @@
   <div class="editor" ref="editor">
 
     <!-- Document editor -->
-    <div class="content" ref="content" :contenteditable="editable" :style="page_style(-1)" @beforeinput="before_input" @input="input" @keyup="process_current_text_style">
+    <div class="content" ref="content" :contenteditable="editable" :style="page_style(-1)" @input="input" @keyup="process_current_text_style">
       <!-- Dummy page that is empty, only to measure the pages_height in px -->
       <div ref="dummy_page" class="page" :style="page_style(0)"></div>
 
@@ -72,15 +72,13 @@ export default {
       editor_width: 0, // real measured with of an empty editor <div> in px
       prevent_next_content_update_from_parent: false, // workaround for infinite update loop
       current_text_style: false, // contains the style at caret position
-      undo_count: -1, // contains the number of times user can undo (= current position in content_history)
-      content_history: [] // contains the content states for undo/redo operations
     }
   },
 
   mounted () {
     this.update_editor_width();
     this.update_css_media_style();
-    this.reset_content(true);
+    this.reset_content();
     window.addEventListener("resize", this.update_editor_width);
     window.addEventListener("click", this.process_current_text_style);
     window.addEventListener("beforeprint", this.before_print);
@@ -102,16 +100,14 @@ export default {
       const style = document.createElement("style");
       document.head.appendChild(style);
       return style;
-    },
-    can_undo () { return this.undo_count > 0; },
-    can_redo () { return this.content_history.length - this.undo_count - 1 > 0; }
+    }
   },
 
 
   methods: {
 
     // Resets all content from the content property
-    async reset_content (initialize_history) {
+    async reset_content () {
       // get page height from dummy page
       await this.$nextTick(); // wait for DOM update
       this.$refs.dummy_page.style.display = "block";
@@ -135,8 +131,8 @@ export default {
       // spread content over several pages if it overflows
       await this.fit_content_over_pages();
 
-      // initialize undo/redo history for the document
-      if(initialize_history) this.store_new_content();
+      // remove the text cursor from the content, if any (its position is lost anyway)
+      this.$refs.content.blur();
     },
 
     // Spreads the HTML content over several pages until it fits
@@ -153,6 +149,17 @@ export default {
         if(!document.body.contains(page_elt)) this.pages.splice(page_idx, 1);
       }
 
+      // Save current selection by inserting empty HTML elements at the start and the end of it
+      const selection = window.getSelection();
+      const start_marker = document.createElement("null");
+      const end_marker = document.createElement("null");
+      if(selection.rangeCount) {
+        const range = selection.getRangeAt(0);
+        range.insertNode(start_marker);
+        range.collapse(false);
+        range.insertNode(end_marker);
+      }
+
       // browse every remaining page
       let prev_page_modified_flag = false;
       for(let page_idx = 0; page_idx < this.pages.length; page_idx++) { // page length can grow inside this loop
@@ -164,18 +171,7 @@ export default {
         // check if this page, the next page, or any previous page content has been modified by the user (don't apply to template pages)
         if(!page.template && (prev_page_modified_flag || page_elt.innerHTML != page.prev_innerHTML
           || (next_page_elt && !next_page.template && next_page_elt.innerHTML != next_page.prev_innerHTML))){
-
           prev_page_modified_flag = true;
-
-          // Check if caret is in this page. If so, save its position by inserting an empty element at the caret
-          let caretPositionElt = false;
-          let selection = window.getSelection();
-          const old_anchorNode = selection.anchorNode;
-          const old_anchorOffset = selection.anchorOffset;
-          if(selection.rangeCount){
-            caretPositionElt = document.createElement("null");
-            selection.getRangeAt(0).insertNode(caretPositionElt);
-          }
 
           // BACKWARD-PROPAGATION
           // check if content doesn't overflow, and that next page exists and has the same content_idx
@@ -203,72 +199,42 @@ export default {
             // move the content step by step to the next page, until it fits
             move_children_forward_recursively(page_elt, next_page_elt, () => (page_elt.clientHeight <= this.pages_height));
           }
-
-          // restore caret position and remove empty element
-          if(caretPositionElt && document.body.contains(caretPositionElt)) {
-            selection = window.getSelection();
-            if(selection.anchorNode != old_anchorNode || selection.anchorOffset != old_anchorOffset){
-              selection.collapse(caretPositionElt, 0);
-            }
-            caretPositionElt.parentElement.removeChild(caretPositionElt);
-            selection.collapseToStart();
-          }
-
-          // normalize HTML (merge text nodes)
-          page_elt.normalize();
         }
+      }
 
-        // store current pages innerHTML for next call
-        page.prev_innerHTML = page_elt.innerHTML;
+      // restore selection and remove empty elements
+      if(document.body.contains(start_marker)){
+        const range = document.createRange();
+        range.setStart(start_marker, 0);
+        if(document.body.contains(end_marker)) range.setEnd(end_marker, 0);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      if(start_marker.parentElement) start_marker.parentElement.removeChild(start_marker);
+      if(end_marker.parentElement) end_marker.parentElement.removeChild(end_marker);
+
+      // normalize and store current page HTML content
+      for(const page of this.pages) {
+        const page_elt = this.$refs[page.uuid][0];
+        page_elt.normalize(); // normalize HTML (merge text nodes)
+        page.prev_innerHTML = page_elt.innerHTML; // store current pages innerHTML for next call
       }
     },
 
-
-    // Beforeinput handler
-    before_input (e) {
-      // manage history undo/redo events
-      switch(e && e.inputType){
-        case "historyUndo": e.preventDefault(); this.undo(); break;
-        case "historyRedo": e.preventDefault(); this.redo(); break;
-      }
-    },
-
-    // Input handler
+    // Input event
     async input (e) {
-      // manage history undo/redo events, in case of beforeinput event is not implemented
-      switch(e && e.inputType){
-        case "historyUndo": this.undo(); return;
-        case "historyRedo": this.redo(); return;
-      }
-
-      // fit content according to modifications
-      await this.fit_content_over_pages();
-
-      // store content to history
-      this.store_new_content();
-
-      // update current style if it has changed
-      if(e && e.inputType != "insertText") this.process_current_text_style();
+      if(!e || !e.inputType) return; // check that input type is set
+      await this.fit_content_over_pages(); // fit content according to modifications
+      this.emit_new_content(); // emit content modification
+      if(e.inputType != "insertText") this.process_current_text_style(); // update current style if it has changed
     },
 
-    // Undo function
-    undo () {
-      if(this.can_undo) this.$emit("update:content", this.content_history[--this.undo_count]);
-    },
-
-    // Redo function
-    redo () {
-      if(this.can_redo) this.$emit("update:content", this.content_history[++this.undo_count]);
-    },
-
-    // Store new content to history and emit content change to parent
-    store_new_content () {
+    // Emit content change to parent
+    emit_new_content () {
       const new_content = this.content.map((item, content_idx) => {
         if(typeof item == "string") return this.pages.filter(page => (page.content_idx == content_idx)).map(page => this.$refs[page.uuid][0].innerHTML).join('');
         else return { template: item.template, props: { ...item.props }};
       });
-      this.content_history[++this.undo_count] = new_content;
-      this.content_history.length = this.undo_count + 1; // remove all redo items
       this.prevent_next_content_update_from_parent = true; // avoid infinite loop
       this.$emit("update:content", new_content);
     },
@@ -277,8 +243,8 @@ export default {
     process_current_text_style () {
       let style = false;
       const sel = window.getSelection();
-      if(sel.anchorNode) {
-        const element = sel.anchorNode.tagName ? sel.anchorNode : sel.anchorNode.parentElement;
+      if(sel.focusNode) {
+        const element = sel.focusNode.tagName ? sel.focusNode : sel.focusNode.parentElement;
         if(element && element.isContentEditable) {
           style = window.getComputedStyle(element);
 
@@ -417,7 +383,7 @@ export default {
           this.prevent_next_content_update_from_parent = false;
         } else await this.reset_content();
       }
-    },
+    }
   }
 
 }

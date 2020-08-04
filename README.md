@@ -1,8 +1,8 @@
 <div align="center">
-  <img width="304" height="24" src="https://github.com/motla/vue-document-editor/raw/master/img/logo.png" alt="vue-document-editor">
+  <img src="https://github.com/motla/vue-document-editor/raw/master/img/logo.png" alt="vue-document-editor">
 </div>
 <div align="center">
-  <img width="500" height="210" src="https://github.com/motla/vue-document-editor/raw/master/img/preview.png">
+  <img src="https://github.com/motla/vue-document-editor/raw/master/img/preview.png">
 </div>
 
 **vue-document-editor** is a rich-text editor built on top of [Vue.js](https://vuejs.org/), using the native [*contenteditable*](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Editable_content) browser implementation and some JavaScript trickery to spread content over paper-sized pages. It is mainly designed to allow **targeted modifications** to pre-formatted documents using HTML or **interactive templates**.
@@ -18,7 +18,6 @@
 - Dynamic document format and margins in millimeters
 - Smart zoom and page display modes
 - Computes text style at caret position
-- Rewritten history stack (undo/redo) compatible with native commands
 
 ###### :speech_balloon: This package doesn't include any toolbar. The demo features [vue-file-toolbar-menu](https://github.com/motla/vue-file-toolbar-menu) for the toolbar.
 
@@ -37,7 +36,7 @@ npm install vue-document-editor
 ###### MyComponent.vue
 ```Vue
 <template>
-  <div>
+  <div style="font-family: Avenir, sans-serif">
     <vue-document-editor :content.sync="content" />
   </div>
 </template>
@@ -54,10 +53,6 @@ export default {
   }
 }
 </script>
-
-<style>
-  body { font-family: Avenir, Helvetica, Arial, sans-serif; }
-</style>
 ```
 
 ## Complete example
@@ -67,9 +62,10 @@ See the [Demo.vue](src/Demo/Demo.vue) file and the [InvoiceTemplate.vue](src/Dem
 For the list of props, data and styling variables: **read the [API](API.md)**.
 
 ## Known issues / limitations
+- **Undo / Redo**: Native undo/redo needs to be rewritten as the split mechanism modifies the HTML content at every input, so the navigator is lost. You have to implement it yourself by watching `content` updates and storing them in a stack, then restoring them. [Demo.vue](src/Demo/Demo.vue) implements this. Also your interactive templates need to have a custom undo/redo management if their editable fields are not synced with the `content`.
 - **Performance**: Large texts must be divided into multiple paragraphs and large page numbers can slow down the entire document.
 - **Safari print**: Safari adds print margins unless you choose a borderless paper format in the print box. This has to be done manually. I guess there is no workaround for this issue yet.
-- **Tables, images**: User cannot resize tables nor images yet. However, table rows split fine over multiple pages.
+- **Tables, images**: Image/table placement and sizing is not included. You can implement it specifically for your needs. However, table rows split fine over multiple pages.
 
 ## Project development
 - `npm run serve` compiles and hot-reloads demo for development
