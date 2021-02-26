@@ -189,13 +189,6 @@ exports.f = DESCRIPTORS ? nativeGetOwnPropertyDescriptor : function getOwnProper
 
 /***/ }),
 
-/***/ "0c49":
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-
 /***/ "0cfb":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1056,17 +1049,6 @@ module.exports = function (bitmap, value) {
   };
 };
 
-
-/***/ }),
-
-/***/ "5cc0":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_e0fe9952_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0c49");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_e0fe9952_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_e0fe9952_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
- /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_e0fe9952_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
@@ -3526,6 +3508,17 @@ module.exports = {
 
 /***/ }),
 
+/***/ "bd7d":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_3172388e_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cd84");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_3172388e_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_3172388e_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+ /* unused harmony default export */ var _unused_webpack_default_export = (_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_0_id_3172388e_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
 /***/ "c04e":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3646,6 +3639,13 @@ module.exports = function (it) {
   return EXISTS ? document.createElement(it) : {};
 };
 
+
+/***/ }),
+
+/***/ "cd84":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
 
 /***/ }),
 
@@ -4438,12 +4438,12 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"788fb7fa-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=e0fe9952&scoped=true&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"editor",staticClass:"editor"},[_c('div',{ref:"content",staticClass:"content",style:(_vm.page_style(-1)),attrs:{"contenteditable":_vm.editable},on:{"input":_vm.input,"keyup":_vm.process_current_text_style}},[_c('div',{ref:"dummy_page",staticClass:"page",style:(_vm.page_style(0))}),_vm._l((_vm.pages),function(page,page_idx){return _c('div',{key:page.uuid,ref:page.uuid,refInFor:true,staticClass:"page",style:(_vm.page_style(page_idx, page.template ? true : false)),attrs:{"data-content-idx":page.content_idx,"contenteditable":!page.template ? true : false}},[(page.template)?_c(page.template,_vm._b({tag:"component"},'component',page.props,false,true)):_vm._e()],1)})],2)])}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"788fb7fa-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=3172388e&scoped=true&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"editor",staticClass:"editor"},[_c('div',{ref:"content",staticClass:"content",style:(_vm.page_style(-1)),attrs:{"contenteditable":_vm.editable},on:{"input":_vm.input,"keyup":_vm.process_current_text_style}},_vm._l((_vm.pages),function(page,page_idx){return _c('div',{key:page.uuid,ref:page.uuid,refInFor:true,staticClass:"page",style:(_vm.page_style(page_idx, page.template ? true : false)),attrs:{"data-content-idx":page.content_idx,"contenteditable":!page.template ? true : false}},[(page.template)?_c(page.template,_vm._b({tag:"component"},'component',page.props,false,true)):_vm._e()],1)}),0)])}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=e0fe9952&scoped=true&
+// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=3172388e&scoped=true&
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.filter.js
 var es_array_filter = __webpack_require__("4de4");
@@ -4915,9 +4915,6 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
 //
 //
 //
-//
-//
-//
 
 /* harmony default export */ var DocumentEditorvue_type_script_lang_js_ = ({
   props: {
@@ -5007,22 +5004,13 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-        var _iterator, _step, page, page_elt;
+        var first_page_elt, _iterator, _step, page, page_elt;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
-                return _this.$nextTick();
-
-              case 2:
-                // wait for DOM update
-                _this.$refs.dummy_page.style.display = "block";
-                _this.pages_height = _this.$refs.dummy_page.clientHeight + 1; // allow one pixel precision
-
-                _this.$refs.dummy_page.style.display = "none"; // delete all pages and set one new page per content item
-
+                // delete all pages and set one new page per content item
                 _this.pages = _this.content.length ? _this.content.map(function (content, content_idx) {
                   return {
                     uuid: content_idx,
@@ -5034,20 +5022,28 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
                   uuid: 0,
                   content_idx: 0
                 }]; // if content is empty
+                // get page height from first empty page
 
-                _context.next = 8;
+                _context.next = 3;
                 return _this.$nextTick();
 
-              case 8:
+              case 3:
                 // wait for DOM update
+                first_page_elt = _this.$refs[_this.pages[0].uuid][0];
+                if (!_this.$refs.content.contains(first_page_elt)) _this.$refs.content.appendChild(first_page_elt); // restore page in DOM in case it was removed
+
+                _this.pages_height = first_page_elt.clientHeight + 1; // allow one pixel precision
+                // initialize text pages
+
                 _iterator = _createForOfIteratorHelper(_this.pages);
 
                 try {
                   for (_iterator.s(); !(_step = _iterator.n()).done;) {
                     page = _step.value;
-                    // initialize text pages
                     page_elt = _this.$refs[page.uuid][0];
-                    if (!_this.content[page.content_idx]) page_elt.innerHTML = "";else if (typeof _this.content[page.content_idx] == "string") page_elt.innerHTML = "<div>" + _this.content[page.content_idx] + "</div>";
+                    if (!_this.content[page.content_idx]) page_elt.innerHTML = "<div><br></div>";else if (typeof _this.content[page.content_idx] == "string") page_elt.innerHTML = "<div>" + _this.content[page.content_idx] + "</div>"; // (else content is a component that is set in Vue.js <template>)
+
+                    if (!_this.$refs.content.contains(page_elt)) _this.$refs.content.appendChild(page_elt); // restore page in DOM in case it was removed
                   } // spread content over several pages if it overflows
 
                 } catch (err) {
@@ -5056,14 +5052,14 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
                   _iterator.f();
                 }
 
-                _context.next = 12;
+                _context.next = 10;
                 return _this.fit_content_over_pages();
 
-              case 12:
+              case 10:
                 // remove the text cursor from the content, if any (its position is lost anyway)
                 _this.$refs.content.blur();
 
-              case 13:
+              case 11:
               case "end":
                 return _context.stop();
             }
@@ -5090,15 +5086,26 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
                 return _context3.abrupt("return");
 
               case 2:
-                // check that pages were not deleted from the DOM (start from the end)
+                // Check that pages were not deleted from the DOM (start from the end)
                 for (page_idx = _this2.pages.length - 1; page_idx >= 0; page_idx--) {
                   page = _this2.pages[page_idx];
                   page_elt = _this2.$refs[page.uuid][0]; // if user deleted the page from the DOM, then remove it from this.pages array
 
                   if (!document.body.contains(page_elt)) _this2.pages.splice(page_idx, 1);
-                } // Save current selection by inserting empty HTML elements at the start and the end of it
+                } // If all the document was wiped out, start a new empty document
 
 
+                if (_this2.pages.length) {
+                  _context3.next = 6;
+                  break;
+                }
+
+                _this2.reset_content();
+
+                return _context3.abrupt("return");
+
+              case 6:
+                // Save current selection by inserting empty HTML elements at the start and the end of it
                 selection = window.getSelection();
                 start_marker = document.createElement("null");
                 end_marker = document.createElement("null");
@@ -5108,7 +5115,7 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
                   range.insertNode(start_marker);
                   range.collapse(false);
                   range.insertNode(end_marker);
-                } // browse every remaining page
+                } // Browse every remaining page
 
 
                 prev_page_modified_flag = false;
@@ -5182,21 +5189,21 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
                 });
                 _page_idx = 0;
 
-              case 10:
+              case 13:
                 if (!(_page_idx < _this2.pages.length)) {
-                  _context3.next = 15;
+                  _context3.next = 18;
                   break;
                 }
 
-                return _context3.delegateYield(_loop(_page_idx), "t0", 12);
-
-              case 12:
-                _page_idx++;
-                _context3.next = 10;
-                break;
+                return _context3.delegateYield(_loop(_page_idx), "t0", 15);
 
               case 15:
-                // restore selection and remove empty elements
+                _page_idx++;
+                _context3.next = 13;
+                break;
+
+              case 18:
+                // Restore selection and remove empty elements
                 if (document.body.contains(start_marker)) {
                   _range = document.createRange();
 
@@ -5208,7 +5215,7 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
                 }
 
                 if (start_marker.parentElement) start_marker.parentElement.removeChild(start_marker);
-                if (end_marker.parentElement) end_marker.parentElement.removeChild(end_marker); // normalize and store current page HTML content
+                if (end_marker.parentElement) end_marker.parentElement.removeChild(end_marker); // Normalize and store current page HTML content
 
                 _iterator2 = _createForOfIteratorHelper(_this2.pages);
 
@@ -5228,7 +5235,7 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
                   _iterator2.f();
                 }
 
-              case 20:
+              case 23:
               case "end":
                 return _context3.stop();
             }
@@ -5520,8 +5527,8 @@ function move_child_backward_with_merging(page_elt, next_page_elt, stop_conditio
 });
 // CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js&
  /* harmony default export */ var DocumentEditor_DocumentEditorvue_type_script_lang_js_ = (DocumentEditorvue_type_script_lang_js_); 
-// EXTERNAL MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=e0fe9952&lang=scss&scoped=true&
-var DocumentEditorvue_type_style_index_0_id_e0fe9952_lang_scss_scoped_true_ = __webpack_require__("5cc0");
+// EXTERNAL MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=3172388e&lang=scss&scoped=true&
+var DocumentEditorvue_type_style_index_0_id_3172388e_lang_scss_scoped_true_ = __webpack_require__("bd7d");
 
 // CONCATENATED MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
 /* globals __VUE_SSR_CONTEXT__ */
@@ -5638,7 +5645,7 @@ var component = normalizeComponent(
   staticRenderFns,
   false,
   null,
-  "e0fe9952",
+  "3172388e",
   null
   
 )

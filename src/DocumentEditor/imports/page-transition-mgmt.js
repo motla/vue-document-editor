@@ -50,7 +50,7 @@ function move_children_forward_recursively (child, child_sibling, stop_condition
     }
 
     // if it is a node with no content (e.g. <img>), or a header title (e.g. <h1>) we simply move it
-    else if (!sub_child.childNodes.length || sub_child.tagName.match(/h\d/i)) {
+    else if(!sub_child.childNodes.length || sub_child.tagName.match(/h\d/i)) {
       // just prevent moving the last child of the page
       if(!not_first_child){
         console.log("Move-forward: first child reached with no stop condition. Aborting");

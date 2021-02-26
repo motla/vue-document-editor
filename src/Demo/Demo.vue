@@ -46,12 +46,12 @@ export default {
   },
 
   created () {
-    // initialize gesture flags
+    // Initialize gesture flags
     let start_zoom_gesture = false;
     let start_dist_touch = false;
     let start_zoom_touch = false;
 
-    // manage ctrl+scroll zoom (or trackpad pinch)
+    // Manage ctrl+scroll zoom (or trackpad pinch)
     window.addEventListener("wheel", (e) => {
       if(e.ctrlKey){
         e.preventDefault();
@@ -59,7 +59,7 @@ export default {
       }
     }, { passive: false });
 
-    // manage trackpad pinch on Safari
+    // Manage trackpad pinch on Safari
     window.addEventListener("gesturestart", (e) => {
       e.preventDefault();
       start_zoom_gesture = this.zoom;
@@ -74,7 +74,7 @@ export default {
       start_zoom_gesture = false;
     });
 
-    // manage pinch to zoom
+    // Manage pinch to zoom for touch devices
     window.addEventListener("touchstart", (e) => {
       if (e.touches.length == 2) {
         e.preventDefault();
@@ -309,8 +309,9 @@ export default {
   watch: {
     content: {
       immediate: true,
+      // Fill undo / redo history stack on user input
       handler (new_content) {
-        if(!this._mute_next_content_watcher) {
+        if(!this._mute_next_content_watcher) { // only update the stack when content is changed by user input, not undo/redo commands
           this.content_history[++this.undo_count] = new_content;
           this.content_history.length = this.undo_count + 1; // remove all redo items
         }
@@ -337,7 +338,7 @@ body {
   width: 16px;
   height: 16px;
 }
-::-webkit-scrollbar-track {
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {
   display: none;
 }
 ::-webkit-scrollbar-thumb {

@@ -3,9 +3,6 @@
 
     <!-- Document editor -->
     <div class="content" ref="content" :contenteditable="editable" :style="page_style(-1)" @input="input" @keyup="process_current_text_style">
-      <!-- Dummy page that is empty, only to measure the pages_height in px -->
-      <div ref="dummy_page" class="page" :style="page_style(0)"></div>
-
       <!-- Contains every page of the document (can be modified by the DOM afterwards) -->
       <div v-for="(page, page_idx) in pages" class="page"
         :key="page.uuid" :ref="page.uuid" :data-content-idx="page.content_idx"
@@ -108,12 +105,6 @@ export default {
 
     // Resets all content from the content property
     async reset_content () {
-      // get page height from dummy page
-      await this.$nextTick(); // wait for DOM update
-      this.$refs.dummy_page.style.display = "block";
-      this.pages_height = this.$refs.dummy_page.clientHeight + 1; // allow one pixel precision
-      this.$refs.dummy_page.style.display = "none";
-
       // delete all pages and set one new page per content item
       this.pages = this.content.length ? this.content.map((content, content_idx) => ({
         uuid: content_idx,
@@ -121,11 +112,20 @@ export default {
         template: content.template,
         props: content.props
       })) : [{ uuid: 0, content_idx: 0 }]; // if content is empty
+
+      // get page height from first empty page
       await this.$nextTick(); // wait for DOM update
-      for(const page of this.pages) { // initialize text pages
+      const first_page_elt = this.$refs[this.pages[0].uuid][0];
+      if(!this.$refs.content.contains(first_page_elt)) this.$refs.content.appendChild(first_page_elt); // restore page in DOM in case it was removed
+      this.pages_height = first_page_elt.clientHeight + 1; // allow one pixel precision
+
+      // initialize text pages
+      for(const page of this.pages) {
         const page_elt = this.$refs[page.uuid][0];
-        if(!this.content[page.content_idx]) page_elt.innerHTML = "";
+        if(!this.content[page.content_idx]) page_elt.innerHTML = "<div><br></div>";
         else if(typeof this.content[page.content_idx] == "string") page_elt.innerHTML = "<div>"+this.content[page.content_idx]+"</div>";
+        // (else content is a component that is set in Vue.js <template>)
+        if(!this.$refs.content.contains(page_elt)) this.$refs.content.appendChild(page_elt); // restore page in DOM in case it was removed
       }
 
       // spread content over several pages if it overflows
@@ -137,16 +137,22 @@ export default {
 
     // Spreads the HTML content over several pages until it fits
     async fit_content_over_pages () {
-      // this.pages_height must have been set before calling this function
+      // Data variable this.pages_height must have been set before calling this function
       if(!this.pages_height) return;
 
-      // check that pages were not deleted from the DOM (start from the end)
+      // Check that pages were not deleted from the DOM (start from the end)
       for(let page_idx = this.pages.length - 1; page_idx >= 0; page_idx--) {
         const page = this.pages[page_idx];
         const page_elt = this.$refs[page.uuid][0];
 
         // if user deleted the page from the DOM, then remove it from this.pages array
         if(!document.body.contains(page_elt)) this.pages.splice(page_idx, 1);
+      }
+
+      // If all the document was wiped out, start a new empty document
+      if(!this.pages.length){
+        this.reset_content();
+        return;
       }
 
       // Save current selection by inserting empty HTML elements at the start and the end of it
@@ -160,7 +166,7 @@ export default {
         range.insertNode(end_marker);
       }
 
-      // browse every remaining page
+      // Browse every remaining page
       let prev_page_modified_flag = false;
       for(let page_idx = 0; page_idx < this.pages.length; page_idx++) { // page length can grow inside this loop
         const page = this.pages[page_idx];
@@ -201,8 +207,9 @@ export default {
           }
         }
       }
+      
 
-      // restore selection and remove empty elements
+      // Restore selection and remove empty elements
       if(document.body.contains(start_marker)){
         const range = document.createRange();
         range.setStart(start_marker, 0);
@@ -213,7 +220,7 @@ export default {
       if(start_marker.parentElement) start_marker.parentElement.removeChild(start_marker);
       if(end_marker.parentElement) end_marker.parentElement.removeChild(end_marker);
 
-      // normalize and store current page HTML content
+      // Normalize and store current page HTML content
       for(const page of this.pages) {
         const page_elt = this.$refs[page.uuid][0];
         page_elt.normalize(); // normalize HTML (merge text nodes)
