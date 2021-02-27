@@ -1,5 +1,14 @@
-module.exports =
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["VueDocumentEditor"] = factory();
+	else
+		root["VueDocumentEditor"] = factory();
+})((typeof self !== 'undefined' ? self : this), function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -5788,4 +5797,5 @@ module.exports = NATIVE_SYMBOL
 /***/ })
 
 /******/ })["default"];
-//# sourceMappingURL=vue-document-editor.common.js.map
+});
+//# sourceMappingURL=VueDocumentEditor.umd.js.map

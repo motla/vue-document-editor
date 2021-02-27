@@ -1,3 +1,9 @@
+## v1.1.2
+
+- Fix [Issue 3](https://github.com/motla/vue-document-editor/issues/2)
+  - Renaming the static library "VueDocumentEditor"
+  - Adding UMD example to README.md
+
 ## v1.1.1
 
 - Bugfix [Issue 2](https://github.com/motla/vue-document-editor/issues/2): Enter key to create new line doesn't seem to work on the demo site

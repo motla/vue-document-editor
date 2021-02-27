@@ -54,6 +54,37 @@ export default {
 }
 </script>
 ```
+<details>
+<summary><small>same example using UMD loaded with a CDN</small></summary>
+
+```HTML
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="https://raw.githubusercontent.com/motla/vue-document-editor/master/dist/vue-document-editor.umd.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <div style="font-family: Avenir, sans-serif">
+      <vue-document-editor :content.sync="content" />
+    </div>
+  </div>
+  <script>
+  var app = new Vue({
+    el: '#app',
+    components: { VueDocumentEditor },
+    data () {
+      return { 
+        content: ["<h1>Hello!</h1>Fill this page with text and new pages will be created as it overflows."]
+      }
+    }
+  })
+  </script>
+</body>
+</html>
+```
+
+</details>
 
 ## Complete example
 See the [Demo.vue](src/Demo/Demo.vue) file and the [InvoiceTemplate.vue](src/Demo/InvoiceTemplate.vue) file corresponding to the [live demo](https://motla.github.io/vue-document-editor/).

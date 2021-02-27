@@ -1,14 +1,5 @@
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else if(typeof exports === 'object')
-		exports["vue-document-editor"] = factory();
-	else
-		root["vue-document-editor"] = factory();
-})((typeof self !== 'undefined' ? self : this), function() {
-return /******/ (function(modules) { // webpackBootstrap
+module.exports =
+/******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -5797,5 +5788,4 @@ module.exports = NATIVE_SYMBOL
 /***/ })
 
 /******/ })["default"];
-});
-//# sourceMappingURL=vue-document-editor.umd.js.map
+//# sourceMappingURL=VueDocumentEditor.common.js.map
