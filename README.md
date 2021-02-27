@@ -55,13 +55,14 @@ export default {
 </script>
 ```
 <details>
-<summary><small>same example using UMD loaded with a CDN</small></summary>
+<summary><small>same example using static files loaded with a CDN</small></summary>
 
 ```HTML
 <html>
 <head>
   <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-  <script src="https://raw.githubusercontent.com/motla/vue-document-editor/master/dist/vue-document-editor.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-document-editor@1/dist/VueDocumentEditor.umd.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/vue-document-editor@1/dist/VueDocumentEditor.css" rel="stylesheet">
 </head>
 <body>
   <div id="app">
