@@ -97,19 +97,19 @@ function move_children_forward_recursively (child, child_sibling, stop_condition
 
 
 /**
- * This function moves the first element from "next_page_elt" to the end of "page_elt", with
+ * This function moves the first element from "next_page_html_div" to the end of "page_html_div", with
  * merging sibling tags previously watermarked by "move_children_forward_recursively", if any.
- * @param {HTMLElement} page_elt Current page element
- * @param {HTMLElement} next_page_elt Next page element
+ * @param {HTMLElement} page_html_div Current page element
+ * @param {HTMLElement} next_page_html_div Next page element
  * @param {Function} stop_condition Check function that returns a boolean if content overflows
  */
-function move_child_backward_with_merging (page_elt, next_page_elt, stop_condition) {
+function move_children_backwards_with_merging (page_html_div, next_page_html_div, stop_condition) {
 
   // loop until content is overflowing
   while(!stop_condition()){
 
     // find first child of next page
-    const first_child = next_page_elt.firstChild;
+    const first_child = next_page_html_div.firstChild;
 
     // merge it at the end of the current page
     var merge_recursively = (container, elt) => {
@@ -125,11 +125,11 @@ function move_child_backward_with_merging (page_elt, next_page_elt, stop_conditi
         container.normalize();
       }
     }
-    merge_recursively(page_elt, first_child);
+    merge_recursively(page_html_div, first_child);
   }
 }
 
 export {
   move_children_forward_recursively,
-  move_child_backward_with_merging
+  move_children_backwards_with_merging
 };

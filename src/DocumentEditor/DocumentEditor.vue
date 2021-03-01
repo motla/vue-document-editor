@@ -1,12 +1,19 @@
 <template>
   <div class="editor" ref="editor">
 
+    <!-- Page overlays (headers, footers, page numbers, ...) -->
+    <div v-if="overlay" class="overlays">
+      <div v-for="(page, page_idx) in pages" class="overlay" :key="page.uuid+'-overlay'" :ref="page.uuid+'-overlay'"
+        v-html="overlay(page_idx+1, pages.length)" :style="page_style(page_idx, false)">
+      </div>
+    </div>
+
     <!-- Document editor -->
     <div class="content" ref="content" :contenteditable="editable" :style="page_style(-1)" @input="input" @keyup="process_current_text_style">
       <!-- Contains every page of the document (can be modified by the DOM afterwards) -->
       <div v-for="(page, page_idx) in pages" class="page"
         :key="page.uuid" :ref="page.uuid" :data-content-idx="page.content_idx"
-        :style="page_style(page_idx, page.template ? true : false)" :contenteditable="!page.template ? true : false" >
+        :style="page_style(page_idx, page.template ? false : true)" :contenteditable="!page.template ? true : false" >
         <component v-if="page.template" :is="page.template" v-bind.sync="page.props" />
       </div>
     </div>
@@ -17,7 +24,7 @@
 </template>
 
 <script>
-import { move_children_forward_recursively, move_child_backward_with_merging } from './imports/page-transition-mgmt.js';
+import { move_children_forward_recursively, move_children_backwards_with_merging } from './imports/page-transition-mgmt.js';
 
 export default {
 
@@ -34,8 +41,17 @@ export default {
     // Display mode of the pages
     display: {
       type: String,
-      default: "auto" // ["auto", "horizontal", "vertical"]
+      default: "grid" // ["grid", "horizontal", "vertical"]
     },
+
+    // Sets whether document text can be modified
+    editable: {
+      type: Boolean,
+      default: true
+    },
+
+    // Overlay function returning page headers and footers in HTML
+    overlay: Function,
 
     // Pages format in mm (should be an array containing [width, height])
     page_format_mm: {
@@ -53,18 +69,12 @@ export default {
     zoom: {
       type: Number,
       default: 1.0
-    },
-
-    // Sets whether document text can be modified
-    editable: {
-      type: Boolean,
-      default: true
-    },
+    }
   },
 
   data () {
     return {
-      pages: [], // contains {uuid, content_idx, prev_innerHTML, template, props} for each pages of the document
+      pages: [], // contains {uuid, content_idx, prev_html, template, props} for each pages of the document
       pages_height: 0, // real measured page height in px (corresponding to page_format_mm[1])
       editor_width: 0, // real measured with of an empty editor <div> in px
       prevent_next_content_update_from_parent: false, // workaround for infinite update loop
@@ -105,7 +115,7 @@ export default {
 
     // Resets all content from the content property
     async reset_content () {
-      // delete all pages and set one new page per content item
+      // Delete all pages and set one new page per content item
       this.pages = this.content.length ? this.content.map((content, content_idx) => ({
         uuid: content_idx,
         content_idx,
@@ -113,25 +123,29 @@ export default {
         props: content.props
       })) : [{ uuid: 0, content_idx: 0 }]; // if content is empty
 
-      // get page height from first empty page
+      // Get page height from first empty page
       await this.$nextTick(); // wait for DOM update
       const first_page_elt = this.$refs[this.pages[0].uuid][0];
       if(!this.$refs.content.contains(first_page_elt)) this.$refs.content.appendChild(first_page_elt); // restore page in DOM in case it was removed
       this.pages_height = first_page_elt.clientHeight + 1; // allow one pixel precision
 
-      // initialize text pages
+      // Initialize text pages
       for(const page of this.pages) {
         const page_elt = this.$refs[page.uuid][0];
+
+        // set raw HTML content
         if(!this.content[page.content_idx]) page_elt.innerHTML = "<div><br></div>";
         else if(typeof this.content[page.content_idx] == "string") page_elt.innerHTML = "<div>"+this.content[page.content_idx]+"</div>";
         // (else content is a component that is set in Vue.js <template>)
-        if(!this.$refs.content.contains(page_elt)) this.$refs.content.appendChild(page_elt); // restore page in DOM in case it was removed
+
+        // restore page in DOM in case it was removed
+        if(!this.$refs.content.contains(page_elt)) this.$refs.content.appendChild(page_elt);
       }
 
-      // spread content over several pages if it overflows
+      // Spread content over several pages if it overflows
       await this.fit_content_over_pages();
 
-      // remove the text cursor from the content, if any (its position is lost anyway)
+      // Remove the text cursor from the content, if any (its position is lost anyway)
       this.$refs.content.blur();
     },
 
@@ -184,7 +198,7 @@ export default {
           if(page_elt.clientHeight <= this.pages_height && next_page && next_page.content_idx == page.content_idx) {
 
             // try to append every node from the next page until it doesn't fit
-            move_child_backward_with_merging(page_elt, next_page_elt, () => !next_page_elt.childNodes.length || (page_elt.clientHeight > this.pages_height));
+            move_children_backwards_with_merging(page_elt, next_page_elt, () => !next_page_elt.childNodes.length || (page_elt.clientHeight > this.pages_height));
 
             // remove next page if it is empty
             if(!next_page_elt.childNodes.length) this.pages.splice(page_idx + 1, 1);
@@ -302,7 +316,7 @@ export default {
         top_mm = 0;
         bkg_width_mm = this.zoom * (this.page_format_mm[0] * nb_pages_x + (nb_pages_x - 1) * page_spacing_mm);
         bkg_height_mm = this.page_format_mm[1] * this.zoom;
-      } else { // "auto", vertical
+      } else { // "grid", vertical
         nb_pages_x = Math.floor(inner_width / page_with_plus_spacing);
         if(nb_pages_x < 1 || this.display == "vertical") nb_pages_x = 1;
         page_column = (page_idx % nb_pages_x);
@@ -316,6 +330,7 @@ export default {
       }
       if(page_idx >= 0) {
         const style = {
+          position: "absolute",
           left: "calc("+ left_px +"px + "+ view_padding +"px)",
           top: "calc("+ top_mm +"mm + "+ view_padding +"px)",
           width: this.page_format_mm[0]+"mm",
@@ -323,7 +338,7 @@ export default {
           padding: this.page_margins,
           transform: "scale("+ this.zoom +")"
         }
-        style[allow_overflow ? "height" : "minHeight"] = this.page_format_mm[1]+"mm";
+        style[allow_overflow ? "minHeight" : "height"] = this.page_format_mm[1]+"mm";
         return style;
       } else {
         // Content/background <div> is sized so it lets a margin around pages when scrolling at the end
@@ -353,10 +368,25 @@ export default {
       for(const [page_idx, page] of this.pages.entries()){
         const page_elt = this.$refs[page.uuid][0];
         const page_clone = page_elt.cloneNode(true);
-        print_body.append(page_clone);
         page_clone.style = ""; // reset page style for the clone
+        page_clone.style.position = "relative";
         page_clone.style.padding = this.page_margins;
         page_clone.style.breakBefore = page_idx ? "page" : "auto";
+
+        // add overlays if any
+        const overlay_elt = this.$refs[page.uuid+'-overlay']?.[0];
+        if(overlay_elt){
+          const overlay_clone = overlay_elt.cloneNode(true);
+          overlay_clone.style.position = "absolute";
+          overlay_clone.style.left = "0";
+          overlay_clone.style.top = "0";
+          overlay_clone.style.transform = "none";
+          overlay_clone.style.padding = "0";
+          overlay_clone.style.overflow = "hidden";
+          page_clone.prepend(overlay_clone);
+        }
+        
+        print_body.append(page_clone);
       }
 
       // replace current body by the print body
@@ -396,6 +426,13 @@ export default {
 }
 </script>
 
+<style>
+body {
+  /* Enable printing of background colors */
+  -webkit-print-color-adjust: exact;
+  color-adjust: exact;
+}
+</style>
 <style lang="scss" scoped>
   @import "./imports/doc-editor-default-styles.scss";
 </style>

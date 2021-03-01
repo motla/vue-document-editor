@@ -57,4 +57,22 @@
       cursor: default;
     }
   }
+
+  & > .overlays {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    min-width: 100%;
+    pointer-events: none;
+
+    & > .overlay {
+      position: absolute;
+      box-sizing: border-box;
+      left: 50%;
+      transform-origin: center top;
+      transition: left .3s, top .3s;
+      overflow: hidden;
+      z-index: 1;
+    }
+  }
 }

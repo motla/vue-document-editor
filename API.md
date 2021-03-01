@@ -7,13 +7,14 @@
 ## Props
 - **content**: `Array` (required)
 
-*Contains the initial document content. Each array item is a new set of pages containing the item. An item can either be an HTML string or this object `{ template: YourComponent, props: {} }` for interactive templates (see [Demo.vue](src/Demo/Demo.vue) and [InvoiceTemplate.vue](src/Demo/InvoiceTemplate.vue) for an example). If an HTML content is too large, it will be split over multiple pages. On the contrary, interactive templates take one full page and any overflow is hidden. The `content` you provide should be synced to user modifications using the [.sync modifier](https://vuejs.org/v2/guide/components-custom-events.html#sync-Modifier).*
+*Contains the initial document content. Each array item is a new set of pages containing the item. An item can either be an HTML string or this object `{ template: YourComponent, props: {} }` for interactive templates (see [Demo.vue](src/Demo/Demo.vue) and [InvoiceTemplate.vue](src/Demo/InvoiceTemplate.vue) for an example). If an HTML content is too large, it will be split over multiple pages. On the contrary, interactive templates take one full page and any overflow is hidden. The `content` you provide should be synced to user modifications using the [.sync modifier](https://vuejs.org/v2/guide/components-custom-events.html#sync-Modifier). You can always restrict the edition of some content inside a page by setting `contenteditable="false"` to some HTML tags.*
 
-- **display**: `["auto"(default), "horizontal", "vertical"]` - *Display mode for the pages*
+- **display**: `"grid"(default), "horizontal", "vertical"` - *Display mode for the pages.*
+- **editable**: `Boolean (default:true)` - *Used to disable the entire document modification*
+- **overlay**: `Function(page: Number, total: Number) => String` (optional) - *Function that outputs HTML overlay (header, footer, page numbers, ...) for each page depending of the arguments (`page` starts at 1). Placement inside the page should be set in CSS by setting `position: absolute` and `left, top, right, bottom` for each element.*
 - **page_format_mm**: `[width, height] (default:[210, 297])` - *Page format in mm*
 - **page_margins**: `String (default:"10mm 15mm")` - *Page margins in CSS format*
 - **zoom**: `Number (default:1.0)`- *Display zoom. Only acts on the screen display*
-- **editable**: `Boolean (default:true)` - *Used to disable document modification*
 
 ## Data
 You can query data variables that contain the current state information about:

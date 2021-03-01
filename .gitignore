@@ -1,7 +1,7 @@
 .DS_Store
 node_modules
 dist/demo.html
-package_lock.json
+package-lock.json
 
 # local env files
 .env.local
