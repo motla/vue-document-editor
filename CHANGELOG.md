@@ -1,3 +1,7 @@
+## v1.2.1
+
+- Force white page background when printing
+
 ## v1.2.0
 
 - Adding `overlay` functionality and documentation

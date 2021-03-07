@@ -11,7 +11,7 @@
 
 ## Features
 ### :rocket: [See live demo](https://motla.github.io/vue-document-editor/)
-- Use your Vue.js components as interactive page templates
+- Use Vue.js components as interactive page templates
 - Word-by-word page splitting with forward and backward propagation (*still experimental*)
 - Predefined page breaks
 - Native Print compatible

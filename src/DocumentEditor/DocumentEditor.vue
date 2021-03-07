@@ -361,8 +361,11 @@ export default {
       // store the current body aside
       this._page_body = document.body;
 
-      // create a new body for the print
+      // create a new body for the print and overwrite CSS
       const print_body = document.createElement("body");
+      print_body.style.margin = "0";
+      print_body.style.padding = "0";
+      print_body.style.background = "white";
 
       // clone each page to the print body
       for(const [page_idx, page] of this.pages.entries()){
