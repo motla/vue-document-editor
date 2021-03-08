@@ -377,9 +377,9 @@ export default {
         page_clone.style.breakBefore = page_idx ? "page" : "auto";
 
         // add overlays if any
-        const overlay_elt = this.$refs[page.uuid+'-overlay']?.[0];
-        if(overlay_elt){
-          const overlay_clone = overlay_elt.cloneNode(true);
+        const overlay_elts = this.$refs[page.uuid+'-overlay'];
+        if(overlay_elts && overlay_elts[0]){
+          const overlay_clone = overlay_elts[0].cloneNode(true);
           overlay_clone.style.position = "absolute";
           overlay_clone.style.left = "0";
           overlay_clone.style.top = "0";

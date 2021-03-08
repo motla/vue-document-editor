@@ -1,3 +1,7 @@
+## v1.2.2
+
+- Fix [Issue 4](https://github.com/motla/vue-document-editor/issues/4): problem with ?. operator
+
 ## v1.2.1
 
 - Force white page background when printing
