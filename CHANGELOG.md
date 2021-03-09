@@ -1,3 +1,11 @@
+## v1.2.3
+
+- Removing useless surrounding `<div>`s from the synchronized document content
+- Fix content synchronizing from an empty content array
+- Fix content update was not triggered after some of the `executeCommand` functions
+- \[Demo\] Reset the history stack after new document creation
+- Dependencies upgrade
+
 ## v1.2.2
 
 - Fix [Issue 4](https://github.com/motla/vue-document-editor/issues/4): problem with ?. operator

@@ -115,6 +115,9 @@ export default {
 
     // Resets all content from the content property
     async reset_content () {
+      // If provided content is empty, initialize it first and exit
+      if(!this.content.length) { this.$emit("update:content", [""]); return; }
+
       // Delete all pages and set one new page per content item
       this.pages = this.content.length ? this.content.map((content, content_idx) => ({
         uuid: content_idx,
@@ -244,7 +247,7 @@ export default {
 
     // Input event
     async input (e) {
-      if(!e || !e.inputType) return; // check that input type is set
+      if(!e) return; // check that event is set
       await this.fit_content_over_pages(); // fit content according to modifications
       this.emit_new_content(); // emit content modification
       if(e.inputType != "insertText") this.process_current_text_style(); // update current style if it has changed
@@ -253,7 +256,16 @@ export default {
     // Emit content change to parent
     emit_new_content () {
       const new_content = this.content.map((item, content_idx) => {
-        if(typeof item == "string") return this.pages.filter(page => (page.content_idx == content_idx)).map(page => this.$refs[page.uuid][0].innerHTML).join('');
+        if(typeof item == "string") {
+          return this.pages.filter(page => (page.content_idx == content_idx)).map(page => {
+            // get rid of any useless <div> surrounding the content
+            let elt = this.$refs[page.uuid][0];
+            while(elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
+              elt = elt.firstChild;
+            }
+            return elt.innerHTML;
+          }).join('');
+        }
         else return { template: item.template, props: { ...item.props }};
       });
       this.prevent_next_content_update_from_parent = true; // avoid infinite loop

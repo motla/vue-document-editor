@@ -1,6 +1,6 @@
 {
   "name": "vue-document-editor",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Paper-sized WYSIWYG document editor for Vue apps",
   "author": {
     "name": "Romain Lamothe",
@@ -42,11 +42,11 @@
     "babel-eslint": "^10.1.0",
     "core-js": "^3.9.1",
     "eslint": "^7.21.0",
-    "eslint-plugin-vue": "^7.6.0",
+    "eslint-plugin-vue": "^7.7.0",
     "sass": "^1.32.8",
     "sass-loader": "^8.0.2",
     "vue": "^2.6.12",
-    "vue-file-toolbar-menu": "^1.3.3",
+    "vue-file-toolbar-menu": "^1.3.4",
     "vue-template-compiler": "^2.6.12"
   },
   "eslintConfig": {
