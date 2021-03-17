@@ -1,3 +1,10 @@
+## v1.2.4
+
+- Removing pages manually from the DOM now remove corresponding items from the `content` you provide
+- Adding `data-page-idx` to pages `<div>`s for custom user scripts convenience
+- \[Demo\] Add dynamic page break functionality example (still experimental)
+- \[Demo\] Restrict nb of table lines in the invoice template page, fix CSS for printing
+
 ## v1.2.3
 
 - Removing useless surrounding `<div>`s from the synchronized document content

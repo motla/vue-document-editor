@@ -12,7 +12,7 @@
     <div class="content" ref="content" :contenteditable="editable" :style="page_style(-1)" @input="input" @keyup="process_current_text_style">
       <!-- Contains every page of the document (can be modified by the DOM afterwards) -->
       <div v-for="(page, page_idx) in pages" class="page"
-        :key="page.uuid" :ref="page.uuid" :data-content-idx="page.content_idx"
+        :key="page.uuid" :ref="page.uuid" :data-content-idx="page.content_idx" :data-page-idx="page_idx"
         :style="page_style(page_idx, page.template ? false : true)" :contenteditable="!page.template ? true : false" >
         <component v-if="page.template" :is="page.template" v-bind.sync="page.props" />
       </div>
@@ -100,9 +100,6 @@ export default {
   },
 
   computed: {
-    new_page_uuid () { // computes the next free uuid
-      return this.pages.reduce((max, arr) => Math.max(max, arr.uuid+1), 0);
-    },
     css_media_style () { // creates a CSS <style> and returns it
       const style = document.createElement("style");
       document.head.appendChild(style);
@@ -112,6 +109,8 @@ export default {
 
 
   methods: {
+    // Computes a random 5-char UUID
+    new_uuid: () => Math.random().toString(36).slice(-5),
 
     // Resets all content from the content property
     async reset_content () {
@@ -120,11 +119,11 @@ export default {
 
       // Delete all pages and set one new page per content item
       this.pages = this.content.length ? this.content.map((content, content_idx) => ({
-        uuid: content_idx,
+        uuid: this.new_uuid(),
         content_idx,
         template: content.template,
         props: content.props
-      })) : [{ uuid: 0, content_idx: 0 }]; // if content is empty
+      })) : [{ uuid: this.new_uuid(), content_idx: 0 }]; // if content is empty
 
       // Get page height from first empty page
       await this.$nextTick(); // wait for DOM update
@@ -160,10 +159,10 @@ export default {
       // Check that pages were not deleted from the DOM (start from the end)
       for(let page_idx = this.pages.length - 1; page_idx >= 0; page_idx--) {
         const page = this.pages[page_idx];
-        const page_elt = this.$refs[page.uuid][0];
+        const page_elt = this.$refs[page.uuid] && this.$refs[page.uuid][0];
 
         // if user deleted the page from the DOM, then remove it from this.pages array
-        if(!document.body.contains(page_elt)) this.pages.splice(page_idx, 1);
+        if(!page_elt || !document.body.contains(page_elt)) this.pages.splice(page_idx, 1);
       }
 
       // If all the document was wiped out, start a new empty document
@@ -213,7 +212,7 @@ export default {
 
             // if there is no next page for the same content, create it
             if(!next_page || next_page.content_idx != page.content_idx) {
-              next_page = { uuid: this.new_page_uuid, content_idx: page.content_idx };
+              next_page = { uuid: this.new_uuid(), content_idx: page.content_idx };
               this.pages.splice(page_idx + 1, 0, next_page);
               await this.$nextTick(); // wait for DOM update
               next_page_elt = this.$refs[next_page.uuid][0];
@@ -255,20 +254,39 @@ export default {
 
     // Emit content change to parent
     emit_new_content () {
+      let removed_pages_flag = false; // flag to call reset_content if some pages were removed by the user
+
+      // process the new content
       const new_content = this.content.map((item, content_idx) => {
-        if(typeof item == "string") {
-          return this.pages.filter(page => (page.content_idx == content_idx)).map(page => {
-            // get rid of any useless <div> surrounding the content
+        // select pages that correspond to this content item (represented by its index in the array)
+        const pages = this.pages.filter(page => (page.content_idx == content_idx));
+
+        // if there are no pages representing this content (because deleted by the user), mark item as false to remove it
+        if(!pages.length) {
+          removed_pages_flag = true;
+          return false;
+        }
+
+        // if item is a string, concatenate each page content and set that
+        else if(typeof item == "string") {
+          return pages.map(page => {
+            // remove any useless <div> surrounding the content
             let elt = this.$refs[page.uuid][0];
             while(elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
               elt = elt.firstChild;
             }
             return elt.innerHTML;
-          }).join('');
+          }).join('') || false;
         }
+
+        // if item is a component, just clone the item
         else return { template: item.template, props: { ...item.props }};
-      });
-      this.prevent_next_content_update_from_parent = true; // avoid infinite loop
+      }).filter(item => (item != false)); // remove empty items
+
+      // avoid calling reset_content after the parent content is updated (infinite loop)
+      if(!removed_pages_flag) this.prevent_next_content_update_from_parent = true;
+
+      // send event to parent to update the synced content
       this.$emit("update:content", new_content);
     },
 

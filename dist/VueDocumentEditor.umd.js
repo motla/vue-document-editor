@@ -215,40 +215,6 @@ module.exports = !DESCRIPTORS && !fails(function () {
 
 /***/ }),
 
-/***/ "106d":
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-
-/***/ }),
-
-/***/ "13d5":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var $ = __webpack_require__("23e7");
-var $reduce = __webpack_require__("d58f").left;
-var arrayMethodIsStrict = __webpack_require__("a640");
-var CHROME_VERSION = __webpack_require__("2d00");
-var IS_NODE = __webpack_require__("605d");
-
-var STRICT_METHOD = arrayMethodIsStrict('reduce');
-// Chrome 80-82 has a critical bug
-// https://bugs.chromium.org/p/chromium/issues/detail?id=1049982
-var CHROME_BUG = !IS_NODE && CHROME_VERSION > 79 && CHROME_VERSION < 83;
-
-// `Array.prototype.reduce` method
-// https://tc39.es/ecma262/#sec-array.prototype.reduce
-$({ target: 'Array', proto: true, forced: !STRICT_METHOD || CHROME_BUG }, {
-  reduce: function reduce(callbackfn /* , initialValue */) {
-    return $reduce(this, callbackfn, arguments.length, arguments.length > 1 ? arguments[1] : undefined);
-  }
-});
-
-
-/***/ }),
-
 /***/ "14c3":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -665,17 +631,6 @@ module.exports = function (it) {
     throw TypeError("Can't set " + String(it) + ' as a prototype');
   } return it;
 };
-
-
-/***/ }),
-
-/***/ "3c18":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_1_id_6d64584e_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("106d");
-/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_1_id_6d64584e_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_1_id_6d64584e_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
-/* unused harmony reexport * */
 
 
 /***/ }),
@@ -2684,6 +2639,13 @@ exports.f = DESCRIPTORS ? nativeDefineProperty : function defineProperty(O, P, A
 
 /***/ }),
 
+/***/ "9db8":
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
 /***/ "9ed3":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3451,6 +3413,17 @@ if (DESCRIPTORS && !(NAME in FunctionPrototype)) {
 
 /***/ }),
 
+/***/ "b246":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_1_id_dd9527ec_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9db8");
+/* harmony import */ var _node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_1_id_dd9527ec_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_mini_css_extract_plugin_dist_loader_js_ref_8_oneOf_1_0_node_modules_css_loader_dist_cjs_js_ref_8_oneOf_1_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_oneOf_1_2_node_modules_sass_loader_dist_cjs_js_ref_8_oneOf_1_3_node_modules_cache_loader_dist_cjs_js_ref_0_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DocumentEditor_vue_vue_type_style_index_1_id_dd9527ec_lang_scss_scoped_true___WEBPACK_IMPORTED_MODULE_0__);
+/* unused harmony reexport * */
+
+
+/***/ }),
+
 /***/ "b622":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3851,53 +3824,6 @@ module.exports = function (it, TAG, STATIC) {
   if (it && !has(it = STATIC ? it : it.prototype, TO_STRING_TAG)) {
     defineProperty(it, TO_STRING_TAG, { configurable: true, value: TAG });
   }
-};
-
-
-/***/ }),
-
-/***/ "d58f":
-/***/ (function(module, exports, __webpack_require__) {
-
-var aFunction = __webpack_require__("1c0b");
-var toObject = __webpack_require__("7b0b");
-var IndexedObject = __webpack_require__("44ad");
-var toLength = __webpack_require__("50c4");
-
-// `Array.prototype.{ reduce, reduceRight }` methods implementation
-var createMethod = function (IS_RIGHT) {
-  return function (that, callbackfn, argumentsLength, memo) {
-    aFunction(callbackfn);
-    var O = toObject(that);
-    var self = IndexedObject(O);
-    var length = toLength(O.length);
-    var index = IS_RIGHT ? length - 1 : 0;
-    var i = IS_RIGHT ? -1 : 1;
-    if (argumentsLength < 2) while (true) {
-      if (index in self) {
-        memo = self[index];
-        index += i;
-        break;
-      }
-      index += i;
-      if (IS_RIGHT ? index < 0 : length <= index) {
-        throw TypeError('Reduce of empty array with no initial value');
-      }
-    }
-    for (;IS_RIGHT ? index >= 0 : length > index; index += i) if (index in self) {
-      memo = callbackfn(memo, self[index], index, O);
-    }
-    return memo;
-  };
-};
-
-module.exports = {
-  // `Array.prototype.reduce` method
-  // https://tc39.es/ecma262/#sec-array.prototype.reduce
-  left: createMethod(false),
-  // `Array.prototype.reduceRight` method
-  // https://tc39.es/ecma262/#sec-array.prototype.reduceright
-  right: createMethod(true)
 };
 
 
@@ -4488,12 +4414,12 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"4928a8a6-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=6d64584e&scoped=true&
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"editor",staticClass:"editor"},[(_vm.overlay)?_c('div',{staticClass:"overlays"},_vm._l((_vm.pages),function(page,page_idx){return _c('div',{key:page.uuid+'-overlay',ref:page.uuid+'-overlay',refInFor:true,staticClass:"overlay",style:(_vm.page_style(page_idx, false)),domProps:{"innerHTML":_vm._s(_vm.overlay(page_idx+1, _vm.pages.length))}})}),0):_vm._e(),_c('div',{ref:"content",staticClass:"content",style:(_vm.page_style(-1)),attrs:{"contenteditable":_vm.editable},on:{"input":_vm.input,"keyup":_vm.process_current_text_style}},_vm._l((_vm.pages),function(page,page_idx){return _c('div',{key:page.uuid,ref:page.uuid,refInFor:true,staticClass:"page",style:(_vm.page_style(page_idx, page.template ? false : true)),attrs:{"data-content-idx":page.content_idx,"contenteditable":!page.template ? true : false}},[(page.template)?_c(page.template,_vm._b({tag:"component"},'component',page.props,false,true)):_vm._e()],1)}),0)])}
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js?{"cacheDirectory":"node_modules/.cache/vue-loader","cacheIdentifier":"3b075272-vue-loader-template"}!./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=dd9527ec&scoped=true&
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{ref:"editor",staticClass:"editor"},[(_vm.overlay)?_c('div',{staticClass:"overlays"},_vm._l((_vm.pages),function(page,page_idx){return _c('div',{key:page.uuid+'-overlay',ref:page.uuid+'-overlay',refInFor:true,staticClass:"overlay",style:(_vm.page_style(page_idx, false)),domProps:{"innerHTML":_vm._s(_vm.overlay(page_idx+1, _vm.pages.length))}})}),0):_vm._e(),_c('div',{ref:"content",staticClass:"content",style:(_vm.page_style(-1)),attrs:{"contenteditable":_vm.editable},on:{"input":_vm.input,"keyup":_vm.process_current_text_style}},_vm._l((_vm.pages),function(page,page_idx){return _c('div',{key:page.uuid,ref:page.uuid,refInFor:true,staticClass:"page",style:(_vm.page_style(page_idx, page.template ? false : true)),attrs:{"data-content-idx":page.content_idx,"data-page-idx":page_idx,"contenteditable":!page.template ? true : false}},[(page.template)?_c(page.template,_vm._b({tag:"component"},'component',page.props,false,true)):_vm._e()],1)}),0)])}
 var staticRenderFns = []
 
 
-// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=6d64584e&scoped=true&
+// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=dd9527ec&scoped=true&
 
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/arrayWithHoles/_index.mjs
 function _arrayWithHoles(arr) {
@@ -4784,8 +4710,8 @@ var runtime = __webpack_require__("96cf");
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.number.constructor.js
 var es_number_constructor = __webpack_require__("a9e3");
 
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.reduce.js
-var es_array_reduce = __webpack_require__("13d5");
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.to-string.js
+var es_regexp_to_string = __webpack_require__("25f0");
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.map.js
 var es_array_map = __webpack_require__("d81d");
@@ -4801,9 +4727,6 @@ var es_string_match = __webpack_require__("466d");
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.exec.js
 var es_regexp_exec = __webpack_require__("ac1f");
-
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.to-string.js
-var es_regexp_to_string = __webpack_require__("25f0");
 
 // CONCATENATED MODULE: ./src/DocumentEditor/imports/page-transition-mgmt.js
 
@@ -4950,6 +4873,7 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 
 
 
+
 //
 //
 //
@@ -5047,12 +4971,6 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
     window.removeEventListener("afterprint", this.after_print);
   },
   computed: {
-    new_page_uuid: function new_page_uuid() {
-      // computes the next free uuid
-      return this.pages.reduce(function (max, arr) {
-        return Math.max(max, arr.uuid + 1);
-      }, 0);
-    },
     css_media_style: function css_media_style() {
       // creates a CSS <style> and returns it
       var style = document.createElement("style");
@@ -5061,6 +4979,10 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
     }
   },
   methods: {
+    // Computes a random 5-char UUID
+    new_uuid: function new_uuid() {
+      return Math.random().toString(36).slice(-5);
+    },
     // Resets all content from the content property
     reset_content: function reset_content() {
       var _this = this;
@@ -5085,13 +5007,13 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
                 // Delete all pages and set one new page per content item
                 _this.pages = _this.content.length ? _this.content.map(function (content, content_idx) {
                   return {
-                    uuid: content_idx,
+                    uuid: _this.new_uuid(),
                     content_idx: content_idx,
                     template: content.template,
                     props: content.props
                   };
                 }) : [{
-                  uuid: 0,
+                  uuid: _this.new_uuid(),
                   content_idx: 0
                 }]; // if content is empty
                 // Get page height from first empty page
@@ -5163,9 +5085,9 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
                 // Check that pages were not deleted from the DOM (start from the end)
                 for (page_idx = _this2.pages.length - 1; page_idx >= 0; page_idx--) {
                   page = _this2.pages[page_idx];
-                  page_elt = _this2.$refs[page.uuid][0]; // if user deleted the page from the DOM, then remove it from this.pages array
+                  page_elt = _this2.$refs[page.uuid] && _this2.$refs[page.uuid][0]; // if user deleted the page from the DOM, then remove it from this.pages array
 
-                  if (!document.body.contains(page_elt)) _this2.pages.splice(page_idx, 1);
+                  if (!page_elt || !document.body.contains(page_elt)) _this2.pages.splice(page_idx, 1);
                 } // If all the document was wiped out, start a new empty document
 
 
@@ -5235,7 +5157,7 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
                           }
 
                           next_page = {
-                            uuid: _this2.new_page_uuid,
+                            uuid: _this2.new_uuid(),
                             content_idx: page.content_idx
                           };
 
@@ -5356,26 +5278,42 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
     emit_new_content: function emit_new_content() {
       var _this4 = this;
 
+      var removed_pages_flag = false; // flag to call reset_content if some pages were removed by the user
+      // process the new content
+
       var new_content = this.content.map(function (item, content_idx) {
-        if (typeof item == "string") {
-          return _this4.pages.filter(function (page) {
-            return page.content_idx == content_idx;
-          }).map(function (page) {
-            // get rid of any useless <div> surrounding the content
-            var elt = _this4.$refs[page.uuid][0];
+        // select pages that correspond to this content item (represented by its index in the array)
+        var pages = _this4.pages.filter(function (page) {
+          return page.content_idx == content_idx;
+        }); // if there are no pages representing this content (because deleted by the user), mark item as false to remove it
 
-            while (elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
-              elt = elt.firstChild;
-            }
 
-            return elt.innerHTML;
-          }).join('');
-        } else return {
-          template: item.template,
-          props: _objectSpread2({}, item.props)
-        };
-      });
-      this.prevent_next_content_update_from_parent = true; // avoid infinite loop
+        if (!pages.length) {
+          removed_pages_flag = true;
+          return false;
+        } // if item is a string, concatenate each page content and set that
+        else if (typeof item == "string") {
+            return pages.map(function (page) {
+              // remove any useless <div> surrounding the content
+              var elt = _this4.$refs[page.uuid][0];
+
+              while (elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
+                elt = elt.firstChild;
+              }
+
+              return elt.innerHTML;
+            }).join('') || false;
+          } // if item is a component, just clone the item
+          else return {
+              template: item.template,
+              props: _objectSpread2({}, item.props)
+            };
+      }).filter(function (item) {
+        return item != false;
+      }); // remove empty items
+      // avoid calling reset_content after the parent content is updated (infinite loop)
+
+      if (!removed_pages_flag) this.prevent_next_content_update_from_parent = true; // send event to parent to update the synced content
 
       this.$emit("update:content", new_content);
     },
@@ -5632,8 +5570,8 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 // EXTERNAL MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&lang=css&
 var DocumentEditorvue_type_style_index_0_lang_css_ = __webpack_require__("a766");
 
-// EXTERNAL MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=6d64584e&lang=scss&scoped=true&
-var DocumentEditorvue_type_style_index_1_id_6d64584e_lang_scss_scoped_true_ = __webpack_require__("3c18");
+// EXTERNAL MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=dd9527ec&lang=scss&scoped=true&
+var DocumentEditorvue_type_style_index_1_id_dd9527ec_lang_scss_scoped_true_ = __webpack_require__("b246");
 
 // CONCATENATED MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
 /* globals __VUE_SSR_CONTEXT__ */
@@ -5751,7 +5689,7 @@ var component = normalizeComponent(
   staticRenderFns,
   false,
   null,
-  "6d64584e",
+  "dd9527ec",
   null
   
 )

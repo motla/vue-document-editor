@@ -74,7 +74,7 @@
           <td style="text-align:right">€ {{(item.qty * item.price).toFixed(2)}}</td>
         </tr>
         <tr>
-          <td><div class="left-btn hide-in-print" @click="() => items.push({ key: Math.random(), ref: 'MyRef', desc: 'My description', qty: 1, price: 0 })">➕</div></td>
+          <td><div v-if="items.length < 5" class="left-btn hide-in-print" @click="() => items.push({ key: Math.random(), ref: 'MyRef', desc: 'My description', qty: 1, price: 0 })">➕</div></td>
           <td colspan="5" style="text-align:right">Sub-total: € {{sub_total.toFixed(2)}}</td>
         </tr>
         <tr>
@@ -185,6 +185,7 @@ export default {
     }
     input[type=number] {
       -moz-appearance: textfield;
+      background: none;
     }
   }
   .header {

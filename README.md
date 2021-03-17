@@ -13,10 +13,10 @@
 ### :rocket: [See live demo](https://motla.github.io/vue-document-editor/)
 - Use Vue.js components as interactive page templates
 - Word-by-word page splitting with forward and backward propagation (*still experimental*)
-- Predefined page breaks
 - Native Print compatible
 - Dynamic document format and margins in millimeters
 - Custom page overlays (headers, footers, page numbers)
+- Page breaks
 - Smart zoom and page display modes
 - Computes text style at caret position
 
