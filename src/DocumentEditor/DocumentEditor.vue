@@ -13,7 +13,7 @@
       <!-- Contains every page of the document (can be modified by the DOM afterwards) -->
       <div v-for="(page, page_idx) in pages" class="page"
         :key="page.uuid" :ref="page.uuid" :data-content-idx="page.content_idx" :data-page-idx="page_idx"
-        :style="page_style(page_idx, page.template ? false : true)" :contenteditable="!page.template ? true : false" >
+        :style="page_style(page_idx, page.template ? false : true)" :contenteditable="(editable && !page.template) ? true : false" >
         <component v-if="page.template" :is="page.template" v-bind.sync="page.props" />
       </div>
     </div>
