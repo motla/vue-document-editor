@@ -1,3 +1,7 @@
+## v1.2.5
+
+- Fix [Issue 11](https://github.com/motla/vue-document-editor/issues/9): Using editable prop to provide read only view
+
 ## v1.2.4
 
 - Removing pages manually from the DOM now remove corresponding items from the `content` you provide
