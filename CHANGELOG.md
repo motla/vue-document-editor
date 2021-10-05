@@ -1,3 +1,8 @@
+## v2.0.0
+
+- Switching `master` branch to Vue3 (we provide vue2 compatibility on the vue2 branch / @1.x version of this library)
+- Dependencies upgrade
+
 ## v1.2.5
 
 - Fix [Issue 11](https://github.com/motla/vue-document-editor/issues/9): Using editable prop to provide read only view

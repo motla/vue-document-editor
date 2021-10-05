@@ -24,7 +24,7 @@
             <div>AB251648730890</div>
           </td>
           <td style="min-width: 250px; text-align:right">
-            <div><b>Invoice number:</b> <span contenteditable @keydown="preventLineBreaks">{{invoice_number}}</span></div>
+            <div><b>Invoice number:</b> <span contenteditable @keydown="preventLineBreaks">{{modelValue.invoice_number}}</span></div>
             <div><b>Invoice date:</b> <span contenteditable @keydown="preventLineBreaks">{{today}}</span></div>
             <div><b>Order number:</b> <span contenteditable @keydown="preventLineBreaks">W210984204</span></div>
             <div><b>Order date:</b> <span contenteditable @keydown="preventLineBreaks">{{today}}</span></div>
@@ -97,7 +97,7 @@
 <script>
 export default {
   props: {
-    invoice_number: String
+    modelValue: Object
   },
   data () {
     return {

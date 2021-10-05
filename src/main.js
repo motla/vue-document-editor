@@ -1,8 +1,9 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
 import Demo from './Demo/Demo.vue'
 
-Vue.config.productionTip = false
+const app = createApp(Demo);
 
-new Vue({
-  render: h => h(Demo),
-}).$mount('#app')
+// enable devtools for the demo
+app.config.devtools = true;
+
+app.mount('#app');

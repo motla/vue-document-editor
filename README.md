@@ -19,14 +19,21 @@
 - Page breaks
 - Smart zoom and page display modes
 - Computes text style at caret position
+- Migrated to Vue.js 3.x (to use with Vue 2.x, select library version 1.x)
 
 ###### :speech_balloon: This package doesn't include any toolbar. The demo features [vue-file-toolbar-menu](https://github.com/motla/vue-file-toolbar-menu) for the toolbar.
 
 ## Installation
-In your Vue.js project:
+##### In your Vue.js 3.x project:
 
 ```
 npm install vue-document-editor
+```
+
+##### In your Vue.js 2.x project:
+
+```
+npm install vue-document-editor@1
 ```
 
 ###### :warning: Your Vue.js project must have [`scss`](https://vue-loader.vuejs.org/guide/pre-processors.html#sass) support
@@ -38,7 +45,7 @@ npm install vue-document-editor
 ```Vue
 <template>
   <div style="font-family: Avenir, sans-serif">
-    <vue-document-editor :content.sync="content" />
+    <vue-document-editor v-model:content="content" />
   </div>
 </template>
 
@@ -61,26 +68,25 @@ export default {
 ```HTML
 <html>
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue-document-editor@1/dist/VueDocumentEditor.umd.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/vue-document-editor@1/dist/VueDocumentEditor.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-document-editor@2/dist/VueDocumentEditor.umd.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/vue-document-editor@2/dist/VueDocumentEditor.css" rel="stylesheet">
 </head>
 <body>
   <div id="app">
     <div style="font-family: Avenir, sans-serif">
-      <vue-document-editor :content.sync="content" />
+      <vue-document-editor v-model:content="content" />
     </div>
   </div>
   <script>
-  var app = new Vue({
-    el: '#app',
+  const app = Vue.createApp({
     components: { VueDocumentEditor },
     data () {
       return { 
         content: ["<h1>Hello!</h1>Fill this page with text and new pages will be created as it overflows."]
       }
     }
-  })
+  }).mount('#app');
   </script>
 </body>
 </html>

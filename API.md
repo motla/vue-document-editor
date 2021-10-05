@@ -5,9 +5,9 @@
 # API
 
 ## Props
-- **content**: `Array` (required)
+- **v-model:content**: `Array` (required)
 
-*Contains the initial document content. Each array item is a new set of pages containing the item. An item can either be an HTML string or this object `{ template: YourComponent, props: {} }` for interactive templates (see [Demo.vue](src/Demo/Demo.vue) and [InvoiceTemplate.vue](src/Demo/InvoiceTemplate.vue) for an example). If an HTML content is too large, it will be split over multiple pages. On the contrary, interactive templates take one full page and any overflow is hidden. The `content` you provide should be synced to user modifications using the [.sync modifier](https://vuejs.org/v2/guide/components-custom-events.html#sync-Modifier). You can always restrict the edition of some content inside a page by setting `contenteditable="false"` to some HTML tags.*
+*Contains the initial document content. Each array item is a new set of pages containing the item. An item can either be an HTML string or this object `{ template: markRaw(YourComponent), props: {} }` for interactive templates (see [Demo.vue](src/Demo/Demo.vue) and [InvoiceTemplate.vue](src/Demo/InvoiceTemplate.vue) for an example). If an HTML content is too large, it will be split over multiple pages. On the contrary, interactive templates take one full page and any overflow is hidden. You can always restrict the edition of some content inside a page by setting `contenteditable="false"` to some HTML tags.*
 
 - **display**: `"grid"(default), "horizontal", "vertical"` - *Display mode for the pages.*
 - **editable**: `Boolean (default:true)` - *Used to disable the entire document modification*

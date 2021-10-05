@@ -3,7 +3,7 @@
 
     <!-- Page overlays (headers, footers, page numbers, ...) -->
     <div v-if="overlay" class="overlays">
-      <div v-for="(page, page_idx) in pages" class="overlay" :key="page.uuid+'-overlay'" :ref="page.uuid+'-overlay'"
+      <div v-for="(page, page_idx) in pages" class="overlay" :key="page.uuid+'-overlay'" :ref="(elt) => (pages_overlay_refs[page.uuid] = elt)"
         v-html="overlay(page_idx+1, pages.length)" :style="page_style(page_idx, false)">
       </div>
     </div>
@@ -12,9 +12,9 @@
     <div class="content" ref="content" :contenteditable="editable" :style="page_style(-1)" @input="input" @keyup="process_current_text_style">
       <!-- Contains every page of the document (can be modified by the DOM afterwards) -->
       <div v-for="(page, page_idx) in pages" class="page"
-        :key="page.uuid" :ref="page.uuid" :data-content-idx="page.content_idx" :data-page-idx="page_idx"
+        :key="page.uuid" :ref="(elt) => (pages_refs[page.uuid] = elt)" :data-content-idx="page.content_idx" :data-page-idx="page_idx"
         :style="page_style(page_idx, page.template ? false : true)" :contenteditable="(editable && !page.template) ? true : false" >
-        <component v-if="page.template" :is="page.template" v-bind.sync="page.props" />
+        <component v-if="page.template" :is="page.template" v-model="page.props" />
       </div>
     </div>
 
@@ -75,9 +75,11 @@ export default {
   data () {
     return {
       pages: [], // contains {uuid, content_idx, prev_html, template, props} for each pages of the document
+      pages_refs: {}, // contains page ref elements indexed by uuid
+      pages_overlay_refs: {}, // contains page overlay ref elements indexed by uuid
       pages_height: 0, // real measured page height in px (corresponding to page_format_mm[1])
       editor_width: 0, // real measured with of an empty editor <div> in px
-      prevent_next_content_update_from_parent: false, // workaround for infinite update loop
+      prevent_next_content_update_from_parent: false, // workaround to avoid infinite update loop
       current_text_style: false, // contains the style at caret position
     }
   },
@@ -92,7 +94,12 @@ export default {
     window.addEventListener("afterprint", this.after_print);
   },
 
-  beforeDestroy () {
+  beforeUpdate () {
+    this.pages_refs = [];
+    this.pages_overlay_refs = [];
+  },
+
+  beforeUnmount () {
     window.removeEventListener("resize", this.update_editor_width);
     window.removeEventListener("click", this.process_current_text_style);
     window.removeEventListener("beforeprint", this.before_print);
@@ -127,13 +134,13 @@ export default {
 
       // Get page height from first empty page
       await this.$nextTick(); // wait for DOM update
-      const first_page_elt = this.$refs[this.pages[0].uuid][0];
+      const first_page_elt = this.pages_refs[this.pages[0].uuid];
       if(!this.$refs.content.contains(first_page_elt)) this.$refs.content.appendChild(first_page_elt); // restore page in DOM in case it was removed
       this.pages_height = first_page_elt.clientHeight + 1; // allow one pixel precision
 
       // Initialize text pages
       for(const page of this.pages) {
-        const page_elt = this.$refs[page.uuid][0];
+        const page_elt = this.pages_refs[page.uuid];
 
         // set raw HTML content
         if(!this.content[page.content_idx]) page_elt.innerHTML = "<div><br></div>";
@@ -159,7 +166,7 @@ export default {
       // Check that pages were not deleted from the DOM (start from the end)
       for(let page_idx = this.pages.length - 1; page_idx >= 0; page_idx--) {
         const page = this.pages[page_idx];
-        const page_elt = this.$refs[page.uuid] && this.$refs[page.uuid][0];
+        const page_elt = this.pages_refs[page.uuid];
 
         // if user deleted the page from the DOM, then remove it from this.pages array
         if(!page_elt || !document.body.contains(page_elt)) this.pages.splice(page_idx, 1);
@@ -186,9 +193,9 @@ export default {
       let prev_page_modified_flag = false;
       for(let page_idx = 0; page_idx < this.pages.length; page_idx++) { // page length can grow inside this loop
         const page = this.pages[page_idx];
-        const page_elt = this.$refs[page.uuid][0];
+        const page_elt = this.pages_refs[page.uuid];
         let next_page = this.pages[page_idx + 1];
-        let next_page_elt = next_page ? this.$refs[next_page.uuid][0] : null;
+        let next_page_elt = next_page ? this.pages_refs[next_page.uuid] : null;
 
         // check if this page, the next page, or any previous page content has been modified by the user (don't apply to template pages)
         if(!page.template && (prev_page_modified_flag || page_elt.innerHTML != page.prev_innerHTML
@@ -215,7 +222,7 @@ export default {
               next_page = { uuid: this.new_uuid(), content_idx: page.content_idx };
               this.pages.splice(page_idx + 1, 0, next_page);
               await this.$nextTick(); // wait for DOM update
-              next_page_elt = this.$refs[next_page.uuid][0];
+              next_page_elt = this.pages_refs[next_page.uuid];
             }
 
             // move the content step by step to the next page, until it fits
@@ -238,7 +245,7 @@ export default {
 
       // Normalize and store current page HTML content
       for(const page of this.pages) {
-        const page_elt = this.$refs[page.uuid][0];
+        const page_elt = this.pages_refs[page.uuid];
         page_elt.normalize(); // normalize HTML (merge text nodes)
         page.prev_innerHTML = page_elt.innerHTML; // store current pages innerHTML for next call
       }
@@ -271,7 +278,7 @@ export default {
         else if(typeof item == "string") {
           return pages.map(page => {
             // remove any useless <div> surrounding the content
-            let elt = this.$refs[page.uuid][0];
+            let elt = this.pages_refs[page.uuid];
             while(elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
               elt = elt.firstChild;
             }
@@ -399,7 +406,7 @@ export default {
 
       // clone each page to the print body
       for(const [page_idx, page] of this.pages.entries()){
-        const page_elt = this.$refs[page.uuid][0];
+        const page_elt = this.pages_refs[page.uuid];
         const page_clone = page_elt.cloneNode(true);
         page_clone.style = ""; // reset page style for the clone
         page_clone.style.position = "relative";
@@ -407,9 +414,9 @@ export default {
         page_clone.style.breakBefore = page_idx ? "page" : "auto";
 
         // add overlays if any
-        const overlay_elts = this.$refs[page.uuid+'-overlay'];
-        if(overlay_elts && overlay_elts[0]){
-          const overlay_clone = overlay_elts[0].cloneNode(true);
+        const overlay_elts = this.pages_overlay_refs[page.uuid];
+        if(overlay_elts){
+          const overlay_clone = overlay_elts.cloneNode(true);
           overlay_clone.style.position = "absolute";
           overlay_clone.style.left = "0";
           overlay_clone.style.top = "0";
@@ -452,7 +459,8 @@ export default {
         if(this.prevent_next_content_update_from_parent) {
           this.prevent_next_content_update_from_parent = false;
         } else await this.reset_content();
-      }
+      },
+      deep: true
     }
   }
 
