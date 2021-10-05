@@ -383,7 +383,7 @@ export default {
       this.$refs.editor.classList.remove("hide_children");
     },
     update_css_media_style () {
-      this.css_media_style.innerHTML = "@media print { @page { size: "+this.page_format_mm[0]+"mm "+this.page_format_mm[1]+"mm; margin: 0 !important; } }";
+      this.css_media_style.innerHTML = "@media print { @page { size: "+this.page_format_mm[0]+"mm "+this.page_format_mm[1]+"mm; margin: 0 !important; } .hidden-print { display: none !important; } }";
     },
 
     // Prepare content before opening the native print box
@@ -421,6 +421,23 @@ export default {
         
         print_body.append(page_clone);
       }
+
+      // display a return arrow to let the user restore the original body in case the navigator doesn't call after_print() (it happens sometimes in Chrome)
+      const return_overlay = document.createElement("div");
+      return_overlay.className = "hidden-print"; // css managed in update_css_media_style method
+      return_overlay.style.position = "fixed";
+      return_overlay.style.left = "0";
+      return_overlay.style.top = "0";
+      return_overlay.style.right = "0";
+      return_overlay.style.bottom = "0";
+      return_overlay.style.display = "flex";
+      return_overlay.style.alignItems = "center";
+      return_overlay.style.justifyContent = "center";
+      return_overlay.style.background = "rgba(255, 255, 255, 0.95)";
+      return_overlay.style.cursor = "pointer";
+      return_overlay.innerHTML = '<svg width="220" height="220"><path fill="rgba(0, 0, 0, 0.7)" d="M120.774,179.271v40c47.303,0,85.784-38.482,85.784-85.785c0-47.3-38.481-85.782-85.784-85.782H89.282L108.7,28.286L80.417,0L12.713,67.703l67.703,67.701l28.283-28.284L89.282,87.703h31.492c25.246,0,45.784,20.538,45.784,45.783C166.558,158.73,146.02,179.271,120.774,179.271z"/></svg>'
+      return_overlay.addEventListener("click", this.after_print);
+      print_body.append(return_overlay);
 
       // replace current body by the print body
       document.body = print_body;
