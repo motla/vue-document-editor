@@ -161,18 +161,18 @@ export default {
     font-family: inherit;
     font-size: inherit;
     color: inherit;
-    background: rgba(200, 250, 230, 0.2);
+    background: rgba(200, 250, 230, 0.4);
     padding: 6px;
   }
-  *[contenteditable=true] {
-    background: rgba(200, 250, 230, 0.2);
+  *[contenteditable] {
+    background: rgba(200, 250, 230, 0.4);
     transition: padding 0.05s linear;
   }
-  span[contenteditable=true]:focus {
+  span[contenteditable]:focus {
     padding: 0 4px;
   }
   @media print {
-    *[contenteditable=true], input {
+    *[contenteditable], input {
       background: none;
     }
     .hide-in-print {

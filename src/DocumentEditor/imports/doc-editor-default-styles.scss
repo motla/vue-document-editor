@@ -50,7 +50,7 @@
       pointer-events: all;
     }
 
-    &[contenteditable=true], & *[contenteditable=true] {
+    &[contenteditable], & *[contenteditable] {
       cursor: text;
     }
     & *[contenteditable=false] {

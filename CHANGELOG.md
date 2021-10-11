@@ -1,3 +1,8 @@
+## v2.0.2
+
+- Fixing the contenteditable field highlight to the Invoice Template of the Demo
+- Adding back Vue2 syntax to the basic example
+
 ## v2.0.1
 
 - Workaround for the Chrome "return from print" bug. Now displays a return arrow to let the user go back to the editor when this bug happens.

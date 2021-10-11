@@ -45,7 +45,8 @@ npm install vue-document-editor@1
 ```Vue
 <template>
   <div style="font-family: Avenir, sans-serif">
-    <vue-document-editor v-model:content="content" />
+    <vue-document-editor v-model:content="content" /> <!-- Vue 3 syntax -->
+    <!-- <vue-document-editor :content.sync="content" /> --> <!-- Vue 2 syntax -->
   </div>
 </template>
 
