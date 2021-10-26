@@ -246,7 +246,7 @@ export default {
       // Normalize and store current page HTML content
       for(const page of this.pages) {
         const page_elt = this.pages_refs[page.uuid];
-        page_elt.normalize(); // normalize HTML (merge text nodes)
+        if(!page.template) page_elt.normalize(); // normalize HTML (merge text nodes) - don't touch template pages or it can break Vue
         page.prev_innerHTML = page_elt.innerHTML; // store current pages innerHTML for next call
       }
     },

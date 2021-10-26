@@ -1,3 +1,8 @@
+## v2.0.3
+
+- Bug fixing: prevent applying normalize() to template pages HTML as it can break Vue behavior (only Vue3)
+- Dependencies upgrade
+
 ## v2.0.2
 
 - Fixing the contenteditable field highlight to the Invoice Template of the Demo
