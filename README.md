@@ -1,8 +1,8 @@
 <div align="center">
-  <img src="https://github.com/motla/vue-document-editor/raw/master/img/logo.png" alt="vue-document-editor">
+  <img src="https://github.com/motla/vue-document-editor/raw/master/img/logo.png" alt="vue-document-editor" width="304" height="24">
 </div>
 <div align="center">
-  <img src="https://github.com/motla/vue-document-editor/raw/master/img/preview.png">
+  <img src="https://github.com/motla/vue-document-editor/raw/master/img/preview.png" width="500" height="210">
 </div>
 
 **vue-document-editor** is a rich-text editor built on top of [Vue.js](https://vuejs.org/), using the native [*contenteditable*](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Editable_content) browser implementation and some JavaScript trickery to spread content over paper-sized pages. It is mainly designed to allow **targeted modifications** to pre-formatted documents using HTML or **interactive templates**.
