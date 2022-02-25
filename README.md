@@ -103,7 +103,7 @@ For the list of props, data and styling variables: **read the [API](API.md)**.
 
 ## Known issues / limitations
 - **Undo / Redo**: Native undo/redo needs to be rewritten as the split mechanism modifies the HTML content at every input, so the navigator is lost. You have to implement it yourself by watching `content` updates and storing them in a stack, then restoring them. [Demo.vue](src/Demo/Demo.vue) implements this. Also your interactive templates need to have a custom undo/redo management if their editable fields are not synced with the `content`.
-- **Performance**: For now, large texts must be divided into multiple paragraphs and large page numbers can slow down the entire document.
+- **Performance**: For now, large texts must be divided into multiple paragraphs and large page numbers can slow down the entire document (see [Issue 14](https://github.com/motla/vue-document-editor/issues/14)).
 - **Safari print**: Safari adds print margins unless you choose a borderless paper format in the print box. This has to be done manually. I guess there is no workaround for this issue yet.
 - **Tables, images**: Image/table placement and sizing is not included. You can implement it specifically for your needs. However, table rows split fine over multiple pages.
 
