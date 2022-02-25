@@ -19,7 +19,7 @@
 
 <script>
 import VueFileToolbarMenu from 'vue-file-toolbar-menu';
-import VueDocumentEditor from '../DocumentEditor/DocumentEditor.vue';
+import VueDocumentEditor from '../DocumentEditor/DocumentEditor.vue'; // set from 'vue-document-editor' in your application
 import InvoiceTemplate from './InvoiceTemplate.vue';
 import { markRaw } from 'vue';
 
