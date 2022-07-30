@@ -1,4 +1,4 @@
-::v-deep.editor {
+.editor ::v-deep() {
   display: block;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

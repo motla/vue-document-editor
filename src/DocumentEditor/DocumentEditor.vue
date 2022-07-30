@@ -498,7 +498,7 @@ export default {
 body {
   /* Enable printing of background colors */
   -webkit-print-color-adjust: exact;
-  color-adjust: exact;
+  print-color-adjust: exact;
 }
 </style>
 <style lang="scss" scoped>
