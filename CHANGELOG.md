@@ -1,3 +1,9 @@
+## v2.0.4
+
+- Fix [Issue 16](https://github.com/motla/vue-document-editor/issues/16): The component breaks if you remove the last character
+- Fix warnings about deprecated ::v-deep and print-color-adjust
+- Dev dependencies upgrade
+
 ## v2.0.3
 
 - Bug fixing: prevent applying normalize() to template pages HTML as it can break Vue behavior (only Vue3)
