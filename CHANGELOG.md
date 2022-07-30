@@ -1,11 +1,9 @@
-## v2.0.1
+###### :speech_balloon: For v2.x (Vue3) releases, see the master branch
 
-- Workaround for the Chrome "return from print" bug. Now displays a return arrow to let the user go back to the editor when this bug happens.
-
-## v2.0.0
-
-- Switching `master` branch to Vue3 (we provide vue2 compatibility on the vue2 branch / @1.x version of this library)
-- Dependencies upgrade
+## v1.2.7
+- Fix [Issue 16](https://github.com/motla/vue-document-editor/issues/16): The component breaks if you remove the last character
+- Fix warnings about deprecated ::v-deep and print-color-adjust
+- Dev dependencies upgrade
 
 ## v1.2.6
 
