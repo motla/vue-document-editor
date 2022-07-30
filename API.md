@@ -19,7 +19,7 @@
 ## Data
 You can query data variables that contain the current state information about:
 - **current_text_style**: [`CSSStyleDeclaration`](https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration)`| false` - *List of every CSS property at caret position, overloaded with these 3 properties:*
-  - **textDecorationStack**: `Array` - *List of all text-decoration applied at caret position*
+  - **textDecorationStack**: `Array` - *List of all `text-decoration` applied at caret position*
   - **headerLevel**: `Number` - *Maximum header level (`<h1>`, `<h2>`, ...) at caret position*
   - **isList**: `Boolean` - *If one parent has its `display` set to `list-item` at caret position*
 

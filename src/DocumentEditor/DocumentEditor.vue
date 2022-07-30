@@ -9,7 +9,7 @@
     </div>
 
     <!-- Document editor -->
-    <div class="content" ref="content" :contenteditable="editable" :style="page_style(-1)" @input="input" @keyup="process_current_text_style">
+    <div class="content" ref="content" :contenteditable="editable" :style="page_style(-1)" @input="input" @keyup="process_current_text_style" @keydown="keydown">
       <!-- Contains every page of the document (can be modified by the DOM afterwards) -->
       <div v-for="(page, page_idx) in pages" class="page"
         :key="page.uuid" :ref="(elt) => (pages_refs[page.uuid] = elt)" :data-content-idx="page.content_idx" :data-page-idx="page_idx"
@@ -257,6 +257,16 @@ export default {
       await this.fit_content_over_pages(); // fit content according to modifications
       this.emit_new_content(); // emit content modification
       if(e.inputType != "insertText") this.process_current_text_style(); // update current style if it has changed
+    },
+
+    // Keydown event
+    keydown (e) {
+      // if the document is empty, prevent removing the first page container with a backspace input (keycode 8)
+      // which is now the default behavior for web browsers
+      if(e.keyCode == 8 && this.content.length <= 1) {
+        const is_text = (this.content[0] && typeof(this.content[0]) == "string") ? this.content[0].replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, '') : false;
+        if(!is_text) e.preventDefault();
+      }
     },
 
     // Emit content change to parent
