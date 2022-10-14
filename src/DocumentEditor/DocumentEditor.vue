@@ -121,16 +121,24 @@ export default {
 
     // Resets all content from the content property
     async reset_content () {
+      // Prevent launching this function multiple times
+      if(this.reset_in_progress) return;
+      this.reset_in_progress = true;
+
       // If provided content is empty, initialize it first and exit
-      if(!this.content.length) { this.$emit("update:content", [""]); return; }
+      if(!this.content.length) {
+        this.reset_in_progress = false;
+        this.$emit("update:content", [""]);
+        return;
+      }
 
       // Delete all pages and set one new page per content item
-      this.pages = this.content.length ? this.content.map((content, content_idx) => ({
+      this.pages = this.content.map((content, content_idx) => ({
         uuid: this.new_uuid(),
         content_idx,
         template: content.template,
         props: content.props
-      })) : [{ uuid: this.new_uuid(), content_idx: 0 }]; // if content is empty
+      }));
 
       // Get page height from first empty page
       await this.$nextTick(); // wait for DOM update
@@ -156,6 +164,9 @@ export default {
 
       // Remove the text cursor from the content, if any (its position is lost anyway)
       this.$refs.content.blur();
+
+      // Clear "reset in progress" flag
+      this.reset_in_progress = false;
     },
 
     // Spreads the HTML content over several pages until it fits
@@ -163,7 +174,11 @@ export default {
       // Data variable this.pages_height must have been set before calling this function
       if(!this.pages_height) return;
 
-      // Check that pages were not deleted from the DOM (start from the end)
+      // Prevent launching this function multiple times
+      if(this.fit_in_progress) return;
+      this.fit_in_progress = true;
+
+      // Check pages that were deleted from the DOM (start from the end)
       for(let page_idx = this.pages.length - 1; page_idx >= 0; page_idx--) {
         const page = this.pages[page_idx];
         const page_elt = this.pages_refs[page.uuid];
@@ -229,6 +244,9 @@ export default {
             move_children_forward_recursively(page_elt, next_page_elt, () => (page_elt.clientHeight <= this.pages_height));
           }
         }
+
+        // Clear "fit in progress" flag
+        this.fit_in_progress = false;
       }
       
 
@@ -283,7 +301,6 @@ export default {
           removed_pages_flag = true;
           return false;
         }
-
         // if item is a string, concatenate each page content and set that
         else if(typeof item == "string") {
           return pages.map(page => {
@@ -295,7 +312,6 @@ export default {
             return elt.innerHTML;
           }).join('') || false;
         }
-
         // if item is a component, just clone the item
         else return { template: item.template, props: { ...item.props }};
       }).filter(item => (item != false)); // remove empty items
