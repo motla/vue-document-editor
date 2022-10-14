@@ -1840,10 +1840,10 @@ if (typeof window !== 'undefined') {
 
 ;// CONCATENATED MODULE: external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
 var external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject = require("vue");
-;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=71ec7e87&scoped=true
+;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=5c1d0a9a&scoped=true
 
 
-const _withScopeId = n => (_pushScopeId("data-v-71ec7e87"), n = n(), _popScopeId(), n);
+const _withScopeId = n => (_pushScopeId("data-v-5c1d0a9a"), n = n(), _popScopeId(), n);
 
 const _hoisted_1 = {
   class: "editor",
@@ -1891,7 +1891,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }, null, 8, ["modelValue", "onUpdate:modelValue"])) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createCommentVNode)("", true)], 12, _hoisted_5);
   }), 128))], 44, _hoisted_4)], 512);
 }
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=71ec7e87&scoped=true
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=5c1d0a9a&scoped=true
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.error.cause.js
 var es_error_cause = __webpack_require__(1703);
@@ -2118,23 +2118,23 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 
     // Resets all content from the content property
     async reset_content() {
-      // If provided content is empty, initialize it first and exit
+      // Prevent launching this function multiple times
+      if (this.reset_in_progress) return;
+      this.reset_in_progress = true; // If provided content is empty, initialize it first and exit
+
       if (!this.content.length) {
+        this.reset_in_progress = false;
         this.$emit("update:content", [""]);
         return;
       } // Delete all pages and set one new page per content item
 
 
-      this.pages = this.content.length ? this.content.map((content, content_idx) => ({
+      this.pages = this.content.map((content, content_idx) => ({
         uuid: this.new_uuid(),
         content_idx,
         template: content.template,
         props: content.props
-      })) : [{
-        uuid: this.new_uuid(),
-        content_idx: 0
-      }]; // if content is empty
-      // Get page height from first empty page
+      })); // Get page height from first empty page
 
       await this.$nextTick(); // wait for DOM update
 
@@ -2156,13 +2156,18 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 
       await this.fit_content_over_pages(); // Remove the text cursor from the content, if any (its position is lost anyway)
 
-      this.$refs.content.blur();
+      this.$refs.content.blur(); // Clear "reset in progress" flag
+
+      this.reset_in_progress = false;
     },
 
     // Spreads the HTML content over several pages until it fits
     async fit_content_over_pages() {
       // Data variable this.pages_height must have been set before calling this function
-      if (!this.pages_height) return; // Check that pages were not deleted from the DOM (start from the end)
+      if (!this.pages_height) return; // Prevent launching this function multiple times
+
+      if (this.fit_in_progress) return;
+      this.fit_in_progress = true; // Check pages that were deleted from the DOM (start from the end)
 
       for (let page_idx = this.pages.length - 1; page_idx >= 0; page_idx--) {
         const page = this.pages[page_idx];
@@ -2228,7 +2233,10 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 
             move_children_forward_recursively(page_elt, next_page_elt, () => page_elt.clientHeight <= this.pages_height);
           }
-        }
+        } // Clear "fit in progress" flag
+
+
+        this.fit_in_progress = false;
       } // Restore selection and remove empty elements
 
 
@@ -2518,15 +2526,15 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 });
 ;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js
  
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=71ec7e87&lang=css
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=5c1d0a9a&lang=css
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=71ec7e87&lang=css
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=5c1d0a9a&lang=css
 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-22.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-22.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-22.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-22.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=71ec7e87&lang=scss&scoped=true
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-22.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-22.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-22.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-22.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=5c1d0a9a&lang=scss&scoped=true
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=71ec7e87&lang=scss&scoped=true
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=5c1d0a9a&lang=scss&scoped=true
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/dist/exportHelper.js
 var exportHelper = __webpack_require__(3744);
@@ -2539,7 +2547,7 @@ var exportHelper = __webpack_require__(3744);
 
 
 
-const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.Z)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-71ec7e87"]])
+const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.Z)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-5c1d0a9a"]])
 
 /* harmony default export */ var DocumentEditor = (__exports__);
 ;// CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js

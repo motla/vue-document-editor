@@ -1,6 +1,6 @@
 {
   "name": "vue-document-editor",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Paper-sized WYSIWYG document editor for Vue apps",
   "author": {
     "name": "Romain Lamothe",
