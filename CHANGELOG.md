@@ -1,5 +1,8 @@
 ###### :speech_balloon: For v2.x (Vue3) releases, see the master branch
 
+## v1.2.8
+- Fix [Issue 19](https://github.com/motla/vue-document-editor/issues/19): Any custom CSS formatting other than the one on `<body>` was not taken into account in print mode
+
 ## v1.2.7
 - Fix [Issue 16](https://github.com/motla/vue-document-editor/issues/16): The component breaks if you remove the last character
 - Fix warnings about deprecated ::v-deep and print-color-adjust

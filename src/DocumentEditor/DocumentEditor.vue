@@ -406,6 +406,8 @@ export default {
       print_body.style.margin = "0";
       print_body.style.padding = "0";
       print_body.style.background = "white";
+      print_body.style.font = window.getComputedStyle(this.$refs.editor).font;
+      print_body.className = this.$refs.editor.className;
 
       // clone each page to the print body
       for(const [page_idx, page] of this.pages.entries()){
