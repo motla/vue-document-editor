@@ -1818,7 +1818,7 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=a6014ea0&scoped=true&
+;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=4d6b14e8&scoped=true&
 var render = function render() {
   var _vm = this,
       _c = _vm._self._c;
@@ -2403,7 +2403,9 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
       const print_body = document.createElement("body");
       print_body.style.margin = "0";
       print_body.style.padding = "0";
-      print_body.style.background = "white"; // clone each page to the print body
+      print_body.style.background = "white";
+      print_body.style.font = window.getComputedStyle(this.$refs.editor).font;
+      print_body.className = this.$refs.editor.className; // clone each page to the print body
 
       for (const [page_idx, page] of this.pages.entries()) {
         const page_elt = this.$refs[page.uuid][0];
@@ -2486,15 +2488,15 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 });
 ;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js&
  /* harmony default export */ var DocumentEditor_DocumentEditorvue_type_script_lang_js_ = (DocumentEditorvue_type_script_lang_js_); 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=a6014ea0&prod&lang=css&
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=4d6b14e8&prod&lang=css&
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=a6014ea0&prod&lang=css&
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=4d6b14e8&prod&lang=css&
 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-22.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-22.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-22.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-22.use[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=a6014ea0&prod&lang=scss&scoped=true&
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-22.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-22.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-22.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-22.use[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=4d6b14e8&prod&lang=scss&scoped=true&
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=a6014ea0&prod&lang=scss&scoped=true&
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=4d6b14e8&prod&lang=scss&scoped=true&
 
 ;// CONCATENATED MODULE: ./node_modules/@vue/vue-loader-v15/lib/runtime/componentNormalizer.js
 /* globals __VUE_SSR_CONTEXT__ */
@@ -2610,7 +2612,7 @@ var component = normalizeComponent(
   staticRenderFns,
   false,
   null,
-  "a6014ea0",
+  "4d6b14e8",
   null
   
 )
