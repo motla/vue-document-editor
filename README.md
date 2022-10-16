@@ -40,7 +40,7 @@ npm install vue-document-editor@1
 
 ###### :speech_balloon: If you prefer static files, import assets from the `dist` folder
 
-## Basic example
+## Basic example (Vue 2)
 ###### MyComponent.vue
 ```Vue
 <template>
@@ -63,30 +63,31 @@ export default {
 </script>
 ```
 <details>
-<summary><small>same example using static files loaded with a CDN</small></summary>
+<summary><small>same example using static files loaded with a CDN (Vue 2)</small></summary>
 
 ```HTML
 <html>
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue-document-editor@2/dist/VueDocumentEditor.umd.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/vue-document-editor@2/dist/VueDocumentEditor.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-document-editor@1/dist/VueDocumentEditor.umd.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/vue-document-editor@1/dist/VueDocumentEditor.css" rel="stylesheet">
 </head>
 <body>
   <div id="app">
     <div style="font-family: Avenir, sans-serif">
-      <vue-document-editor v-model:content="content" />
+      <vue-document-editor :content.sync="content" />
     </div>
   </div>
   <script>
-  const app = Vue.createApp({
+  var app = new Vue({
+    el: '#app',
     components: { VueDocumentEditor },
     data () {
       return { 
         content: ["<h1>Hello!</h1>Fill this page with text and new pages will be created as it overflows."]
       }
     }
-  }).mount('#app');
+  })
   </script>
 </body>
 </html>
