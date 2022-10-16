@@ -64,7 +64,7 @@ export default {
 </script>
 ```
 <details>
-<summary><small>same example using static files loaded with a CDN</small></summary>
+<summary><small>same example using static files loaded with a CDN (Vue 3)</small></summary>
 
 ```HTML
 <html>
@@ -88,6 +88,38 @@ export default {
       }
     }
   }).mount('#app');
+  </script>
+</body>
+</html>
+```
+
+</details>
+<details>
+<summary><small>same example using static files loaded with a CDN (Vue 2)</small></summary>
+
+```HTML
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-document-editor@1/dist/VueDocumentEditor.umd.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/vue-document-editor@1/dist/VueDocumentEditor.css" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <div style="font-family: Avenir, sans-serif">
+      <vue-document-editor :content.sync="content" />
+    </div>
+  </div>
+  <script>
+  var app = new Vue({
+    el: '#app',
+    components: { VueDocumentEditor },
+    data () {
+      return { 
+        content: ["<h1>Hello!</h1>Fill this page with text and new pages will be created as it overflows."]
+      }
+    }
+  })
   </script>
 </body>
 </html>
