@@ -1727,26 +1727,6 @@ exportWebAssemblyErrorCauseWrapper('RuntimeError', function (init) {
 });
 
 
-/***/ }),
-
-/***/ 3744:
-/***/ (function(__unused_webpack_module, exports) {
-
-"use strict";
-var __webpack_unused_export__;
-
-__webpack_unused_export__ = ({ value: true });
-// runtime helper for setting properties on components
-// in a tree-shakable way
-exports.Z = (sfc, props) => {
-    const target = sfc.__vccOpts || sfc;
-    for (const [key, val] of props) {
-        target[key] = val;
-    }
-    return target;
-};
-
-
 /***/ })
 
 /******/ 	});
@@ -1838,60 +1818,65 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-;// CONCATENATED MODULE: external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
-var external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject = require("vue");
-;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=5c1d0a9a&scoped=true
+;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=587217e4&scoped=true&
+var render = function render() {
+  var _vm = this,
+      _c = _vm._self._c;
 
-
-const _withScopeId = n => (_pushScopeId("data-v-5c1d0a9a"), n = n(), _popScopeId(), n);
-
-const _hoisted_1 = {
-  class: "editor",
-  ref: "editor"
-};
-const _hoisted_2 = {
-  key: 0,
-  class: "overlays"
-};
-const _hoisted_3 = ["innerHTML"];
-const _hoisted_4 = ["contenteditable"];
-const _hoisted_5 = ["data-content-idx", "data-page-idx", "contenteditable"];
-function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", _hoisted_1, [$props.overlay ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", _hoisted_2, [((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(true), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)(external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.Fragment, null, (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.renderList)($data.pages, (page, page_idx) => {
-    return (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
-      class: "overlay",
+  return _c('div', {
+    ref: "editor",
+    staticClass: "editor"
+  }, [_vm.overlay ? _c('div', {
+    staticClass: "overlays"
+  }, _vm._l(_vm.pages, function (page, page_idx) {
+    return _c('div', {
       key: page.uuid + '-overlay',
-      ref_for: true,
-      ref: elt => $data.pages_overlay_refs[page.uuid] = elt,
-      innerHTML: $props.overlay(page_idx + 1, $data.pages.length),
-      style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)($options.page_style(page_idx, false))
-    }, null, 12, _hoisted_3);
-  }), 128))])) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createCommentVNode)("", true), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", {
-    class: "content",
+      ref: elt => _vm.pages_overlay_refs[page.uuid] = elt,
+      refInFor: true,
+      staticClass: "overlay",
+      style: _vm.page_style(page_idx, false),
+      domProps: {
+        "innerHTML": _vm._s(_vm.overlay(page_idx + 1, _vm.pages.length))
+      }
+    });
+  }), 0) : _vm._e(), _c('div', {
     ref: "content",
-    contenteditable: $props.editable,
-    style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)($options.page_style(-1)),
-    onInput: _cache[0] || (_cache[0] = (...args) => $options.input && $options.input(...args)),
-    onKeyup: _cache[1] || (_cache[1] = (...args) => $options.process_current_text_style && $options.process_current_text_style(...args)),
-    onKeydown: _cache[2] || (_cache[2] = (...args) => $options.keydown && $options.keydown(...args))
-  }, [((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(true), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)(external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.Fragment, null, (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.renderList)($data.pages, (page, page_idx) => {
-    return (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
-      class: "page",
+    staticClass: "content",
+    style: _vm.page_style(-1),
+    attrs: {
+      "contenteditable": _vm.editable
+    },
+    on: {
+      "input": _vm.input,
+      "keyup": _vm.process_current_text_style,
+      "keydown": _vm.keydown
+    }
+  }, _vm._l(_vm.pages, function (page, page_idx) {
+    return _c('div', {
       key: page.uuid,
-      ref_for: true,
-      ref: elt => $data.pages_refs[page.uuid] = elt,
-      "data-content-idx": page.content_idx,
-      "data-page-idx": page_idx,
-      style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)($options.page_style(page_idx, page.template ? false : true)),
-      contenteditable: $props.editable && !page.template ? true : false
-    }, [page.template ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createBlock)((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.resolveDynamicComponent)(page.template), {
-      key: 0,
-      modelValue: page.props,
-      "onUpdate:modelValue": $event => page.props = $event
-    }, null, 8, ["modelValue", "onUpdate:modelValue"])) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createCommentVNode)("", true)], 12, _hoisted_5);
-  }), 128))], 44, _hoisted_4)], 512);
-}
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=5c1d0a9a&scoped=true
+      ref: elt => _vm.pages_refs[page.uuid] = elt,
+      refInFor: true,
+      staticClass: "page",
+      style: _vm.page_style(page_idx, page.template ? false : true),
+      attrs: {
+        "data-content-idx": page.content_idx,
+        "data-page-idx": page_idx,
+        "contenteditable": _vm.editable && !page.template ? true : false
+      }
+    }, [page.template ? _c(page.template, {
+      tag: "component",
+      model: {
+        value: page.props,
+        callback: function ($$v) {
+          _vm.$set(page, "props", $$v);
+        },
+        expression: "page.props"
+      }
+    }) : _vm._e()], 1);
+  }), 0)]);
+};
+
+var staticRenderFns = [];
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.error.cause.js
 var es_error_cause = __webpack_require__(1703);
@@ -2020,9 +2005,9 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 }
 
 
-;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js
+;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js&
 
-/* harmony default export */ var DocumentEditorvue_type_script_lang_js = ({
+/* harmony default export */ var DocumentEditorvue_type_script_lang_js_ = ({
   props: {
     // This contains the initial content of the document that can be synced
     // It must be an Array: each array item is a new set of pages containing the
@@ -2442,7 +2427,9 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
       const print_body = document.createElement("body");
       print_body.style.margin = "0";
       print_body.style.padding = "0";
-      print_body.style.background = "white"; // clone each page to the print body
+      print_body.style.background = "white";
+      print_body.style.font = window.getComputedStyle(this.$refs.editor).font;
+      print_body.className = this.$refs.editor.className; // clone each page to the print body
 
       for (const [page_idx, page] of this.pages.entries()) {
         const page_elt = this.pages_refs[page.uuid];
@@ -2524,22 +2511,117 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
     }
   }
 });
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js
- 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=5c1d0a9a&lang=css
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js&
+ /* harmony default export */ var DocumentEditor_DocumentEditorvue_type_script_lang_js_ = (DocumentEditorvue_type_script_lang_js_); 
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=587217e4&prod&lang=css&
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=5c1d0a9a&lang=css
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=587217e4&prod&lang=css&
 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-22.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-22.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-22.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-22.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=5c1d0a9a&lang=scss&scoped=true
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-22.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-22.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-22.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-22.use[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=587217e4&prod&lang=scss&scoped=true&
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=5c1d0a9a&lang=scss&scoped=true
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=587217e4&prod&lang=scss&scoped=true&
 
-// EXTERNAL MODULE: ./node_modules/vue-loader/dist/exportHelper.js
-var exportHelper = __webpack_require__(3744);
+;// CONCATENATED MODULE: ./node_modules/@vue/vue-loader-v15/lib/runtime/componentNormalizer.js
+/* globals __VUE_SSR_CONTEXT__ */
+
+// IMPORTANT: Do NOT use ES2015 features in this file (except for modules).
+// This module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle.
+
+function normalizeComponent(
+  scriptExports,
+  render,
+  staticRenderFns,
+  functionalTemplate,
+  injectStyles,
+  scopeId,
+  moduleIdentifier /* server only */,
+  shadowMode /* vue-cli only */
+) {
+  // Vue.extend constructor export interop
+  var options =
+    typeof scriptExports === 'function' ? scriptExports.options : scriptExports
+
+  // render functions
+  if (render) {
+    options.render = render
+    options.staticRenderFns = staticRenderFns
+    options._compiled = true
+  }
+
+  // functional template
+  if (functionalTemplate) {
+    options.functional = true
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = 'data-v-' + scopeId
+  }
+
+  var hook
+  if (moduleIdentifier) {
+    // server build
+    hook = function (context) {
+      // 2.3 injection
+      context =
+        context || // cached call
+        (this.$vnode && this.$vnode.ssrContext) || // stateful
+        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
+      // 2.2 with runInNewContext: true
+      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+        context = __VUE_SSR_CONTEXT__
+      }
+      // inject component styles
+      if (injectStyles) {
+        injectStyles.call(this, context)
+      }
+      // register component module identifier for async chunk inferrence
+      if (context && context._registeredComponents) {
+        context._registeredComponents.add(moduleIdentifier)
+      }
+    }
+    // used by ssr in case component is cached and beforeCreate
+    // never gets called
+    options._ssrRegister = hook
+  } else if (injectStyles) {
+    hook = shadowMode
+      ? function () {
+          injectStyles.call(
+            this,
+            (options.functional ? this.parent : this).$root.$options.shadowRoot
+          )
+        }
+      : injectStyles
+  }
+
+  if (hook) {
+    if (options.functional) {
+      // for template-only hot-reload because in that case the render fn doesn't
+      // go through the normalizer
+      options._injectStyles = hook
+      // register for functional component in vue file
+      var originalRender = options.render
+      options.render = function renderWithStyleInjection(h, context) {
+        hook.call(context)
+        return originalRender(h, context)
+      }
+    } else {
+      // inject component registration as beforeCreate hook
+      var existing = options.beforeCreate
+      options.beforeCreate = existing ? [].concat(existing, hook) : [hook]
+    }
+  }
+
+  return {
+    exports: scriptExports,
+    options: options
+  }
+}
+
 ;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue
-
 
 
 
@@ -2547,9 +2629,20 @@ var exportHelper = __webpack_require__(3744);
 
 
 
-const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.Z)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-5c1d0a9a"]])
+/* normalize component */
 
-/* harmony default export */ var DocumentEditor = (__exports__);
+var component = normalizeComponent(
+  DocumentEditor_DocumentEditorvue_type_script_lang_js_,
+  render,
+  staticRenderFns,
+  false,
+  null,
+  "587217e4",
+  null
+  
+)
+
+/* harmony default export */ var DocumentEditor = (component.exports);
 ;// CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
 
 
