@@ -1,3 +1,7 @@
+## v2.0.7
+
+- Fix: 2.0.6 static libraries and docs (demo) were faulty because compiled with vue2. Recompiled with vue3.
+
 ## v2.0.6
 
 - Fix [Issue 19](https://github.com/motla/vue-document-editor/issues/19): Any custom CSS formatting other than the one on `<body>` was not taken into account in print mode
