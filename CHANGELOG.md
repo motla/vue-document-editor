@@ -1,3 +1,7 @@
+## v2.0.6
+
+- Fix [Issue 19](https://github.com/motla/vue-document-editor/issues/19): Any custom CSS formatting other than the one on `<body>` was not taken into account in print mode
+
 ## v2.0.5
 
 - Fix [Issue 17](https://github.com/motla/vue-document-editor/issues/17): In some cases, multiple instances of reset_content were launched simultaneously which could cause errors.
@@ -26,6 +30,10 @@
 
 - Switching `master` branch to Vue3 (we provide vue2 compatibility on the vue2 branch / @1.x version of this library)
 - Dependencies upgrade
+
+## v1.2.8
+
+- Fix [Issue 19](https://github.com/motla/vue-document-editor/issues/19): Any custom CSS formatting other than the one on `<body>` was not taken into account in print mode
 
 ## v1.2.7
 
