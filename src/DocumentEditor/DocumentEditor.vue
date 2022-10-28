@@ -2,7 +2,7 @@
   <div class="editor" ref="editor">
 
     <!-- Page overlays (headers, footers, page numbers, ...) -->
-    <div v-if="overlay" class="overlays">
+    <div v-if="overlay" class="overlays" ref="overlays">
       <div v-for="(page, page_idx) in pages" class="overlay" :key="page.uuid+'-overlay'" :ref="(elt) => (pages_overlay_refs[page.uuid] = elt)"
         v-html="overlay(page_idx+1, pages.length)" :style="page_style(page_idx, false)">
       </div>
@@ -10,20 +10,16 @@
 
     <!-- Document editor -->
     <div class="content" ref="content" :contenteditable="editable" :style="page_style(-1)" @input="input" @keyup="process_current_text_style" @keydown="keydown">
-      <!-- Contains every page of the document (can be modified by the DOM afterwards) -->
-      <div v-for="(page, page_idx) in pages" class="page"
-        :key="page.uuid" :ref="(elt) => (pages_refs[page.uuid] = elt)" :data-content-idx="page.content_idx" :data-page-idx="page_idx"
-        :style="page_style(page_idx, page.template ? false : true)" :contenteditable="(editable && !page.template) ? true : false" >
-        <component v-if="page.template" :is="page.template" v-model="page.props" />
-      </div>
+      <!-- This is a Vue "hoisted" static <div> which contains every page of the document and can be modified by the DOM -->
     </div>
 
-    <!-- maybe new items (widgets, ...) will be inserted here in the future -->
+    <!-- Items related to the document editor (widgets, ...) can be inserted here -->
 
   </div>
 </template>
 
 <script>
+import { defineCustomElement } from 'vue';
 import { move_children_forward_recursively, move_children_backwards_with_merging } from './imports/page-transition-mgmt.js';
 
 export default {
@@ -74,8 +70,7 @@ export default {
 
   data () {
     return {
-      pages: [], // contains {uuid, content_idx, prev_html, template, props} for each pages of the document
-      pages_refs: {}, // contains page ref elements indexed by uuid
+      pages: [], // contains {uuid, content_idx, prev_html, template, props, elt} for each pages of the document
       pages_overlay_refs: {}, // contains page overlay ref elements indexed by uuid
       pages_height: 0, // real measured page height in px (corresponding to page_format_mm[1])
       editor_width: 0, // real measured with of an empty editor <div> in px
@@ -95,7 +90,6 @@ export default {
   },
 
   beforeUpdate () {
-    this.pages_refs = [];
     this.pages_overlay_refs = [];
   },
 
@@ -120,7 +114,7 @@ export default {
     new_uuid: () => Math.random().toString(36).slice(-5),
 
     // Resets all content from the content property
-    async reset_content () {
+    reset_content () {
       // Prevent launching this function multiple times
       if(this.reset_in_progress) return;
       this.reset_in_progress = true;
@@ -139,28 +133,31 @@ export default {
         template: content.template,
         props: content.props
       }));
+      this.update_pages_elts();
 
       // Get page height from first empty page
-      await this.$nextTick(); // wait for DOM update
-      const first_page_elt = this.pages_refs[this.pages[0].uuid];
+      const first_page_elt = this.pages[0].elt;
       if(!this.$refs.content.contains(first_page_elt)) this.$refs.content.appendChild(first_page_elt); // restore page in DOM in case it was removed
       this.pages_height = first_page_elt.clientHeight + 1; // allow one pixel precision
 
       // Initialize text pages
       for(const page of this.pages) {
-        const page_elt = this.pages_refs[page.uuid];
 
         // set raw HTML content
-        if(!this.content[page.content_idx]) page_elt.innerHTML = "<div><br></div>";
-        else if(typeof this.content[page.content_idx] == "string") page_elt.innerHTML = "<div>"+this.content[page.content_idx]+"</div>";
-        // (else content is a component that is set in Vue.js <template>)
+        if(!this.content[page.content_idx]) page.elt.innerHTML = "<div><br></div>";
+        else if(typeof this.content[page.content_idx] == "string") page.elt.innerHTML = "<div>"+this.content[page.content_idx]+"</div>";
+        else if(page.template) {
+          const componentElement = defineCustomElement(page.template);
+          customElements.define('component-'+page.uuid, componentElement);
+          page.elt.appendChild(new componentElement({ modelValue: page.props }));
+        }
 
         // restore page in DOM in case it was removed
-        if(!this.$refs.content.contains(page_elt)) this.$refs.content.appendChild(page_elt);
+        if(!this.$refs.content.contains(page.elt)) this.$refs.content.appendChild(page.elt);
       }
 
       // Spread content over several pages if it overflows
-      await this.fit_content_over_pages();
+      this.fit_content_over_pages();
 
       // Remove the text cursor from the content, if any (its position is lost anyway)
       this.$refs.content.blur();
@@ -170,7 +167,7 @@ export default {
     },
 
     // Spreads the HTML content over several pages until it fits
-    async fit_content_over_pages () {
+    fit_content_over_pages () {
       // Data variable this.pages_height must have been set before calling this function
       if(!this.pages_height) return;
 
@@ -181,10 +178,9 @@ export default {
       // Check pages that were deleted from the DOM (start from the end)
       for(let page_idx = this.pages.length - 1; page_idx >= 0; page_idx--) {
         const page = this.pages[page_idx];
-        const page_elt = this.pages_refs[page.uuid];
 
         // if user deleted the page from the DOM, then remove it from this.pages array
-        if(!page_elt || !document.body.contains(page_elt)) this.pages.splice(page_idx, 1);
+        if(!page.elt || !document.body.contains(page.elt)) this.pages.splice(page_idx, 1);
       }
 
       // If all the document was wiped out, start a new empty document
@@ -193,7 +189,7 @@ export default {
         return;
       }
 
-      // Save current selection by inserting empty HTML elements at the start and the end of it
+      // Save current selection (or cursor position) by inserting empty HTML elements at the start and the end of it
       const selection = window.getSelection();
       const start_marker = document.createElement("null");
       const end_marker = document.createElement("null");
@@ -208,45 +204,45 @@ export default {
       let prev_page_modified_flag = false;
       for(let page_idx = 0; page_idx < this.pages.length; page_idx++) { // page length can grow inside this loop
         const page = this.pages[page_idx];
-        const page_elt = this.pages_refs[page.uuid];
         let next_page = this.pages[page_idx + 1];
-        let next_page_elt = next_page ? this.pages_refs[next_page.uuid] : null;
+        let next_page_elt = next_page ? next_page.elt : null;
 
         // check if this page, the next page, or any previous page content has been modified by the user (don't apply to template pages)
-        if(!page.template && (prev_page_modified_flag || page_elt.innerHTML != page.prev_innerHTML
+        if(!page.template && (prev_page_modified_flag || page.elt.innerHTML != page.prev_innerHTML
           || (next_page_elt && !next_page.template && next_page_elt.innerHTML != next_page.prev_innerHTML))){
           prev_page_modified_flag = true;
 
           // BACKWARD-PROPAGATION
           // check if content doesn't overflow, and that next page exists and has the same content_idx
-          if(page_elt.clientHeight <= this.pages_height && next_page && next_page.content_idx == page.content_idx) {
+          if(page.elt.clientHeight <= this.pages_height && next_page && next_page.content_idx == page.content_idx) {
 
             // try to append every node from the next page until it doesn't fit
-            move_children_backwards_with_merging(page_elt, next_page_elt, () => !next_page_elt.childNodes.length || (page_elt.clientHeight > this.pages_height));
-
-            // remove next page if it is empty
-            if(!next_page_elt.childNodes.length) this.pages.splice(page_idx + 1, 1);
+            move_children_backwards_with_merging(page.elt, next_page_elt, () => !next_page_elt.childNodes.length || (page.elt.clientHeight > this.pages_height));
           }
 
           // FORWARD-PROPAGATION
           // check if content overflows
-          if(page_elt.clientHeight > this.pages_height) {
+          if(page.elt.clientHeight > this.pages_height) {
 
             // if there is no next page for the same content, create it
             if(!next_page || next_page.content_idx != page.content_idx) {
               next_page = { uuid: this.new_uuid(), content_idx: page.content_idx };
               this.pages.splice(page_idx + 1, 0, next_page);
-              await this.$nextTick(); // wait for DOM update
-              next_page_elt = this.pages_refs[next_page.uuid];
+              this.update_pages_elts();
+              next_page_elt = next_page.elt;
             }
 
             // move the content step by step to the next page, until it fits
-            move_children_forward_recursively(page_elt, next_page_elt, () => (page_elt.clientHeight <= this.pages_height));
+            move_children_forward_recursively(page.elt, next_page_elt, () => (page.elt.clientHeight <= this.pages_height));
+          }
+
+          // CLEANING
+          // remove next page if it is empty
+          if(next_page_elt && next_page.content_idx == page.content_idx && !next_page_elt.childNodes.length) {
+            this.pages.splice(page_idx + 1, 1);
+            this.update_pages_elts();
           }
         }
-
-        // Clear "fit in progress" flag
-        this.fit_in_progress = false;
       }
       
 
@@ -263,16 +259,18 @@ export default {
 
       // Normalize and store current page HTML content
       for(const page of this.pages) {
-        const page_elt = this.pages_refs[page.uuid];
-        if(!page.template) page_elt.normalize(); // normalize HTML (merge text nodes) - don't touch template pages or it can break Vue
-        page.prev_innerHTML = page_elt.innerHTML; // store current pages innerHTML for next call
+        if(!page.template) page.elt.normalize(); // normalize HTML (merge text nodes) - don't touch template pages or it can break Vue
+        page.prev_innerHTML = page.elt.innerHTML; // store current pages innerHTML for next call
       }
+
+      // Clear "fit in progress" flag
+      this.fit_in_progress = false;
     },
 
     // Input event
-    async input (e) {
+    input (e) {
       if(!e) return; // check that event is set
-      await this.fit_content_over_pages(); // fit content according to modifications
+      this.fit_content_over_pages(); // fit content according to modifications
       this.emit_new_content(); // emit content modification
       if(e.inputType != "insertText") this.process_current_text_style(); // update current style if it has changed
     },
@@ -305,7 +303,7 @@ export default {
         else if(typeof item == "string") {
           return pages.map(page => {
             // remove any useless <div> surrounding the content
-            let elt = this.pages_refs[page.uuid];
+            let elt = page.elt;
             while(elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
               elt = elt.firstChild;
             }
@@ -409,10 +407,37 @@ export default {
       }
     },
 
+    // Utility to convert page_style to CSS string
+    css_to_string: (css) => Object.entries(css).map(([k, v]) => k.replace(/[A-Z]/g, match => ("-"+match.toLowerCase()))+":"+v).join(';'),
+
+    // Update pages <div> from this.pages data
+    update_pages_elts () {
+      // Removing deleted pages
+      for(const page_elt of this.$refs.content.children) {
+        if(!this.pages.find(page => (page.elt == page_elt))) page_elt.remove();
+      }
+
+      // Adding / updating pages
+      for(const [page_idx, page] of this.pages.entries()) {
+        // Get either existing page_elt or create it
+        if(!page.elt) {
+          page.elt = document.createElement("div");
+          page.elt.className = "page";
+          const next_page = this.pages[page_idx + 1];
+          this.$refs.content.insertBefore(page.elt, next_page ? next_page.elt : null);
+        }
+        // Update page properties
+        page.elt.dataset.contentIdx = page.content_idx;
+        page.elt.style = Object.entries(this.page_style(page_idx, page.template ? false : true)).map(([k, v]) => k.replace(/[A-Z]/g, match => ("-"+match.toLowerCase()))+":"+v).join(';'); // (convert page_style to CSS string)
+        page.elt.contentEditable = (this.editable && !page.template) ? true : false;
+      }
+    },
+
     // Get and store empty editor <div> width
     update_editor_width () {
       this.$refs.editor.classList.add("hide_children");
       this.editor_width = this.$refs.editor.clientWidth;
+      this.update_pages_elts();
       this.$refs.editor.classList.remove("hide_children");
     },
     update_css_media_style () {
@@ -432,29 +457,27 @@ export default {
       print_body.style.font = window.getComputedStyle(this.$refs.editor).font;
       print_body.className = this.$refs.editor.className;
 
-      // clone each page to the print body
+      // move each page to the print body
       for(const [page_idx, page] of this.pages.entries()){
-        const page_elt = this.pages_refs[page.uuid];
-        const page_clone = page_elt.cloneNode(true);
-        page_clone.style = ""; // reset page style for the clone
-        page_clone.style.position = "relative";
-        page_clone.style.padding = this.page_margins;
-        page_clone.style.breakBefore = page_idx ? "page" : "auto";
+        //const page_clone = page_elt.cloneNode(true);
+        page.elt.style = ""; // reset page style for the clone
+        page.elt.style.position = "relative";
+        page.elt.style.padding = this.page_margins;
+        page.elt.style.breakBefore = page_idx ? "page" : "auto";
 
         // add overlays if any
-        const overlay_elts = this.pages_overlay_refs[page.uuid];
-        if(overlay_elts){
-          const overlay_clone = overlay_elts.cloneNode(true);
-          overlay_clone.style.position = "absolute";
-          overlay_clone.style.left = "0";
-          overlay_clone.style.top = "0";
-          overlay_clone.style.transform = "none";
-          overlay_clone.style.padding = "0";
-          overlay_clone.style.overflow = "hidden";
-          page_clone.prepend(overlay_clone);
+        const overlay_elt = this.pages_overlay_refs[page.uuid];
+        if(overlay_elt){
+          overlay_elt.style.position = "absolute";
+          overlay_elt.style.left = "0";
+          overlay_elt.style.top = "0";
+          overlay_elt.style.transform = "none";
+          overlay_elt.style.padding = "0";
+          overlay_elt.style.overflow = "hidden";
+          page.elt.prepend(overlay_elt);
         }
         
-        print_body.append(page_clone);
+        print_body.append(page.elt);
       }
 
       // display a return arrow to let the user restore the original body in case the navigator doesn't call after_print() (it happens sometimes in Chrome)
@@ -480,6 +503,15 @@ export default {
 
     // Restore content after closing the native print box
     after_print () {
+      for(const [page_idx, page] of this.pages.entries()){
+        page.elt.style = this.css_to_string(this.page_style(page_idx, page.template ? false : true));
+        this.$refs.content.append(page.elt);
+        const overlay_elt = this.pages_overlay_refs[page.uuid];
+        if(overlay_elt) {
+          overlay_elt.style = this.css_to_string(this.page_style(page_idx, false));
+          this.$refs.overlays.append(overlay_elt);
+        }
+      }
       document.body = this._page_body;
       this.update_editor_width();
     }
@@ -488,22 +520,22 @@ export default {
   // Watch for changes and adapt content accordingly
   watch: {
     page_format_mm: {
-      async handler () {
+      handler () {
         this.update_css_media_style();
-        await this.reset_content();
+        this.reset_content();
       }
     },
     page_margins: {
-      async handler () {
-        await this.reset_content();
+      handler () {
+        this.reset_content();
       }
     },
     content: {
-      async handler () {
+      handler () {
         // prevent infinite loop as reset_content triggers a content update and it's async
         if(this.prevent_next_content_update_from_parent) {
           this.prevent_next_content_update_from_parent = false;
-        } else await this.reset_content();
+        } else this.reset_content();
       },
       deep: true
     }
