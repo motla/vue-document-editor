@@ -76,6 +76,7 @@ export default {
       editor_width: 0, // real measured with of an empty editor <div> in px
       prevent_next_content_update_from_parent: false, // workaround to avoid infinite update loop
       current_text_style: false, // contains the style at caret position
+      printing_mode: false, // flag set when page is rendering in printing mode
     }
   },
 
@@ -428,7 +429,7 @@ export default {
         }
         // Update page properties
         page.elt.dataset.contentIdx = page.content_idx;
-        page.elt.style = Object.entries(this.page_style(page_idx, page.template ? false : true)).map(([k, v]) => k.replace(/[A-Z]/g, match => ("-"+match.toLowerCase()))+":"+v).join(';'); // (convert page_style to CSS string)
+        if(!this.printing_mode) page.elt.style = Object.entries(this.page_style(page_idx, page.template ? false : true)).map(([k, v]) => k.replace(/[A-Z]/g, match => ("-"+match.toLowerCase()))+":"+v).join(';'); // (convert page_style to CSS string)
         page.elt.contentEditable = (this.editable && !page.template) ? true : false;
       }
     },
@@ -446,6 +447,9 @@ export default {
 
     // Prepare content before opening the native print box
     before_print () {
+      // set the printing mode flag
+      this.printing_mode = true;
+
       // store the current body aside
       this._page_body = document.body;
 
@@ -503,6 +507,10 @@ export default {
 
     // Restore content after closing the native print box
     after_print () {
+      // clear the printing mode flag
+      this.printing_mode = false;
+
+      // restore pages and overlays
       for(const [page_idx, page] of this.pages.entries()){
         page.elt.style = this.css_to_string(this.page_style(page_idx, page.template ? false : true));
         this.$refs.content.append(page.elt);
@@ -513,7 +521,6 @@ export default {
         }
       }
       document.body = this._page_body;
-      this.update_editor_width();
     }
   },
 
