@@ -39,4 +39,4 @@ You can override these CSS variables somewhere in your project (it will not affe
 ```
 The default font style of the document is set by the parent element.
 
-###### :speech_balloon: If you need some variables that are missing, edit [the stylesheet](src/DocumentEditor/imports/doc-editor-default-styles.scss) then submit a PR, or overwrite styles using `!important`
+###### :speech_balloon: If you need some variables that are missing, edit [the stylesheet](src/DocumentEditor/DocumentEditor.vue#L563) then submit a PR, or overwrite styles using `!important`

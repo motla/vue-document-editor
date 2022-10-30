@@ -36,8 +36,6 @@ npm install vue-document-editor
 npm install vue-document-editor@1
 ```
 
-###### :warning: Your Vue.js project must have [`scss`](https://vue-loader.vuejs.org/guide/pre-processors.html#sass) support
-
 ###### :speech_balloon: If you prefer static files, import assets from the `dist` folder
 
 ## Basic example
