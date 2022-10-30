@@ -4,6 +4,8 @@
 
 # API
 
+###### :speech_balloon: This is the API for Vue2. [For Vue3, check the master branch](https://github.com/motla/vue-document-editor/blob/master/API.md).
+
 ## Props
 - **content**: `Array` (required)
 
@@ -37,4 +39,4 @@ You can override these CSS variables somewhere in your project (it will not affe
 ```
 The default font style of the document is set by the parent element.
 
-###### :speech_balloon: If you need some variables that are missing, edit [the stylesheet](src/DocumentEditor/imports/doc-editor-default-styles.scss) then submit a PR, or overwrite styles using `!important`
+###### :speech_balloon: If you need some variables that are missing, edit [the stylesheet](src/DocumentEditor/DocumentEditor.vue#L491) then submit a PR, or overwrite styles using `!important`

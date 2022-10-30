@@ -1,9 +1,18 @@
 ###### :speech_balloon: For v2.x (Vue3) releases, see the master branch
 
+## v1.3.0
+
+- SCSS has been converted to basic CSS, so you don't have to install a SCSS compiler anymore
+- Updating dependencies
+- Removing ESLint for a lighter project
+- Fix [Issue 16](https://github.com/motla/vue-document-editor/issues/16): The component breaks if you remove all the content
+
 ## v1.2.8
+
 - Fix [Issue 19](https://github.com/motla/vue-document-editor/issues/19): Any custom CSS formatting other than the one on `<body>` was not taken into account in print mode
 
 ## v1.2.7
+
 - Fix [Issue 16](https://github.com/motla/vue-document-editor/issues/16): The component breaks if you remove the last character
 - Fix warnings about deprecated ::v-deep and print-color-adjust
 - Dev dependencies upgrade

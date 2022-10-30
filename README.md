@@ -36,8 +36,6 @@ npm install vue-document-editor
 npm install vue-document-editor@1
 ```
 
-###### :warning: Your Vue.js project must have [`scss`](https://vue-loader.vuejs.org/guide/pre-processors.html#sass) support
-
 ###### :speech_balloon: If you prefer static files, import assets from the `dist` folder
 
 ## Basic example (Vue 2)
@@ -99,7 +97,7 @@ export default {
 See the [Demo.vue](src/Demo/Demo.vue) file and the [InvoiceTemplate.vue](src/Demo/InvoiceTemplate.vue) file corresponding to the [live demo](https://motla.github.io/vue-document-editor/).
 
 ## API
-For the list of props, data and styling variables: **read the [API](API.md)**.
+For the list of props, data and styling variables: **:blue_book: read the [API](API.md)**.
 
 ## Known issues / limitations
 - **Undo / Redo**: Native undo/redo needs to be rewritten as the split mechanism modifies the HTML content at every input, so the navigator is lost. You have to implement it yourself by watching `content` updates and storing them in a stack, then restoring them. [Demo.vue](src/Demo/Demo.vue) implements this. Also your interactive templates need to have a custom undo/redo management if their editable fields are not synced with the `content`.
@@ -109,7 +107,6 @@ For the list of props, data and styling variables: **read the [API](API.md)**.
 
 ## Project development
 - `npm run serve` compiles and hot-reloads demo for development
-- `npm run lint` lints and fixes files
 - `npm run build` compiles and minifies production files and demo
 
 ## Licensing

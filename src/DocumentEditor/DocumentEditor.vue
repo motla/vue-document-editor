@@ -115,7 +115,10 @@ export default {
     // Resets all content from the content property
     async reset_content () {
       // If provided content is empty, initialize it first and exit
-      if(!this.content.length) { this.$emit("update:content", [""]); return; }
+      if(!this.content.length) {
+        this.$emit("update:content", [""]);
+        return;
+      }
 
       // Delete all pages and set one new page per content item
       this.pages = this.content.length ? this.content.map((content, content_idx) => ({
@@ -167,7 +170,7 @@ export default {
 
       // If all the document was wiped out, start a new empty document
       if(!this.pages.length){
-        this.reset_content();
+        this.$emit("update:content", [""]);
         return;
       }
 
@@ -495,6 +498,75 @@ body {
   print-color-adjust: exact;
 }
 </style>
-<style lang="scss" scoped>
-  @import "./imports/doc-editor-default-styles.scss";
+<style scoped>
+.editor {
+  display: block;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  cursor: default;
+}
+.editor ::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+.editor ::-webkit-scrollbar-track,
+.editor ::-webkit-scrollbar-corner {
+  display: none;
+}
+.editor ::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 5px solid transparent;
+  border-radius: 16px;
+  background-clip: content-box;
+}
+.editor ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+.editor .hide_children > * {
+  display: none;
+}
+.editor > .content {
+  position: relative;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  min-width: 100%;
+  pointer-events: none;
+}
+.editor > .content >>> .page {
+  position: absolute;
+  box-sizing: border-box;
+  left: 50%;
+  transform-origin: center top;
+  background: var(--page-background, white);
+  box-shadow: var(--page-box-shadow, 0 1px 3px 1px rgba(60, 64, 67, 0.15));
+  border: var(--page-border);
+  border-radius: var(--page-border-radius);
+  transition: left 0.3s, top 0.3s;
+  overflow: hidden;
+  pointer-events: all;
+}
+.editor > .content[contenteditable],
+.editor > .content >>> *[contenteditable] {
+  cursor: text;
+}
+.editor > .content >>> *[contenteditable=false] {
+  cursor: default;
+}
+.editor > .overlays {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  min-width: 100%;
+  pointer-events: none;
+}
+.editor > .overlays > .overlay {
+  position: absolute;
+  box-sizing: border-box;
+  left: 50%;
+  transform-origin: center top;
+  transition: left 0.3s, top 0.3s;
+  overflow: hidden;
+  z-index: 1;
+}
 </style>
