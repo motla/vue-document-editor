@@ -129,7 +129,7 @@ export default {
 See the [Demo.vue](src/Demo/Demo.vue) file and the [InvoiceTemplate.ce.vue](src/Demo/InvoiceTemplate.ce.vue) file corresponding to the [live demo](https://motla.github.io/vue-document-editor/).
 
 ## API
-For the list of props, data and styling variables: **read the [API](API.md)**.
+For the list of props, data and styling variables: **:blue_book: read the [API](API.md)**.
 
 ## Known issues / limitations
 - **Undo / Redo**: Native undo/redo needs to be rewritten as the split mechanism modifies the HTML content at every input, so the navigator is lost. You have to implement it yourself by watching `content` updates and storing them in a stack, then restoring them. [Demo.vue](src/Demo/Demo.vue) implements this. Also your interactive templates need to have a custom undo/redo management if their editable fields are not synced with the `content`.
