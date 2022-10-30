@@ -4,10 +4,12 @@
 
 # API
 
+###### :speech_balloon: This is the API for Vue3. [For Vue2, check the vue2 branch](https://github.com/motla/vue-document-editor/blob/vue2/API.md).
+
 ## Props
 - **v-model:content**: `Array` (required)
 
-*Contains the initial document content. Each array item is a new set of pages containing the item. An item can either be an HTML string or this object `{ template: markRaw(YourComponent), props: {} }` for interactive templates (see [Demo.vue](src/Demo/Demo.vue) and [InvoiceTemplate.vue](src/Demo/InvoiceTemplate.vue) for an example). If an HTML content is too large, it will be split over multiple pages. On the contrary, interactive templates take one full page and any overflow is hidden. You can always restrict the edition of some content inside a page by setting `contenteditable="false"` to some HTML tags.*
+*Contains the initial document content. Each array item is a new set of pages containing the item. An item can either be an HTML string or this object `{ template: markRaw(YourComponent), props: {} }` for interactive templates (see [Demo.vue](src/Demo/Demo.vue) and [InvoiceTemplate.ce.vue](src/Demo/InvoiceTemplate.ce.vue) for an example). If your template contains custom CSS, you must name it with the `.ce.vue` extension ([more info here](https://vuejs.org/guide/extras/web-components.html#sfc-as-custom-element)). If an HTML content is too large, it will be split over multiple pages. On the contrary, interactive templates take one full page and any overflow is hidden. You can always restrict the edition of some content inside a page by setting `contenteditable="false"` to some HTML tags.*
 
 - **display**: `"grid"(default), "horizontal", "vertical"` - *Display mode for the pages.*
 - **editable**: `Boolean (default:true)` - *Used to disable the entire document modification*

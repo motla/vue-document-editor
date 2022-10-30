@@ -128,7 +128,7 @@ export default {
 </details>
 
 ## Complete example
-See the [Demo.vue](src/Demo/Demo.vue) file and the [InvoiceTemplate.vue](src/Demo/InvoiceTemplate.vue) file corresponding to the [live demo](https://motla.github.io/vue-document-editor/).
+See the [Demo.vue](src/Demo/Demo.vue) file and the [InvoiceTemplate.ce.vue](src/Demo/InvoiceTemplate.ce.vue) file corresponding to the [live demo](https://motla.github.io/vue-document-editor/).
 
 ## API
 For the list of props, data and styling variables: **read the [API](API.md)**.

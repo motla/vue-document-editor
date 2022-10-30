@@ -1,3 +1,9 @@
+## v2.1.0
+
+- This library core has been rewritten for Vue3 using an hoisted static `<div>` for pages content to manage page manually and avoid conflicts between DOM contenteditable elements and Vue.js. [More info here](https://vuejs.org/guide/extras/rendering-mechanism.html#static-hoisting)
+- SCSS has been converted to basic CSS, so you don't have to install a SCSS compiler anymore
+- :warning: Warning: starting from this version, the new core implies that for using templates with custom CSS you must rename your single file components with `.ce.vue` extension. [More info here](https://vuejs.org/guide/extras/web-components.html#sfc-as-custom-element)
+
 ## v2.0.7
 
 - Fix: 2.0.6 static libraries and docs (demo) were faulty because compiled with vue2. Recompiled with vue3.
