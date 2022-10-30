@@ -28,22 +28,6 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 6077:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var isCallable = __webpack_require__(614);
-
-var $String = String;
-var $TypeError = TypeError;
-
-module.exports = function (argument) {
-  if (typeof argument == 'object' || isCallable(argument)) return argument;
-  throw $TypeError("Can't set " + $String(argument) + ' as a prototype');
-};
-
-
-/***/ }),
-
 /***/ 9670:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -100,73 +84,51 @@ module.exports = {
 
 /***/ }),
 
+/***/ 3658:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var DESCRIPTORS = __webpack_require__(9781);
+var isArray = __webpack_require__(3157);
+
+var $TypeError = TypeError;
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+
+// Safari < 13 does not throw an error in this case
+var SILENT_ON_NON_WRITABLE_LENGTH_SET = DESCRIPTORS && !function () {
+  // makes no sense without proper strict mode support
+  if (this !== undefined) return true;
+  try {
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
+    Object.defineProperty([], 'length', { writable: false }).length = 1;
+  } catch (error) {
+    return error instanceof TypeError;
+  }
+}();
+
+module.exports = SILENT_ON_NON_WRITABLE_LENGTH_SET ? function (O, length) {
+  if (isArray(O) && !getOwnPropertyDescriptor(O, 'length').writable) {
+    throw $TypeError('Cannot set read only .length');
+  } return O.length = length;
+} : function (O, length) {
+  return O.length = length;
+};
+
+
+/***/ }),
+
 /***/ 4326:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThis = __webpack_require__(1702);
+var uncurryThisRaw = __webpack_require__(84);
 
-var toString = uncurryThis({}.toString);
-var stringSlice = uncurryThis(''.slice);
+var toString = uncurryThisRaw({}.toString);
+var stringSlice = uncurryThisRaw(''.slice);
 
 module.exports = function (it) {
   return stringSlice(toString(it), 8, -1);
-};
-
-
-/***/ }),
-
-/***/ 648:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var TO_STRING_TAG_SUPPORT = __webpack_require__(1694);
-var isCallable = __webpack_require__(614);
-var classofRaw = __webpack_require__(4326);
-var wellKnownSymbol = __webpack_require__(5112);
-
-var TO_STRING_TAG = wellKnownSymbol('toStringTag');
-var $Object = Object;
-
-// ES3 wrong here
-var CORRECT_ARGUMENTS = classofRaw(function () { return arguments; }()) == 'Arguments';
-
-// fallback for IE11 Script Access Denied error
-var tryGet = function (it, key) {
-  try {
-    return it[key];
-  } catch (error) { /* empty */ }
-};
-
-// getting tag from ES6+ `Object.prototype.toString`
-module.exports = TO_STRING_TAG_SUPPORT ? classofRaw : function (it) {
-  var O, tag, result;
-  return it === undefined ? 'Undefined' : it === null ? 'Null'
-    // @@toStringTag case
-    : typeof (tag = tryGet(O = $Object(it), TO_STRING_TAG)) == 'string' ? tag
-    // builtinTag case
-    : CORRECT_ARGUMENTS ? classofRaw(O)
-    // ES3 arguments fallback
-    : (result = classofRaw(O)) == 'Object' && isCallable(O.callee) ? 'Arguments' : result;
-};
-
-
-/***/ }),
-
-/***/ 7741:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var uncurryThis = __webpack_require__(1702);
-
-var $Error = Error;
-var replace = uncurryThis(''.replace);
-
-var TEST = (function (arg) { return String($Error(arg).stack); })('zxcasd');
-var V8_OR_CHAKRA_STACK_ENTRY = /\n\s*at [^:]*:[^\n]*/;
-var IS_V8_OR_CHAKRA_STACK = V8_OR_CHAKRA_STACK_ENTRY.test(TEST);
-
-module.exports = function (stack, dropEntries) {
-  if (IS_V8_OR_CHAKRA_STACK && typeof stack == 'string' && !$Error.prepareStackTrace) {
-    while (dropEntries--) stack = replace(stack, V8_OR_CHAKRA_STACK_ENTRY, '');
-  } return stack;
 };
 
 
@@ -266,7 +228,7 @@ module.exports = function (O, key, value, options) {
 
 var global = __webpack_require__(7854);
 
-// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+// eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
 
 module.exports = function (key, value) {
@@ -287,9 +249,25 @@ var fails = __webpack_require__(7293);
 
 // Detect IE8's incomplete defineProperty implementation
 module.exports = !fails(function () {
-  // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
+  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] != 7;
 });
+
+
+/***/ }),
+
+/***/ 4154:
+/***/ (function(module) {
+
+var documentAll = typeof document == 'object' && document.all;
+
+// https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
+var IS_HTMLDDA = typeof documentAll == 'undefined' && documentAll !== undefined;
+
+module.exports = {
+  all: documentAll,
+  IS_HTMLDDA: IS_HTMLDDA
+};
 
 
 /***/ }),
@@ -306,6 +284,20 @@ var EXISTS = isObject(document) && isObject(document.createElement);
 
 module.exports = function (it) {
   return EXISTS ? document.createElement(it) : {};
+};
+
+
+/***/ }),
+
+/***/ 7207:
+/***/ (function(module) {
+
+var $TypeError = TypeError;
+var MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF; // 2 ** 53 - 1 == 9007199254740991
+
+module.exports = function (it) {
+  if (it > MAX_SAFE_INTEGER) throw $TypeError('Maximum allowed index exceeded');
+  return it;
 };
 
 
@@ -368,23 +360,6 @@ module.exports = [
   'toString',
   'valueOf'
 ];
-
-
-/***/ }),
-
-/***/ 2914:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var fails = __webpack_require__(7293);
-var createPropertyDescriptor = __webpack_require__(9114);
-
-module.exports = !fails(function () {
-  var error = Error('a');
-  if (!('stack' in error)) return true;
-  // eslint-disable-next-line es-x/no-object-defineproperty -- safe
-  Object.defineProperty(error, 'stack', createPropertyDescriptor(1, 7));
-  return error.stack !== 7;
-});
 
 
 /***/ }),
@@ -464,30 +439,13 @@ module.exports = function (exec) {
 
 /***/ }),
 
-/***/ 2104:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var NATIVE_BIND = __webpack_require__(4374);
-
-var FunctionPrototype = Function.prototype;
-var apply = FunctionPrototype.apply;
-var call = FunctionPrototype.call;
-
-// eslint-disable-next-line es-x/no-reflect -- safe
-module.exports = typeof Reflect == 'object' && Reflect.apply || (NATIVE_BIND ? call.bind(apply) : function () {
-  return call.apply(apply, arguments);
-});
-
-
-/***/ }),
-
 /***/ 4374:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var fails = __webpack_require__(7293);
 
 module.exports = !fails(function () {
-  // eslint-disable-next-line es-x/no-function-prototype-bind -- safe
+  // eslint-disable-next-line es/no-function-prototype-bind -- safe
   var test = (function () { /* empty */ }).bind();
   // eslint-disable-next-line no-prototype-builtins -- safe
   return typeof test != 'function' || test.hasOwnProperty('prototype');
@@ -517,7 +475,7 @@ var DESCRIPTORS = __webpack_require__(9781);
 var hasOwn = __webpack_require__(2597);
 
 var FunctionPrototype = Function.prototype;
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var getDescriptor = DESCRIPTORS && Object.getOwnPropertyDescriptor;
 
 var EXISTS = hasOwn(FunctionPrototype, 'name');
@@ -534,22 +492,35 @@ module.exports = {
 
 /***/ }),
 
-/***/ 1702:
+/***/ 84:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var NATIVE_BIND = __webpack_require__(4374);
 
 var FunctionPrototype = Function.prototype;
-var bind = FunctionPrototype.bind;
 var call = FunctionPrototype.call;
-var uncurryThis = NATIVE_BIND && bind.bind(call, call);
+var uncurryThisWithBind = NATIVE_BIND && FunctionPrototype.bind.bind(call, call);
 
-module.exports = NATIVE_BIND ? function (fn) {
-  return fn && uncurryThis(fn);
-} : function (fn) {
-  return fn && function () {
+module.exports = NATIVE_BIND ? uncurryThisWithBind : function (fn) {
+  return function () {
     return call.apply(fn, arguments);
   };
+};
+
+
+/***/ }),
+
+/***/ 1702:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var classofRaw = __webpack_require__(4326);
+var uncurryThisRaw = __webpack_require__(84);
+
+module.exports = function (fn) {
+  // Nashorn bug:
+  //   https://github.com/zloirock/core-js/issues/1128
+  //   https://github.com/zloirock/core-js/issues/1130
+  if (classofRaw(fn) === 'Function') return uncurryThisRaw(fn);
 };
 
 
@@ -576,12 +547,13 @@ module.exports = function (namespace, method) {
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var aCallable = __webpack_require__(9662);
+var isNullOrUndefined = __webpack_require__(8554);
 
 // `GetMethod` abstract operation
 // https://tc39.es/ecma262/#sec-getmethod
 module.exports = function (V, P) {
   var func = V[P];
-  return func == null ? undefined : aCallable(func);
+  return isNullOrUndefined(func) ? undefined : aCallable(func);
 };
 
 
@@ -596,7 +568,7 @@ var check = function (it) {
 
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 module.exports =
-  // eslint-disable-next-line es-x/no-global-this -- safe
+  // eslint-disable-next-line es/no-global-this -- safe
   check(typeof globalThis == 'object' && globalThis) ||
   check(typeof window == 'object' && window) ||
   // eslint-disable-next-line no-restricted-globals -- safe
@@ -618,7 +590,7 @@ var hasOwnProperty = uncurryThis({}.hasOwnProperty);
 
 // `HasOwnProperty` abstract operation
 // https://tc39.es/ecma262/#sec-hasownproperty
-// eslint-disable-next-line es-x/no-object-hasown -- safe
+// eslint-disable-next-line es/no-object-hasown -- safe
 module.exports = Object.hasOwn || function hasOwn(it, key) {
   return hasOwnProperty(toObject(it), key);
 };
@@ -643,7 +615,7 @@ var createElement = __webpack_require__(317);
 
 // Thanks to IE8 for its funny defineProperty
 module.exports = !DESCRIPTORS && !fails(function () {
-  // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
+  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty(createElement('div'), 'a', {
     get: function () { return 7; }
   }).a != 7;
@@ -674,31 +646,6 @@ module.exports = fails(function () {
 
 /***/ }),
 
-/***/ 9587:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var isCallable = __webpack_require__(614);
-var isObject = __webpack_require__(111);
-var setPrototypeOf = __webpack_require__(7674);
-
-// makes subclassing work correct for wrapped built-ins
-module.exports = function ($this, dummy, Wrapper) {
-  var NewTarget, NewTargetPrototype;
-  if (
-    // it can work only with native `setPrototypeOf`
-    setPrototypeOf &&
-    // we haven't completely correct pre-ES6 way for getting `new.target`, so use this
-    isCallable(NewTarget = dummy.constructor) &&
-    NewTarget !== Wrapper &&
-    isObject(NewTargetPrototype = NewTarget.prototype) &&
-    NewTargetPrototype !== Wrapper.prototype
-  ) setPrototypeOf($this, NewTargetPrototype);
-  return $this;
-};
-
-
-/***/ }),
-
 /***/ 2788:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -720,29 +667,11 @@ module.exports = store.inspectSource;
 
 /***/ }),
 
-/***/ 8340:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var isObject = __webpack_require__(111);
-var createNonEnumerableProperty = __webpack_require__(8880);
-
-// `InstallErrorCause` abstract operation
-// https://tc39.es/proposal-error-cause/#sec-errorobjects-install-error-cause
-module.exports = function (O, options) {
-  if (isObject(options) && 'cause' in options) {
-    createNonEnumerableProperty(O, 'cause', options.cause);
-  }
-};
-
-
-/***/ }),
-
 /***/ 9909:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var NATIVE_WEAK_MAP = __webpack_require__(8536);
+var NATIVE_WEAK_MAP = __webpack_require__(4811);
 var global = __webpack_require__(7854);
-var uncurryThis = __webpack_require__(1702);
 var isObject = __webpack_require__(111);
 var createNonEnumerableProperty = __webpack_require__(8880);
 var hasOwn = __webpack_require__(2597);
@@ -770,26 +699,28 @@ var getterFor = function (TYPE) {
 
 if (NATIVE_WEAK_MAP || shared.state) {
   var store = shared.state || (shared.state = new WeakMap());
-  var wmget = uncurryThis(store.get);
-  var wmhas = uncurryThis(store.has);
-  var wmset = uncurryThis(store.set);
+  /* eslint-disable no-self-assign -- prototype methods protection */
+  store.get = store.get;
+  store.has = store.has;
+  store.set = store.set;
+  /* eslint-enable no-self-assign -- prototype methods protection */
   set = function (it, metadata) {
-    if (wmhas(store, it)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
+    if (store.has(it)) throw TypeError(OBJECT_ALREADY_INITIALIZED);
     metadata.facade = it;
-    wmset(store, it, metadata);
+    store.set(it, metadata);
     return metadata;
   };
   get = function (it) {
-    return wmget(store, it) || {};
+    return store.get(it) || {};
   };
   has = function (it) {
-    return wmhas(store, it);
+    return store.has(it);
   };
 } else {
   var STATE = sharedKey('state');
   hiddenKeys[STATE] = true;
   set = function (it, metadata) {
-    if (hasOwn(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
+    if (hasOwn(it, STATE)) throw TypeError(OBJECT_ALREADY_INITIALIZED);
     metadata.facade = it;
     createNonEnumerableProperty(it, STATE, metadata);
     return metadata;
@@ -813,12 +744,33 @@ module.exports = {
 
 /***/ }),
 
+/***/ 3157:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var classof = __webpack_require__(4326);
+
+// `IsArray` abstract operation
+// https://tc39.es/ecma262/#sec-isarray
+// eslint-disable-next-line es/no-array-isarray -- safe
+module.exports = Array.isArray || function isArray(argument) {
+  return classof(argument) == 'Array';
+};
+
+
+/***/ }),
+
 /***/ 614:
-/***/ (function(module) {
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var $documentAll = __webpack_require__(4154);
+
+var documentAll = $documentAll.all;
 
 // `IsCallable` abstract operation
 // https://tc39.es/ecma262/#sec-iscallable
-module.exports = function (argument) {
+module.exports = $documentAll.IS_HTMLDDA ? function (argument) {
+  return typeof argument == 'function' || argument === documentAll;
+} : function (argument) {
   return typeof argument == 'function';
 };
 
@@ -854,12 +806,29 @@ module.exports = isForced;
 
 /***/ }),
 
+/***/ 8554:
+/***/ (function(module) {
+
+// we can't use just `it == null` since of `document.all` special case
+// https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot-aec
+module.exports = function (it) {
+  return it === null || it === undefined;
+};
+
+
+/***/ }),
+
 /***/ 111:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var isCallable = __webpack_require__(614);
+var $documentAll = __webpack_require__(4154);
 
-module.exports = function (it) {
+var documentAll = $documentAll.all;
+
+module.exports = $documentAll.IS_HTMLDDA ? function (it) {
+  return typeof it == 'object' ? it !== null : isCallable(it) || it === documentAll;
+} : function (it) {
   return typeof it == 'object' ? it !== null : isCallable(it);
 };
 
@@ -921,7 +890,7 @@ var InternalStateModule = __webpack_require__(9909);
 
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
-// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+// eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
 
 var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
@@ -972,56 +941,10 @@ var floor = Math.floor;
 
 // `Math.trunc` method
 // https://tc39.es/ecma262/#sec-math.trunc
-// eslint-disable-next-line es-x/no-math-trunc -- safe
+// eslint-disable-next-line es/no-math-trunc -- safe
 module.exports = Math.trunc || function trunc(x) {
   var n = +x;
   return (n > 0 ? floor : ceil)(n);
-};
-
-
-/***/ }),
-
-/***/ 133:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-/* eslint-disable es-x/no-symbol -- required for testing */
-var V8_VERSION = __webpack_require__(7392);
-var fails = __webpack_require__(7293);
-
-// eslint-disable-next-line es-x/no-object-getownpropertysymbols -- required for testing
-module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
-  var symbol = Symbol();
-  // Chrome 38 Symbol has incorrect toString conversion
-  // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
-  return !String(symbol) || !(Object(symbol) instanceof Symbol) ||
-    // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
-    !Symbol.sham && V8_VERSION && V8_VERSION < 41;
-});
-
-
-/***/ }),
-
-/***/ 8536:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var global = __webpack_require__(7854);
-var isCallable = __webpack_require__(614);
-var inspectSource = __webpack_require__(2788);
-
-var WeakMap = global.WeakMap;
-
-module.exports = isCallable(WeakMap) && /native code/.test(inspectSource(WeakMap));
-
-
-/***/ }),
-
-/***/ 6277:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var toString = __webpack_require__(1340);
-
-module.exports = function (argument, $default) {
-  return argument === undefined ? arguments.length < 2 ? '' : $default : toString(argument);
 };
 
 
@@ -1037,9 +960,9 @@ var anObject = __webpack_require__(9670);
 var toPropertyKey = __webpack_require__(4948);
 
 var $TypeError = TypeError;
-// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+// eslint-disable-next-line es/no-object-defineproperty -- safe
 var $defineProperty = Object.defineProperty;
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 var ENUMERABLE = 'enumerable';
 var CONFIGURABLE = 'configurable';
@@ -1089,7 +1012,7 @@ var toPropertyKey = __webpack_require__(4948);
 var hasOwn = __webpack_require__(2597);
 var IE8_DOM_DEFINE = __webpack_require__(4664);
 
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // `Object.getOwnPropertyDescriptor` method
@@ -1116,7 +1039,7 @@ var hiddenKeys = enumBugKeys.concat('length', 'prototype');
 
 // `Object.getOwnPropertyNames` method
 // https://tc39.es/ecma262/#sec-object.getownpropertynames
-// eslint-disable-next-line es-x/no-object-getownpropertynames -- safe
+// eslint-disable-next-line es/no-object-getownpropertynames -- safe
 exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
   return internalObjectKeys(O, hiddenKeys);
 };
@@ -1127,7 +1050,7 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
 /***/ 5181:
 /***/ (function(__unused_webpack_module, exports) {
 
-// eslint-disable-next-line es-x/no-object-getownpropertysymbols -- safe
+// eslint-disable-next-line es/no-object-getownpropertysymbols -- safe
 exports.f = Object.getOwnPropertySymbols;
 
 
@@ -1176,7 +1099,7 @@ module.exports = function (object, names) {
 "use strict";
 
 var $propertyIsEnumerable = {}.propertyIsEnumerable;
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // Nashorn ~ JDK8 bug
@@ -1188,40 +1111,6 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
   var descriptor = getOwnPropertyDescriptor(this, V);
   return !!descriptor && descriptor.enumerable;
 } : $propertyIsEnumerable;
-
-
-/***/ }),
-
-/***/ 7674:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-/* eslint-disable no-proto -- safe */
-var uncurryThis = __webpack_require__(1702);
-var anObject = __webpack_require__(9670);
-var aPossiblePrototype = __webpack_require__(6077);
-
-// `Object.setPrototypeOf` method
-// https://tc39.es/ecma262/#sec-object.setprototypeof
-// Works with __proto__ only. Old v8 can't work with null proto objects.
-// eslint-disable-next-line es-x/no-object-setprototypeof -- safe
-module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
-  var CORRECT_SETTER = false;
-  var test = {};
-  var setter;
-  try {
-    // eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
-    setter = uncurryThis(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set);
-    setter(test, []);
-    CORRECT_SETTER = test instanceof Array;
-  } catch (error) { /* empty */ }
-  return function setPrototypeOf(O, proto) {
-    anObject(O);
-    aPossiblePrototype(proto);
-    if (CORRECT_SETTER) setter(O, proto);
-    else O.__proto__ = proto;
-    return O;
-  };
-}() : undefined);
 
 
 /***/ }),
@@ -1269,31 +1158,17 @@ module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
 
 /***/ }),
 
-/***/ 2626:
+/***/ 4488:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var defineProperty = (__webpack_require__(3070).f);
-
-module.exports = function (Target, Source, key) {
-  key in Target || defineProperty(Target, key, {
-    configurable: true,
-    get: function () { return Source[key]; },
-    set: function (it) { Source[key] = it; }
-  });
-};
-
-
-/***/ }),
-
-/***/ 4488:
-/***/ (function(module) {
+var isNullOrUndefined = __webpack_require__(8554);
 
 var $TypeError = TypeError;
 
 // `RequireObjectCoercible` abstract operation
 // https://tc39.es/ecma262/#sec-requireobjectcoercible
 module.exports = function (it) {
-  if (it == undefined) throw $TypeError("Can't call method on " + it);
+  if (isNullOrUndefined(it)) throw $TypeError("Can't call method on " + it);
   return it;
 };
 
@@ -1338,11 +1213,31 @@ var store = __webpack_require__(5465);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.24.1',
+  version: '3.26.0',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.24.1/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.26.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
+});
+
+
+/***/ }),
+
+/***/ 6293:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+/* eslint-disable es/no-symbol -- required for testing */
+var V8_VERSION = __webpack_require__(7392);
+var fails = __webpack_require__(7293);
+
+// eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
+module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
+  var symbol = Symbol();
+  // Chrome 38 Symbol has incorrect toString conversion
+  // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
+  return !String(symbol) || !(Object(symbol) instanceof Symbol) ||
+    // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
+    !Symbol.sham && V8_VERSION && V8_VERSION < 41;
 });
 
 
@@ -1477,36 +1372,6 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 1694:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var wellKnownSymbol = __webpack_require__(5112);
-
-var TO_STRING_TAG = wellKnownSymbol('toStringTag');
-var test = {};
-
-test[TO_STRING_TAG] = 'z';
-
-module.exports = String(test) === '[object z]';
-
-
-/***/ }),
-
-/***/ 1340:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var classof = __webpack_require__(648);
-
-var $String = String;
-
-module.exports = function (argument) {
-  if (classof(argument) === 'Symbol') throw TypeError('Cannot convert a Symbol value to a string');
-  return $String(argument);
-};
-
-
-/***/ }),
-
 /***/ 6330:
 /***/ (function(module) {
 
@@ -1542,8 +1407,8 @@ module.exports = function (key) {
 /***/ 3307:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-/* eslint-disable es-x/no-symbol -- required for testing */
-var NATIVE_SYMBOL = __webpack_require__(133);
+/* eslint-disable es/no-symbol -- required for testing */
+var NATIVE_SYMBOL = __webpack_require__(6293);
 
 module.exports = NATIVE_SYMBOL
   && !Symbol.sham
@@ -1561,12 +1426,25 @@ var fails = __webpack_require__(7293);
 // V8 ~ Chrome 36-
 // https://bugs.chromium.org/p/v8/issues/detail?id=3334
 module.exports = DESCRIPTORS && fails(function () {
-  // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
+  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty(function () { /* empty */ }, 'prototype', {
     value: 42,
     writable: false
   }).prototype != 42;
 });
+
+
+/***/ }),
+
+/***/ 4811:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var global = __webpack_require__(7854);
+var isCallable = __webpack_require__(614);
+
+var WeakMap = global.WeakMap;
+
+module.exports = isCallable(WeakMap) && /native code/.test(String(WeakMap));
 
 
 /***/ }),
@@ -1578,7 +1456,7 @@ var global = __webpack_require__(7854);
 var shared = __webpack_require__(2309);
 var hasOwn = __webpack_require__(2597);
 var uid = __webpack_require__(9711);
-var NATIVE_SYMBOL = __webpack_require__(133);
+var NATIVE_SYMBOL = __webpack_require__(6293);
 var USE_SYMBOL_AS_UID = __webpack_require__(3307);
 
 var WellKnownSymbolsStore = shared('wks');
@@ -1602,138 +1480,49 @@ module.exports = function (name) {
 
 /***/ }),
 
-/***/ 9191:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+/***/ 7658:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
-var getBuiltIn = __webpack_require__(5005);
-var hasOwn = __webpack_require__(2597);
-var createNonEnumerableProperty = __webpack_require__(8880);
-var isPrototypeOf = __webpack_require__(7976);
-var setPrototypeOf = __webpack_require__(7674);
-var copyConstructorProperties = __webpack_require__(9920);
-var proxyAccessor = __webpack_require__(2626);
-var inheritIfRequired = __webpack_require__(9587);
-var normalizeStringArgument = __webpack_require__(6277);
-var installErrorCause = __webpack_require__(8340);
-var clearErrorStack = __webpack_require__(7741);
-var ERROR_STACK_INSTALLABLE = __webpack_require__(2914);
-var DESCRIPTORS = __webpack_require__(9781);
-var IS_PURE = __webpack_require__(1913);
-
-module.exports = function (FULL_NAME, wrapper, FORCED, IS_AGGREGATE_ERROR) {
-  var STACK_TRACE_LIMIT = 'stackTraceLimit';
-  var OPTIONS_POSITION = IS_AGGREGATE_ERROR ? 2 : 1;
-  var path = FULL_NAME.split('.');
-  var ERROR_NAME = path[path.length - 1];
-  var OriginalError = getBuiltIn.apply(null, path);
-
-  if (!OriginalError) return;
-
-  var OriginalErrorPrototype = OriginalError.prototype;
-
-  // V8 9.3- bug https://bugs.chromium.org/p/v8/issues/detail?id=12006
-  if (!IS_PURE && hasOwn(OriginalErrorPrototype, 'cause')) delete OriginalErrorPrototype.cause;
-
-  if (!FORCED) return OriginalError;
-
-  var BaseError = getBuiltIn('Error');
-
-  var WrappedError = wrapper(function (a, b) {
-    var message = normalizeStringArgument(IS_AGGREGATE_ERROR ? b : a, undefined);
-    var result = IS_AGGREGATE_ERROR ? new OriginalError(a) : new OriginalError();
-    if (message !== undefined) createNonEnumerableProperty(result, 'message', message);
-    if (ERROR_STACK_INSTALLABLE) createNonEnumerableProperty(result, 'stack', clearErrorStack(result.stack, 2));
-    if (this && isPrototypeOf(OriginalErrorPrototype, this)) inheritIfRequired(result, this, WrappedError);
-    if (arguments.length > OPTIONS_POSITION) installErrorCause(result, arguments[OPTIONS_POSITION]);
-    return result;
-  });
-
-  WrappedError.prototype = OriginalErrorPrototype;
-
-  if (ERROR_NAME !== 'Error') {
-    if (setPrototypeOf) setPrototypeOf(WrappedError, BaseError);
-    else copyConstructorProperties(WrappedError, BaseError, { name: true });
-  } else if (DESCRIPTORS && STACK_TRACE_LIMIT in OriginalError) {
-    proxyAccessor(WrappedError, OriginalError, STACK_TRACE_LIMIT);
-    proxyAccessor(WrappedError, OriginalError, 'prepareStackTrace');
-  }
-
-  copyConstructorProperties(WrappedError, OriginalError);
-
-  if (!IS_PURE) try {
-    // Safari 13- bug: WebAssembly errors does not have a proper `.name`
-    if (OriginalErrorPrototype.name !== ERROR_NAME) {
-      createNonEnumerableProperty(OriginalErrorPrototype, 'name', ERROR_NAME);
-    }
-    OriginalErrorPrototype.constructor = WrappedError;
-  } catch (error) { /* empty */ }
-
-  return WrappedError;
-};
-
-
-/***/ }),
-
-/***/ 1703:
-/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
-
-/* eslint-disable no-unused-vars -- required for functions `.length` */
 var $ = __webpack_require__(2109);
-var global = __webpack_require__(7854);
-var apply = __webpack_require__(2104);
-var wrapErrorConstructorWithCause = __webpack_require__(9191);
+var toObject = __webpack_require__(7908);
+var lengthOfArrayLike = __webpack_require__(6244);
+var setArrayLength = __webpack_require__(3658);
+var doesNotExceedSafeInteger = __webpack_require__(7207);
+var fails = __webpack_require__(7293);
 
-var WEB_ASSEMBLY = 'WebAssembly';
-var WebAssembly = global[WEB_ASSEMBLY];
+var INCORRECT_TO_LENGTH = fails(function () {
+  return [].push.call({ length: 0x100000000 }, 1) !== 4294967297;
+});
 
-var FORCED = Error('e', { cause: 7 }).cause !== 7;
-
-var exportGlobalErrorCauseWrapper = function (ERROR_NAME, wrapper) {
-  var O = {};
-  O[ERROR_NAME] = wrapErrorConstructorWithCause(ERROR_NAME, wrapper, FORCED);
-  $({ global: true, constructor: true, arity: 1, forced: FORCED }, O);
-};
-
-var exportWebAssemblyErrorCauseWrapper = function (ERROR_NAME, wrapper) {
-  if (WebAssembly && WebAssembly[ERROR_NAME]) {
-    var O = {};
-    O[ERROR_NAME] = wrapErrorConstructorWithCause(WEB_ASSEMBLY + '.' + ERROR_NAME, wrapper, FORCED);
-    $({ target: WEB_ASSEMBLY, stat: true, constructor: true, arity: 1, forced: FORCED }, O);
+// V8 and Safari <= 15.4, FF < 23 throws InternalError
+// https://bugs.chromium.org/p/v8/issues/detail?id=12681
+var SILENT_ON_NON_WRITABLE_LENGTH = !function () {
+  try {
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
+    Object.defineProperty([], 'length', { writable: false }).push();
+  } catch (error) {
+    return error instanceof TypeError;
   }
-};
+}();
 
-// https://github.com/tc39/proposal-error-cause
-exportGlobalErrorCauseWrapper('Error', function (init) {
-  return function Error(message) { return apply(init, this, arguments); };
-});
-exportGlobalErrorCauseWrapper('EvalError', function (init) {
-  return function EvalError(message) { return apply(init, this, arguments); };
-});
-exportGlobalErrorCauseWrapper('RangeError', function (init) {
-  return function RangeError(message) { return apply(init, this, arguments); };
-});
-exportGlobalErrorCauseWrapper('ReferenceError', function (init) {
-  return function ReferenceError(message) { return apply(init, this, arguments); };
-});
-exportGlobalErrorCauseWrapper('SyntaxError', function (init) {
-  return function SyntaxError(message) { return apply(init, this, arguments); };
-});
-exportGlobalErrorCauseWrapper('TypeError', function (init) {
-  return function TypeError(message) { return apply(init, this, arguments); };
-});
-exportGlobalErrorCauseWrapper('URIError', function (init) {
-  return function URIError(message) { return apply(init, this, arguments); };
-});
-exportWebAssemblyErrorCauseWrapper('CompileError', function (init) {
-  return function CompileError(message) { return apply(init, this, arguments); };
-});
-exportWebAssemblyErrorCauseWrapper('LinkError', function (init) {
-  return function LinkError(message) { return apply(init, this, arguments); };
-});
-exportWebAssemblyErrorCauseWrapper('RuntimeError', function (init) {
-  return function RuntimeError(message) { return apply(init, this, arguments); };
+// `Array.prototype.push` method
+// https://tc39.es/ecma262/#sec-array.prototype.push
+$({ target: 'Array', proto: true, arity: 1, forced: INCORRECT_TO_LENGTH || SILENT_ON_NON_WRITABLE_LENGTH }, {
+  // eslint-disable-next-line no-unused-vars -- required for `.length`
+  push: function push(item) {
+    var O = toObject(this);
+    var len = lengthOfArrayLike(O);
+    var argCount = arguments.length;
+    doesNotExceedSafeInteger(len + argCount);
+    for (var i = 0; i < argCount; i++) {
+      O[len] = arguments[i];
+      len++;
+    }
+    setArrayLength(O, len);
+    return len;
+  }
 });
 
 
@@ -1828,11 +1617,10 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=4d6b14e8&scoped=true&
+;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=6d0a5848&scoped=true&
 var render = function render() {
   var _vm = this,
-      _c = _vm._self._c;
-
+    _c = _vm._self._c;
   return _c('div', {
     ref: "editor",
     staticClass: "editor"
@@ -1878,14 +1666,11 @@ var render = function render() {
     }, 'component', page.props, false, true)) : _vm._e()], 1);
   }), 0)]);
 };
-
 var staticRenderFns = [];
 
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es.error.cause.js
-var es_error_cause = __webpack_require__(1703);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
+var es_array_push = __webpack_require__(7658);
 ;// CONCATENATED MODULE: ./src/DocumentEditor/imports/page-transition-mgmt.js
-
-
 /**
  * Utility function that acts like an Array.filter on childNodes of "container"
  * @param {HTMLElement} container 
@@ -1894,13 +1679,12 @@ var es_error_cause = __webpack_require__(1703);
 function find_sub_child_sibling_node(container, s_tag) {
   if (!container || !s_tag) return false;
   const child_nodes = container.childNodes;
-
   for (let i = 0; i < child_nodes.length; i++) {
     if (child_nodes[i].s_tag == s_tag) return child_nodes[i];
   }
-
   return false;
 }
+
 /**
  * This function moves every sub-child of argument "child" to the start of the "child_sibling"
  * argument, beginning from the last child, with word splitting and format preserving.
@@ -1911,60 +1695,61 @@ function find_sub_child_sibling_node(container, s_tag) {
  * @param {Function} stop_condition Check function that returns a boolean if content doesn't overflow anymore
  * @param {Boolean} not_first_child Should be unset. Used internally to let at least one child in the page
  */
-
-
 function move_children_forward_recursively(child, child_sibling, stop_condition, not_first_child) {
   // if the child still has nodes and the current page still overflows
   while (child.childNodes.length && !stop_condition()) {
     // check if page has only one child tree left
-    not_first_child = not_first_child || child.childNodes.length != 1; // select the last sub-child
+    not_first_child = not_first_child || child.childNodes.length != 1;
 
-    const sub_child = child.lastChild; // if it is a text node, move its content to next page word(/space) by word
+    // select the last sub-child
+    const sub_child = child.lastChild;
 
+    // if it is a text node, move its content to next page word(/space) by word
     if (sub_child.nodeType == Node.TEXT_NODE) {
       const sub_child_hashes = sub_child.textContent.match(/(\s|\S+)/g);
       const sub_child_continuation = document.createTextNode('');
       child_sibling.prepend(sub_child_continuation);
       const l = sub_child_hashes ? sub_child_hashes.length : 0;
-
       for (let i = 0; i < l; i++) {
         if (i == l - 1 && !not_first_child) return; // never remove the first word of the page
-
         sub_child.textContent = sub_child_hashes.slice(0, l - i - 1).join('');
         sub_child_continuation.textContent = sub_child_hashes.slice(l - i - 1, l).join('');
         if (stop_condition()) return;
       }
-    } // if it is a node with no content (e.g. <img>), or a header title (e.g. <h1>) we simply move it
+    }
+
+    // if it is a node with no content (e.g. <img>), or a header title (e.g. <h1>) we simply move it
     else if (!sub_child.childNodes.length || sub_child.tagName.match(/h\d/i)) {
       // just prevent moving the last child of the page
       if (!not_first_child) {
         console.log("Move-forward: first child reached with no stop condition. Aborting");
         return;
       }
-
       child_sibling.prepend(sub_child);
-    } // for every other node that is not text and not the first child, clone it recursively to next page
+    }
+
+    // for every other node that is not text and not the first child, clone it recursively to next page
     else {
       // check if sub child has already been cloned before
-      let sub_child_sibling = find_sub_child_sibling_node(child_sibling, sub_child.s_tag); // if not, create it and watermark the relationship with a random tag
+      let sub_child_sibling = find_sub_child_sibling_node(child_sibling, sub_child.s_tag);
 
+      // if not, create it and watermark the relationship with a random tag
       if (!sub_child_sibling) {
         if (!sub_child.s_tag) {
           const new_random_tag = Math.random().toString(36).slice(2, 8);
           sub_child.s_tag = new_random_tag;
         }
-
         sub_child_sibling = sub_child.cloneNode(false);
         sub_child_sibling.s_tag = sub_child.s_tag;
         child_sibling.prepend(sub_child_sibling);
-      } // then move/clone its children and sub-children recursively
+      }
 
-
+      // then move/clone its children and sub-children recursively
       move_children_forward_recursively(sub_child, sub_child_sibling, stop_condition, not_first_child);
       sub_child_sibling.normalize(); // merge consecutive text nodes
-    } // if sub_child was a container that was cloned and is now empty, we clean it
+    }
 
-
+    // if sub_child was a container that was cloned and is now empty, we clean it
     if (child.contains(sub_child)) {
       if (sub_child.childNodes.length == 0 || sub_child.innerHTML == "") child.removeChild(sub_child);else if (!stop_condition()) {
         // the only case when it can be non empty should be when stop_condition is now true
@@ -1974,6 +1759,7 @@ function move_children_forward_recursively(child, child_sibling, stop_condition,
     }
   }
 }
+
 /**
  * This function moves the first element from "next_page_html_div" to the end of "page_html_div", with
  * merging sibling tags previously watermarked by "move_children_forward_recursively", if any.
@@ -1981,34 +1767,32 @@ function move_children_forward_recursively(child, child_sibling, stop_condition,
  * @param {HTMLElement} next_page_html_div Next page element
  * @param {Function} stop_condition Check function that returns a boolean if content overflows
  */
-
-
 function move_children_backwards_with_merging(page_html_div, next_page_html_div, stop_condition) {
   // loop until content is overflowing
   while (!stop_condition()) {
     // find first child of next page
-    const first_child = next_page_html_div.firstChild; // merge it at the end of the current page
+    const first_child = next_page_html_div.firstChild;
 
+    // merge it at the end of the current page
     var merge_recursively = (container, elt) => {
       // check if child had been splitted (= has a sibling on previous page)
       const elt_sibling = find_sub_child_sibling_node(container, elt.s_tag);
-
       if (elt_sibling && elt.childNodes.length) {
         // then dig for deeper children, in case of
         merge_recursively(elt_sibling, elt.firstChild);
-      } // else move the child inside the right container at current page
+      }
+      // else move the child inside the right container at current page
       else {
         container.append(elt);
         container.normalize();
       }
     };
-
     merge_recursively(page_html_div, first_child);
   }
 }
 
-
 ;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js&
+
 
 /* harmony default export */ var DocumentEditorvue_type_script_lang_js_ = ({
   props: {
@@ -2024,8 +1808,8 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
     display: {
       type: String,
       default: "grid" // ["grid", "horizontal", "vertical"]
-
     },
+
     // Sets whether document text can be modified
     editable: {
       type: Boolean,
@@ -2049,7 +1833,6 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
       default: 1.0
     }
   },
-
   data() {
     return {
       pages: [],
@@ -2061,7 +1844,6 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
       prevent_next_content_update_from_parent: false,
       // workaround for infinite update loop
       current_text_style: false // contains the style at caret position
-
     };
   },
 
@@ -2074,14 +1856,12 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
     window.addEventListener("beforeprint", this.before_print);
     window.addEventListener("afterprint", this.after_print);
   },
-
   beforeDestroy() {
     window.removeEventListener("resize", this.update_editor_width);
     window.removeEventListener("click", this.process_current_text_style);
     window.removeEventListener("beforeprint", this.before_print);
     window.removeEventListener("afterprint", this.after_print);
   },
-
   computed: {
     css_media_style() {
       // creates a CSS <style> and returns it
@@ -2089,21 +1869,19 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
       document.head.appendChild(style);
       return style;
     }
-
   },
   methods: {
     // Computes a random 5-char UUID
     new_uuid: () => Math.random().toString(36).slice(-5),
-
     // Resets all content from the content property
     async reset_content() {
       // If provided content is empty, initialize it first and exit
       if (!this.content.length) {
         this.$emit("update:content", [""]);
         return;
-      } // Delete all pages and set one new page per content item
+      }
 
-
+      // Delete all pages and set one new page per content item
       this.pages = this.content.length ? this.content.map((content, content_idx) => ({
         uuid: this.new_uuid(),
         content_idx,
@@ -2113,84 +1891,87 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
         uuid: this.new_uuid(),
         content_idx: 0
       }]; // if content is empty
+
       // Get page height from first empty page
-
       await this.$nextTick(); // wait for DOM update
-
       const first_page_elt = this.$refs[this.pages[0].uuid][0];
       if (!this.$refs.content.contains(first_page_elt)) this.$refs.content.appendChild(first_page_elt); // restore page in DOM in case it was removed
-
       this.pages_height = first_page_elt.clientHeight + 1; // allow one pixel precision
+
       // Initialize text pages
-
       for (const page of this.pages) {
-        const page_elt = this.$refs[page.uuid][0]; // set raw HTML content
+        const page_elt = this.$refs[page.uuid][0];
 
-        if (!this.content[page.content_idx]) page_elt.innerHTML = "<div><br></div>";else if (typeof this.content[page.content_idx] == "string") page_elt.innerHTML = "<div>" + this.content[page.content_idx] + "</div>"; // (else content is a component that is set in Vue.js <template>)
+        // set raw HTML content
+        if (!this.content[page.content_idx]) page_elt.innerHTML = "<div><br></div>";else if (typeof this.content[page.content_idx] == "string") page_elt.innerHTML = "<div>" + this.content[page.content_idx] + "</div>";
+        // (else content is a component that is set in Vue.js <template>)
+
         // restore page in DOM in case it was removed
-
         if (!this.$refs.content.contains(page_elt)) this.$refs.content.appendChild(page_elt);
-      } // Spread content over several pages if it overflows
+      }
 
+      // Spread content over several pages if it overflows
+      await this.fit_content_over_pages();
 
-      await this.fit_content_over_pages(); // Remove the text cursor from the content, if any (its position is lost anyway)
-
+      // Remove the text cursor from the content, if any (its position is lost anyway)
       this.$refs.content.blur();
     },
-
     // Spreads the HTML content over several pages until it fits
     async fit_content_over_pages() {
       // Data variable this.pages_height must have been set before calling this function
-      if (!this.pages_height) return; // Check that pages were not deleted from the DOM (start from the end)
+      if (!this.pages_height) return;
 
+      // Check that pages were not deleted from the DOM (start from the end)
       for (let page_idx = this.pages.length - 1; page_idx >= 0; page_idx--) {
         const page = this.pages[page_idx];
-        const page_elt = this.$refs[page.uuid] && this.$refs[page.uuid][0]; // if user deleted the page from the DOM, then remove it from this.pages array
+        const page_elt = this.$refs[page.uuid] && this.$refs[page.uuid][0];
 
+        // if user deleted the page from the DOM, then remove it from this.pages array
         if (!page_elt || !document.body.contains(page_elt)) this.pages.splice(page_idx, 1);
-      } // If all the document was wiped out, start a new empty document
+      }
 
-
+      // If all the document was wiped out, start a new empty document
       if (!this.pages.length) {
-        this.reset_content();
+        this.$emit("update:content", [""]);
         return;
-      } // Save current selection by inserting empty HTML elements at the start and the end of it
+      }
 
-
+      // Save current selection by inserting empty HTML elements at the start and the end of it
       const selection = window.getSelection();
       const start_marker = document.createElement("null");
       const end_marker = document.createElement("null");
-
       if (selection.rangeCount) {
         const range = selection.getRangeAt(0);
         range.insertNode(start_marker);
         range.collapse(false);
         range.insertNode(end_marker);
-      } // Browse every remaining page
+      }
 
-
+      // Browse every remaining page
       let prev_page_modified_flag = false;
-
       for (let page_idx = 0; page_idx < this.pages.length; page_idx++) {
         // page length can grow inside this loop
         const page = this.pages[page_idx];
         const page_elt = this.$refs[page.uuid][0];
         let next_page = this.pages[page_idx + 1];
-        let next_page_elt = next_page ? this.$refs[next_page.uuid][0] : null; // check if this page, the next page, or any previous page content has been modified by the user (don't apply to template pages)
+        let next_page_elt = next_page ? this.$refs[next_page.uuid][0] : null;
 
+        // check if this page, the next page, or any previous page content has been modified by the user (don't apply to template pages)
         if (!page.template && (prev_page_modified_flag || page_elt.innerHTML != page.prev_innerHTML || next_page_elt && !next_page.template && next_page_elt.innerHTML != next_page.prev_innerHTML)) {
-          prev_page_modified_flag = true; // BACKWARD-PROPAGATION
-          // check if content doesn't overflow, and that next page exists and has the same content_idx
+          prev_page_modified_flag = true;
 
+          // BACKWARD-PROPAGATION
+          // check if content doesn't overflow, and that next page exists and has the same content_idx
           if (page_elt.clientHeight <= this.pages_height && next_page && next_page.content_idx == page.content_idx) {
             // try to append every node from the next page until it doesn't fit
-            move_children_backwards_with_merging(page_elt, next_page_elt, () => !next_page_elt.childNodes.length || page_elt.clientHeight > this.pages_height); // remove next page if it is empty
+            move_children_backwards_with_merging(page_elt, next_page_elt, () => !next_page_elt.childNodes.length || page_elt.clientHeight > this.pages_height);
 
+            // remove next page if it is empty
             if (!next_page_elt.childNodes.length) this.pages.splice(page_idx + 1, 1);
-          } // FORWARD-PROPAGATION
+          }
+
+          // FORWARD-PROPAGATION
           // check if content overflows
-
-
           if (page_elt.clientHeight > this.pages_height) {
             // if there is no next page for the same content, create it
             if (!next_page || next_page.content_idx != page.content_idx) {
@@ -2200,17 +1981,16 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
               };
               this.pages.splice(page_idx + 1, 0, next_page);
               await this.$nextTick(); // wait for DOM update
-
               next_page_elt = this.$refs[next_page.uuid][0];
-            } // move the content step by step to the next page, until it fits
+            }
 
-
+            // move the content step by step to the next page, until it fits
             move_children_forward_recursively(page_elt, next_page_elt, () => page_elt.clientHeight <= this.pages_height);
           }
         }
-      } // Restore selection and remove empty elements
+      }
 
-
+      // Restore selection and remove empty elements
       if (document.body.contains(start_marker)) {
         const range = document.createRange();
         range.setStart(start_marker, 0);
@@ -2218,14 +1998,13 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
         selection.removeAllRanges();
         selection.addRange(range);
       }
-
       if (start_marker.parentElement) start_marker.parentElement.removeChild(start_marker);
-      if (end_marker.parentElement) end_marker.parentElement.removeChild(end_marker); // Normalize and store current page HTML content
+      if (end_marker.parentElement) end_marker.parentElement.removeChild(end_marker);
 
+      // Normalize and store current page HTML content
       for (const page of this.pages) {
         const page_elt = this.$refs[page.uuid][0];
         page_elt.normalize(); // normalize HTML (merge text nodes)
-
         page.prev_innerHTML = page_elt.innerHTML; // store current pages innerHTML for next call
       }
     },
@@ -2233,11 +2012,8 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
     // Input event
     async input(e) {
       if (!e) return; // check that event is set
-
       await this.fit_content_over_pages(); // fit content according to modifications
-
       this.emit_new_content(); // emit content modification
-
       if (e.inputType != "insertText") this.process_current_text_style(); // update current style if it has changed
     },
 
@@ -2250,69 +2026,69 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
         if (!is_text) e.preventDefault();
       }
     },
-
     // Emit content change to parent
     emit_new_content() {
       let removed_pages_flag = false; // flag to call reset_content if some pages were removed by the user
-      // process the new content
 
+      // process the new content
       const new_content = this.content.map((item, content_idx) => {
         // select pages that correspond to this content item (represented by its index in the array)
-        const pages = this.pages.filter(page => page.content_idx == content_idx); // if there are no pages representing this content (because deleted by the user), mark item as false to remove it
+        const pages = this.pages.filter(page => page.content_idx == content_idx);
 
+        // if there are no pages representing this content (because deleted by the user), mark item as false to remove it
         if (!pages.length) {
           removed_pages_flag = true;
           return false;
-        } // if item is a string, concatenate each page content and set that
+        }
+
+        // if item is a string, concatenate each page content and set that
         else if (typeof item == "string") {
           return pages.map(page => {
             // remove any useless <div> surrounding the content
             let elt = this.$refs[page.uuid][0];
-
             while (elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
               elt = elt.firstChild;
             }
-
             return elt.innerHTML;
           }).join('') || false;
-        } // if item is a component, just clone the item
+        }
+
+        // if item is a component, just clone the item
         else return {
           template: item.template,
-          props: { ...item.props
+          props: {
+            ...item.props
           }
         };
       }).filter(item => item != false); // remove empty items
+
       // avoid calling reset_content after the parent content is updated (infinite loop)
+      if (!removed_pages_flag) this.prevent_next_content_update_from_parent = true;
 
-      if (!removed_pages_flag) this.prevent_next_content_update_from_parent = true; // send event to parent to update the synced content
-
+      // send event to parent to update the synced content
       this.$emit("update:content", new_content);
     },
-
     // Sets current_text_style with CSS style at caret position
     process_current_text_style() {
       let style = false;
       const sel = window.getSelection();
-
       if (sel.focusNode) {
         const element = sel.focusNode.tagName ? sel.focusNode : sel.focusNode.parentElement;
-
         if (element && element.isContentEditable) {
-          style = window.getComputedStyle(element); // compute additional properties
+          style = window.getComputedStyle(element);
 
+          // compute additional properties
           style.textDecorationStack = []; // array of text-decoration strings from parent elements
-
           style.headerLevel = 0;
           style.isList = false;
           let parent = element;
-
           while (parent) {
-            const parent_style = window.getComputedStyle(parent); // stack CSS text-decoration as it is not overridden by children
-
-            style.textDecorationStack.push(parent_style.textDecoration); // check if one parent is a list-item
-
-            if (parent_style.display == "list-item") style.isList = true; // get first header level, if any
-
+            const parent_style = window.getComputedStyle(parent);
+            // stack CSS text-decoration as it is not overridden by children
+            style.textDecorationStack.push(parent_style.textDecoration);
+            // check if one parent is a list-item
+            if (parent_style.display == "list-item") style.isList = true;
+            // get first header level, if any
             if (!style.headerLevel) {
               for (let i = 1; i <= 6; i++) {
                 if (parent.tagName.toUpperCase() == "H" + i) {
@@ -2321,15 +2097,12 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
                 }
               }
             }
-
             parent = parent.parentElement;
           }
         }
       }
-
       this.current_text_style = style;
     },
-
     // Process the specific style (position and size) of each page <div> and content <div>
     page_style(page_idx, allow_overflow) {
       const px_in_mm = 0.2645833333333;
@@ -2339,14 +2112,13 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
       const view_padding = 20;
       const inner_width = this.editor_width - 2 * view_padding;
       let nb_pages_x = 1,
-          page_column,
-          x_pos,
-          x_ofx,
-          left_px,
-          top_mm,
-          bkg_width_mm,
-          bkg_height_mm;
-
+        page_column,
+        x_pos,
+        x_ofx,
+        left_px,
+        top_mm,
+        bkg_width_mm,
+        bkg_height_mm;
       if (this.display == "horizontal") {
         if (inner_width > this.pages.length * page_with_plus_spacing) {
           nb_pages_x = Math.floor(inner_width / page_with_plus_spacing);
@@ -2355,7 +2127,6 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
           nb_pages_x = this.pages.length;
           left_px = page_with_plus_spacing * page_idx + page_width / 2 * (this.zoom - 1);
         }
-
         top_mm = 0;
         bkg_width_mm = this.zoom * (this.page_format_mm[0] * nb_pages_x + (nb_pages_x - 1) * page_spacing_mm);
         bkg_height_mm = this.page_format_mm[1] * this.zoom;
@@ -2372,7 +2143,6 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
         bkg_width_mm = this.zoom * (this.page_format_mm[0] * nb_pages_x + (nb_pages_x - 1) * page_spacing_mm);
         bkg_height_mm = this.zoom * (this.page_format_mm[1] * nb_pages_y + (nb_pages_y - 1) * page_spacing_mm);
       }
-
       if (page_idx >= 0) {
         const style = {
           position: "absolute",
@@ -2393,41 +2163,39 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
         };
       }
     },
-
     // Get and store empty editor <div> width
     update_editor_width() {
       this.$refs.editor.classList.add("hide_children");
       this.editor_width = this.$refs.editor.clientWidth;
       this.$refs.editor.classList.remove("hide_children");
     },
-
     update_css_media_style() {
       this.css_media_style.innerHTML = "@media print { @page { size: " + this.page_format_mm[0] + "mm " + this.page_format_mm[1] + "mm; margin: 0 !important; } .hidden-print { display: none !important; } }";
     },
-
     // Prepare content before opening the native print box
     before_print() {
       // store the current body aside
-      this._page_body = document.body; // create a new body for the print and overwrite CSS
+      this._page_body = document.body;
 
+      // create a new body for the print and overwrite CSS
       const print_body = document.createElement("body");
       print_body.style.margin = "0";
       print_body.style.padding = "0";
       print_body.style.background = "white";
       print_body.style.font = window.getComputedStyle(this.$refs.editor).font;
-      print_body.className = this.$refs.editor.className; // clone each page to the print body
+      print_body.className = this.$refs.editor.className;
 
+      // clone each page to the print body
       for (const [page_idx, page] of this.pages.entries()) {
         const page_elt = this.$refs[page.uuid][0];
         const page_clone = page_elt.cloneNode(true);
         page_clone.style = ""; // reset page style for the clone
-
         page_clone.style.position = "relative";
         page_clone.style.padding = this.page_margins;
-        page_clone.style.breakBefore = page_idx ? "page" : "auto"; // add overlays if any
+        page_clone.style.breakBefore = page_idx ? "page" : "auto";
 
+        // add overlays if any
         const overlay_elts = this.$refs[page.uuid + '-overlay'];
-
         if (overlay_elts && overlay_elts[0]) {
           const overlay_clone = overlay_elts[0].cloneNode(true);
           overlay_clone.style.position = "absolute";
@@ -2438,14 +2206,12 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
           overlay_clone.style.overflow = "hidden";
           page_clone.prepend(overlay_clone);
         }
-
         print_body.append(page_clone);
-      } // display a return arrow to let the user restore the original body in case the navigator doesn't call after_print() (it happens sometimes in Chrome)
+      }
 
-
+      // display a return arrow to let the user restore the original body in case the navigator doesn't call after_print() (it happens sometimes in Chrome)
       const return_overlay = document.createElement("div");
       return_overlay.className = "hidden-print"; // css managed in update_css_media_style method
-
       return_overlay.style.position = "fixed";
       return_overlay.style.left = "0";
       return_overlay.style.top = "0";
@@ -2458,17 +2224,16 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
       return_overlay.style.cursor = "pointer";
       return_overlay.innerHTML = '<svg width="220" height="220"><path fill="rgba(0, 0, 0, 0.7)" d="M120.774,179.271v40c47.303,0,85.784-38.482,85.784-85.785c0-47.3-38.481-85.782-85.784-85.782H89.282L108.7,28.286L80.417,0L12.713,67.703l67.703,67.701l28.283-28.284L89.282,87.703h31.492c25.246,0,45.784,20.538,45.784,45.783C166.558,158.73,146.02,179.271,120.774,179.271z"/></svg>';
       return_overlay.addEventListener("click", this.after_print);
-      print_body.append(return_overlay); // replace current body by the print body
+      print_body.append(return_overlay);
 
+      // replace current body by the print body
       document.body = print_body;
     },
-
     // Restore content after closing the native print box
     after_print() {
       document.body = this._page_body;
       this.update_editor_width();
     }
-
   },
   // Watch for changes and adapt content accordingly
   watch: {
@@ -2477,13 +2242,11 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
         this.update_css_media_style();
         await this.reset_content();
       }
-
     },
     page_margins: {
       async handler() {
         await this.reset_content();
       }
-
     },
     content: {
       async handler() {
@@ -2492,21 +2255,20 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
           this.prevent_next_content_update_from_parent = false;
         } else await this.reset_content();
       }
-
     }
   }
 });
 ;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js&
  /* harmony default export */ var DocumentEditor_DocumentEditorvue_type_script_lang_js_ = (DocumentEditorvue_type_script_lang_js_); 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=4d6b14e8&prod&lang=css&
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=6d0a5848&prod&lang=css&
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=4d6b14e8&prod&lang=css&
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=6d0a5848&prod&lang=css&
 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-64.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-64.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-64.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-64.use[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=4d6b14e8&prod&lang=scss&scoped=true&
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=6d0a5848&prod&scoped=true&lang=css&
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=4d6b14e8&prod&lang=scss&scoped=true&
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=6d0a5848&prod&scoped=true&lang=css&
 
 ;// CONCATENATED MODULE: ./node_modules/@vue/vue-loader-v15/lib/runtime/componentNormalizer.js
 /* globals __VUE_SSR_CONTEXT__ */
@@ -2622,7 +2384,7 @@ var component = normalizeComponent(
   staticRenderFns,
   false,
   null,
-  "4d6b14e8",
+  "6d0a5848",
   null
   
 )
