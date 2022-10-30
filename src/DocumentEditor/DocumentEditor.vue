@@ -186,7 +186,7 @@ export default {
 
       // If all the document was wiped out, start a new empty document
       if(!this.pages.length){
-        this.reset_content();
+        this.$emit("update:content", [""]);
         return;
       }
 
@@ -241,9 +241,11 @@ export default {
           // remove next page if it is empty
           if(next_page_elt && next_page.content_idx == page.content_idx && !next_page_elt.childNodes.length) {
             this.pages.splice(page_idx + 1, 1);
-            this.update_pages_elts();
           }
         }
+
+        // update pages in the DOM
+        this.update_pages_elts();
       }
       
 
