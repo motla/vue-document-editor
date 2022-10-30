@@ -2,6 +2,9 @@
 
 - This library core has been rewritten for Vue3 using an hoisted static `<div>` for pages content to manage page manually and avoid conflicts between DOM contenteditable elements and Vue.js. [More info here](https://vuejs.org/guide/extras/rendering-mechanism.html#static-hoisting)
 - SCSS has been converted to basic CSS, so you don't have to install a SCSS compiler anymore
+- Updating dependencies
+- Removing ESLint for a lighter project
+- Fix [Issue 16](https://github.com/motla/vue-document-editor/issues/16): The component breaks if you remove all the content
 - :warning: Warning: starting from this version, the new core implies that for using templates with custom CSS you must rename your single file components with `.ce.vue` extension. [More info here](https://vuejs.org/guide/extras/web-components.html#sfc-as-custom-element)
 
 ## v2.0.7

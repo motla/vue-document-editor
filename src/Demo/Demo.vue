@@ -5,7 +5,6 @@
     <vue-file-toolbar-menu :content="menu" class="bar" />
 
     <!-- Document editor -->
-    <!-- eslint-disable vue/no-v-model-argument -->
     <vue-document-editor class="editor" ref="editor"
       v-model:content="content"
       :overlay="overlay"
