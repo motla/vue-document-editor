@@ -139,7 +139,6 @@ For the list of props, data and styling variables: **read the [API](API.md)**.
 
 ## Project development
 - `npm run serve` compiles and hot-reloads demo for development
-- `npm run lint` lints and fixes files
 - `npm run build` compiles and minifies production files and demo
 
 ## Licensing
