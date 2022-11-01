@@ -1,3 +1,7 @@
+## v2.1.1
+
+- Bugfix: Display update was not triggered when changing `display` or `zoom` props
+
 ## v2.1.0
 
 - This library core has been rewritten for Vue3 using an hoisted static `<div>` for pages content to manage page manually and avoid conflicts between DOM contenteditable elements and Vue.js. [More info here](https://vuejs.org/guide/extras/rendering-mechanism.html#static-hoisting)

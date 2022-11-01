@@ -528,6 +528,18 @@ export default {
 
   // Watch for changes and adapt content accordingly
   watch: {
+    content: {
+      handler () {
+        // prevent infinite loop as reset_content triggers a content update and it's async
+        if(this.prevent_next_content_update_from_parent) {
+          this.prevent_next_content_update_from_parent = false;
+        } else this.reset_content();
+      },
+      deep: true
+    },
+    display: {
+      handler () { this.update_pages_elts(); }
+    },
     page_format_mm: {
       handler () {
         this.update_css_media_style();
@@ -539,14 +551,8 @@ export default {
         this.reset_content();
       }
     },
-    content: {
-      handler () {
-        // prevent infinite loop as reset_content triggers a content update and it's async
-        if(this.prevent_next_content_update_from_parent) {
-          this.prevent_next_content_update_from_parent = false;
-        } else this.reset_content();
-      },
-      deep: true
+    zoom: {
+      handler () { this.update_pages_elts(); }
     }
   }
 
