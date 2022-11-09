@@ -1,3 +1,7 @@
+## v2.1.2
+
+- Bugfix: Cursor is blurred when editing `contenteditable` fields inside components
+
 ## v2.1.1
 
 - Bugfix: Display update was not triggered when changing `display` or `zoom` props

@@ -194,7 +194,8 @@ export default {
       const selection = window.getSelection();
       const start_marker = document.createElement("null");
       const end_marker = document.createElement("null");
-      if(selection.rangeCount) {
+      // don't insert markers in case selection fails (if we are editing in components in the shadow-root it selects the page <div> as anchorNode)
+      if(selection && selection.rangeCount && selection.anchorNode && !(selection.anchorNode.dataset && selection.anchorNode.dataset.isVDEPage != null)) {
         const range = selection.getRangeAt(0);
         range.insertNode(start_marker);
         range.collapse(false);
@@ -401,7 +402,7 @@ export default {
           // "height" is set below
           padding: this.page_margins,
           transform: "scale("+ this.zoom +")"
-        }
+        };
         style[allow_overflow ? "minHeight" : "height"] = this.page_format_mm[1]+"mm";
         return style;
       } else {
@@ -426,6 +427,7 @@ export default {
         if(!page.elt) {
           page.elt = document.createElement("div");
           page.elt.className = "page";
+          page.elt.dataset.isVDEPage = "";
           const next_page = this.pages[page_idx + 1];
           this.$refs.content.insertBefore(page.elt, next_page ? next_page.elt : null);
         }
