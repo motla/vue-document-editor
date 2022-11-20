@@ -112,10 +112,10 @@ module.exports = SILENT_ON_NON_WRITABLE_LENGTH_SET ? function (O, length) {
 /***/ 4326:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var uncurryThisRaw = __webpack_require__(84);
+var uncurryThis = __webpack_require__(1702);
 
-var toString = uncurryThisRaw({}.toString);
-var stringSlice = uncurryThisRaw(''.slice);
+var toString = uncurryThis({}.toString);
+var stringSlice = uncurryThis(''.slice);
 
 module.exports = function (it) {
   return stringSlice(toString(it), 8, -1);
@@ -482,7 +482,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 84:
+/***/ 1702:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var NATIVE_BIND = __webpack_require__(4374);
@@ -495,22 +495,6 @@ module.exports = NATIVE_BIND ? uncurryThisWithBind : function (fn) {
   return function () {
     return call.apply(fn, arguments);
   };
-};
-
-
-/***/ }),
-
-/***/ 1702:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var classofRaw = __webpack_require__(4326);
-var uncurryThisRaw = __webpack_require__(84);
-
-module.exports = function (fn) {
-  // Nashorn bug:
-  //   https://github.com/zloirock/core-js/issues/1128
-  //   https://github.com/zloirock/core-js/issues/1130
-  if (classofRaw(fn) === 'Function') return uncurryThisRaw(fn);
 };
 
 
@@ -1203,10 +1187,10 @@ var store = __webpack_require__(5465);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.26.0',
+  version: '3.26.1',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.26.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.26.1/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -1629,9 +1613,9 @@ if (typeof window !== 'undefined') {
 
 ;// CONCATENATED MODULE: external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
 var external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject = require("vue");
-;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=988dbac0&scoped=true
+;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=4da58a69&scoped=true
 
-const _withScopeId = n => (_pushScopeId("data-v-988dbac0"), n = n(), _popScopeId(), n);
+const _withScopeId = n => (_pushScopeId("data-v-4da58a69"), n = n(), _popScopeId(), n);
 const _hoisted_1 = {
   class: "editor",
   ref: "editor"
@@ -1663,7 +1647,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onKeydown: _cache[2] || (_cache[2] = (...args) => $options.keydown && $options.keydown(...args))
   }, null, 44, _hoisted_4)], 512);
 }
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=988dbac0&scoped=true
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=4da58a69&scoped=true
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
 var es_array_push = __webpack_require__(7658);
@@ -1822,7 +1806,7 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
     },
     // Page margins in CSS
     page_margins: {
-      type: String,
+      type: [String, Function],
       default: "10mm 15mm"
     },
     // Display zoom. Only acts on the screen display
@@ -2171,7 +2155,7 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
           top: "calc(" + top_mm + "mm + " + view_padding + "px)",
           width: this.page_format_mm[0] + "mm",
           // "height" is set below
-          padding: this.page_margins,
+          padding: typeof this.page_margins == "function" ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins,
           transform: "scale(" + this.zoom + ")"
         };
         style[allow_overflow ? "minHeight" : "height"] = this.page_format_mm[1] + "mm";
@@ -2240,7 +2224,7 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
         //const page_clone = page_elt.cloneNode(true);
         page.elt.style = ""; // reset page style for the clone
         page.elt.style.position = "relative";
-        page.elt.style.padding = this.page_margins;
+        page.elt.style.padding = typeof this.page_margins == "function" ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins;
         page.elt.style.breakBefore = page_idx ? "page" : "auto";
 
         // add overlays if any
@@ -2293,6 +2277,9 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
         }
       }
       document.body = this._page_body;
+
+      // reposition pages
+      this.update_pages_elts();
     }
   },
   // Watch for changes and adapt content accordingly
@@ -2331,15 +2318,15 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 });
 ;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js
  
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=988dbac0&lang=css
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=4da58a69&lang=css
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=988dbac0&lang=css
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=4da58a69&lang=css
 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=988dbac0&scoped=true&lang=css
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=4da58a69&scoped=true&lang=css
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=988dbac0&scoped=true&lang=css
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=4da58a69&scoped=true&lang=css
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/dist/exportHelper.js
 var exportHelper = __webpack_require__(3744);
@@ -2352,7 +2339,7 @@ var exportHelper = __webpack_require__(3744);
 
 
 
-const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.Z)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-988dbac0"]])
+const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.Z)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-4da58a69"]])
 
 /* harmony default export */ var DocumentEditor = (__exports__);
 ;// CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
