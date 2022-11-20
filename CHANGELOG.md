@@ -1,5 +1,8 @@
 ###### :speech_balloon: For v2.x (Vue3) releases, see the master branch
 
+## v1.4.0
+- User can now provide a function for `page_margins`, to set margins specific to the page number (for more info read the [API](API.md))
+
 ## v1.3.0
 
 - SCSS has been converted to basic CSS, so you don't have to install a SCSS compiler anymore
