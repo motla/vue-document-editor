@@ -1,3 +1,10 @@
+# Vue 3
+
+## v2.2.0
+
+- User can now provide a function for `page_margins`, to set margins specific to the page number (for more info read the [API](API.md))
+- Bugfix: Display update was not triggered after exiting printing mode
+
 ## v2.1.2
 
 - Bugfix: Cursor is blurred when editing `contenteditable` fields inside components
@@ -51,6 +58,11 @@
 
 - Switching `master` branch to Vue3 (we provide vue2 compatibility on the vue2 branch / @1.x version of this library)
 - Dependencies upgrade
+
+# Vue 2
+
+## v1.4.0
+- User can now provide a function for `page_margins`, to set margins specific to the page number (for more info read the [API](API.md))
 
 ## v1.3.0
 

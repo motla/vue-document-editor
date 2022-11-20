@@ -260,7 +260,7 @@ export default {
     // Margins management
     current_margins_name () {
       const margins = this.margins.find(([, margins]) => (this.page_margins == margins));
-      return margins ? margins[0] : margins[1];
+      return margins ? margins[0] : this.page_margins;
     },
     margins: () => [
       ["Medium", "20mm"],

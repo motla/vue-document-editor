@@ -57,7 +57,7 @@ export default {
 
     // Page margins in CSS
     page_margins: {
-      type: String,
+      type: [String, Function],
       default: "10mm 15mm"
     },
 
@@ -400,7 +400,7 @@ export default {
           top: "calc("+ top_mm +"mm + "+ view_padding +"px)",
           width: this.page_format_mm[0]+"mm",
           // "height" is set below
-          padding: this.page_margins,
+          padding: (typeof this.page_margins == "function") ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins,
           transform: "scale("+ this.zoom +")"
         };
         style[allow_overflow ? "minHeight" : "height"] = this.page_format_mm[1]+"mm";
@@ -470,7 +470,7 @@ export default {
         //const page_clone = page_elt.cloneNode(true);
         page.elt.style = ""; // reset page style for the clone
         page.elt.style.position = "relative";
-        page.elt.style.padding = this.page_margins;
+        page.elt.style.padding = (typeof this.page_margins == "function") ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins;
         page.elt.style.breakBefore = page_idx ? "page" : "auto";
 
         // add overlays if any
@@ -525,6 +525,9 @@ export default {
         }
       }
       document.body = this._page_body;
+
+      // reposition pages
+      this.update_pages_elts();
     }
   },
 
