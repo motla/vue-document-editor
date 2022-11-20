@@ -15,7 +15,7 @@
 - **editable**: `Boolean (default:true)` - *Used to disable the entire document modification*
 - **overlay**: `Function(page: Number, total: Number) => String` (optional) - *Function that outputs HTML overlay (header, footer, page numbers, ...) for each page depending of the arguments (`page` starts at 1). Placement inside the page should be set in CSS by setting `position: absolute` and `left, top, right, bottom` for each element.*
 - **page_format_mm**: `[width, height] (default:[210, 297])` - *Page format in mm*
-- **page_margins**: `String (default:"10mm 15mm") or Function(page: Number, total: Number => String` - *Page margins in CSS format*
+- **page_margins**: `String (default:"10mm 15mm") or Function(page: Number, total: Number) => String` - *Page margins in CSS format*
 - **zoom**: `Number (default:1.0)`- *Display zoom. Only acts on the screen display*
 
 ## Data
