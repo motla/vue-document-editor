@@ -1,9 +1,12 @@
 # Vue 3
 
+## v2.2.1
+
+- Bugfix: Display update was not triggered after exiting printing mode
+
 ## v2.2.0
 
 - User can now provide a function for `page_margins`, to set margins specific to the page number (for more info read the [API](API.md))
-- Bugfix: Display update was not triggered after exiting printing mode
 
 ## v2.1.2
 

@@ -526,8 +526,8 @@ export default {
       }
       document.body = this._page_body;
 
-      // reposition pages
-      this.update_pages_elts();
+      // recompute editor with and reposition elements
+      this.update_editor_width();
     }
   },
 
