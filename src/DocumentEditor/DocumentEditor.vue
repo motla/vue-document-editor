@@ -417,9 +417,8 @@ export default {
     // Update pages <div> from this.pages data
     update_pages_elts () {
       // Removing deleted pages
-      for(const page_elt of this.$refs.content.children) {
-        if(!this.pages.find(page => (page.elt == page_elt))) page_elt.remove();
-      }
+      const deleted_pages = [...this.$refs.content.children].filter((page_elt) => !this.pages.find(page => (page.elt == page_elt)));
+      for(const page_elt of deleted_pages) { page_elt.remove(); }
 
       // Adding / updating pages
       for(const [page_idx, page] of this.pages.entries()) {

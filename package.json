@@ -36,8 +36,8 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^5.0.8",
     "@vue/cli-service": "^5.0.8",
-    "vue": "^3.2.41",
-    "vue-file-toolbar-menu": "^2.1.0"
+    "vue": "^3.2.45",
+    "vue-file-toolbar-menu": "^2.2.0"
   },
   "browserslist": [
     "> 1%",
