@@ -1,5 +1,10 @@
 # Vue 3
 
+## v2.2.2
+
+- Fix [Issue 24](https://github.com/motla/vue-document-editor/issues/24): Backspace key is broken with one page content
+- Bugfix: All pages were not removed after a content reset
+
 ## v2.2.1
 
 - Bugfix: Display update was not triggered after exiting printing mode
@@ -64,7 +69,12 @@
 
 # Vue 2
 
+## v1.4.1
+
+- Fix [Issue 24](https://github.com/motla/vue-document-editor/issues/24): Backspace key is broken with one page content
+
 ## v1.4.0
+
 - User can now provide a function for `page_margins`, to set margins specific to the page number (for more info read the [API](API.md))
 
 ## v1.3.0
