@@ -38,7 +38,7 @@
     "@vue/cli-service": "^5.0.8",
     "vue": "^2.7.13",
     "vue-template-compiler": "^2.7.13",
-    "vue-file-toolbar-menu": "^1.4.1"
+    "vue-file-toolbar-menu": "^1.5.0"
   },
   "browserslist": [
     "> 1%",

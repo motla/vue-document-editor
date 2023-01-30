@@ -259,9 +259,9 @@ export default {
     keydown (e) {
       // if the document is empty, prevent removing the first page container with a backspace input (keycode 8)
       // which is now the default behavior for web browsers
-      if(e.keyCode == 8 && this.content.length <= 1) {
-        const is_text = (this.content[0] && typeof(this.content[0]) == "string") ? this.content[0].replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, '') : false;
-        if(!is_text) e.preventDefault();
+      if(e.keyCode == 8 && this.content.length <= 1 && typeof(this.content[0]) == "string") {
+        const text = this.content[0].replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, '');
+        if(!text) e.preventDefault();
       }
     },
 
