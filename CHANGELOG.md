@@ -1,6 +1,11 @@
 ###### :speech_balloon: For v2.x (Vue3) releases, see the master branch
 
+## v1.4.1
+
+- Fix [Issue 24](https://github.com/motla/vue-document-editor/issues/24): Backspace key is broken with one page content
+
 ## v1.4.0
+
 - User can now provide a function for `page_margins`, to set margins specific to the page number (for more info read the [API](API.md))
 
 ## v1.3.0
