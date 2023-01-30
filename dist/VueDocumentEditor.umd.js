@@ -262,6 +262,7 @@ module.exports = !fails(function () {
 var documentAll = typeof document == 'object' && document.all;
 
 // https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
+// eslint-disable-next-line unicorn/no-typeof-undefined -- required for testing
 var IS_HTMLDDA = typeof documentAll == 'undefined' && documentAll !== undefined;
 
 module.exports = {
@@ -304,11 +305,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ 8113:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+/***/ (function(module) {
 
-var getBuiltIn = __webpack_require__(5005);
-
-module.exports = getBuiltIn('navigator', 'userAgent') || '';
+module.exports = typeof navigator != 'undefined' && String(navigator.userAgent) || '';
 
 
 /***/ }),
@@ -864,6 +863,7 @@ module.exports = function (obj) {
 /***/ 6339:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
+var uncurryThis = __webpack_require__(1702);
 var fails = __webpack_require__(7293);
 var isCallable = __webpack_require__(614);
 var hasOwn = __webpack_require__(2597);
@@ -874,8 +874,12 @@ var InternalStateModule = __webpack_require__(9909);
 
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
+var $String = String;
 // eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
+var stringSlice = uncurryThis(''.slice);
+var replace = uncurryThis(''.replace);
+var join = uncurryThis([].join);
 
 var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
   return defineProperty(function () { /* empty */ }, 'length', { value: 8 }).length !== 8;
@@ -884,8 +888,8 @@ var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
 var TEMPLATE = String(String).split('String');
 
 var makeBuiltIn = module.exports = function (value, name, options) {
-  if (String(name).slice(0, 7) === 'Symbol(') {
-    name = '[' + String(name).replace(/^Symbol\(([^)]*)\)/, '$1') + ']';
+  if (stringSlice($String(name), 0, 7) === 'Symbol(') {
+    name = '[' + replace($String(name), /^Symbol\(([^)]*)\)/, '$1') + ']';
   }
   if (options && options.getter) name = 'get ' + name;
   if (options && options.setter) name = 'set ' + name;
@@ -904,7 +908,7 @@ var makeBuiltIn = module.exports = function (value, name, options) {
   } catch (error) { /* empty */ }
   var state = enforceInternalState(value);
   if (!hasOwn(state, 'source')) {
-    state.source = TEMPLATE.join(typeof name == 'string' ? name : '');
+    state.source = join(TEMPLATE, typeof name == 'string' ? name : '');
   } return value;
 };
 
@@ -1197,10 +1201,10 @@ var store = __webpack_require__(5465);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.26.1',
+  version: '3.27.2',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.26.1/LICENSE',
+  copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
+  license: 'https://github.com/zloirock/core-js/blob/v3.27.2/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -1443,21 +1447,15 @@ var uid = __webpack_require__(9711);
 var NATIVE_SYMBOL = __webpack_require__(6293);
 var USE_SYMBOL_AS_UID = __webpack_require__(3307);
 
-var WellKnownSymbolsStore = shared('wks');
 var Symbol = global.Symbol;
-var symbolFor = Symbol && Symbol['for'];
-var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol : Symbol && Symbol.withoutSetter || uid;
+var WellKnownSymbolsStore = shared('wks');
+var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol['for'] || Symbol : Symbol && Symbol.withoutSetter || uid;
 
 module.exports = function (name) {
-  if (!hasOwn(WellKnownSymbolsStore, name) || !(NATIVE_SYMBOL || typeof WellKnownSymbolsStore[name] == 'string')) {
-    var description = 'Symbol.' + name;
-    if (NATIVE_SYMBOL && hasOwn(Symbol, name)) {
-      WellKnownSymbolsStore[name] = Symbol[name];
-    } else if (USE_SYMBOL_AS_UID && symbolFor) {
-      WellKnownSymbolsStore[name] = symbolFor(description);
-    } else {
-      WellKnownSymbolsStore[name] = createWellKnownSymbol(description);
-    }
+  if (!hasOwn(WellKnownSymbolsStore, name)) {
+    WellKnownSymbolsStore[name] = NATIVE_SYMBOL && hasOwn(Symbol, name)
+      ? Symbol[name]
+      : createWellKnownSymbol('Symbol.' + name);
   } return WellKnownSymbolsStore[name];
 };
 
@@ -1482,18 +1480,20 @@ var INCORRECT_TO_LENGTH = fails(function () {
 
 // V8 and Safari <= 15.4, FF < 23 throws InternalError
 // https://bugs.chromium.org/p/v8/issues/detail?id=12681
-var SILENT_ON_NON_WRITABLE_LENGTH = !function () {
+var properErrorOnNonWritableLength = function () {
   try {
     // eslint-disable-next-line es/no-object-defineproperty -- safe
     Object.defineProperty([], 'length', { writable: false }).push();
   } catch (error) {
     return error instanceof TypeError;
   }
-}();
+};
+
+var FORCED = INCORRECT_TO_LENGTH || !properErrorOnNonWritableLength();
 
 // `Array.prototype.push` method
 // https://tc39.es/ecma262/#sec-array.prototype.push
-$({ target: 'Array', proto: true, arity: 1, forced: INCORRECT_TO_LENGTH || SILENT_ON_NON_WRITABLE_LENGTH }, {
+$({ target: 'Array', proto: true, arity: 1, forced: FORCED }, {
   // eslint-disable-next-line no-unused-vars -- required for `.length`
   push: function push(item) {
     var O = toObject(this);
@@ -1631,9 +1631,9 @@ if (typeof window !== 'undefined') {
 
 // EXTERNAL MODULE: external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
 var external_commonjs_vue_commonjs2_vue_root_Vue_ = __webpack_require__(7203);
-;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=263dfbd1&scoped=true
+;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=287770f8&scoped=true
 
-const _withScopeId = n => (_pushScopeId("data-v-263dfbd1"), n = n(), _popScopeId(), n);
+const _withScopeId = n => (_pushScopeId("data-v-287770f8"), n = n(), _popScopeId(), n);
 const _hoisted_1 = {
   class: "editor",
   ref: "editor"
@@ -1665,7 +1665,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onKeydown: _cache[2] || (_cache[2] = (...args) => $options.keydown && $options.keydown(...args))
   }, null, 44, _hoisted_4)], 512);
 }
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=263dfbd1&scoped=true
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=287770f8&scoped=true
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
 var es_array_push = __webpack_require__(7658);
@@ -2046,9 +2046,9 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
     keydown(e) {
       // if the document is empty, prevent removing the first page container with a backspace input (keycode 8)
       // which is now the default behavior for web browsers
-      if (e.keyCode == 8 && this.content.length <= 1) {
-        const is_text = this.content[0] && typeof this.content[0] == "string" ? this.content[0].replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, '') : false;
-        if (!is_text) e.preventDefault();
+      if (e.keyCode == 8 && this.content.length <= 1 && typeof this.content[0] == "string") {
+        const text = this.content[0].replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, '');
+        if (!text) e.preventDefault();
       }
     },
     // Emit content change to parent
@@ -2191,8 +2191,9 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
     // Update pages <div> from this.pages data
     update_pages_elts() {
       // Removing deleted pages
-      for (const page_elt of this.$refs.content.children) {
-        if (!this.pages.find(page => page.elt == page_elt)) page_elt.remove();
+      const deleted_pages = [...this.$refs.content.children].filter(page_elt => !this.pages.find(page => page.elt == page_elt));
+      for (const page_elt of deleted_pages) {
+        page_elt.remove();
       }
 
       // Adding / updating pages
@@ -2336,15 +2337,15 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 });
 ;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js
  
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=263dfbd1&lang=css
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=287770f8&lang=css
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=263dfbd1&lang=css
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=287770f8&lang=css
 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=263dfbd1&scoped=true&lang=css
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=287770f8&scoped=true&lang=css
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=263dfbd1&scoped=true&lang=css
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=287770f8&scoped=true&lang=css
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/dist/exportHelper.js
 var exportHelper = __webpack_require__(3744);
@@ -2357,7 +2358,7 @@ var exportHelper = __webpack_require__(3744);
 
 
 
-const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.Z)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-263dfbd1"]])
+const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.Z)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-287770f8"]])
 
 /* harmony default export */ var DocumentEditor = (__exports__);
 ;// CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
