@@ -548,7 +548,7 @@ module.exports =
   check(typeof self == 'object' && self) ||
   check(typeof __webpack_require__.g == 'object' && __webpack_require__.g) ||
   // eslint-disable-next-line no-new-func -- fallback
-  (function () { return this; })() || Function('return this')();
+  (function () { return this; })() || this || Function('return this')();
 
 
 /***/ }),
@@ -1191,10 +1191,10 @@ var store = __webpack_require__(5465);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.27.2',
+  version: '3.30.2',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.27.2/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.30.2/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -1207,13 +1207,18 @@ var store = __webpack_require__(5465);
 /* eslint-disable es/no-symbol -- required for testing */
 var V8_VERSION = __webpack_require__(7392);
 var fails = __webpack_require__(7293);
+var global = __webpack_require__(7854);
+
+var $String = global.String;
 
 // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
   var symbol = Symbol();
   // Chrome 38 Symbol has incorrect toString conversion
   // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
-  return !String(symbol) || !(Object(symbol) instanceof Symbol) ||
+  // nb: Do not call `String` directly to avoid this being optimized out to `symbol+''` which will,
+  // of course, fail.
+  return !$String(symbol) || !(Object(symbol) instanceof Symbol) ||
     // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
     !Symbol.sham && V8_VERSION && V8_VERSION < 41;
 });
@@ -1542,7 +1547,7 @@ exports.Z = (sfc, props) => {
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -1613,9 +1618,9 @@ if (typeof window !== 'undefined') {
 
 ;// CONCATENATED MODULE: external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
 var external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject = require("vue");
-;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=287770f8&scoped=true
+;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=5abf13c6&scoped=true
 
-const _withScopeId = n => (_pushScopeId("data-v-287770f8"), n = n(), _popScopeId(), n);
+const _withScopeId = n => (_pushScopeId("data-v-5abf13c6"), n = n(), _popScopeId(), n);
 const _hoisted_1 = {
   class: "editor",
   ref: "editor"
@@ -1647,7 +1652,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onKeydown: _cache[2] || (_cache[2] = (...args) => $options.keydown && $options.keydown(...args))
   }, null, 44, _hoisted_4)], 512);
 }
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=287770f8&scoped=true
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=5abf13c6&scoped=true
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
 var es_array_push = __webpack_require__(7658);
@@ -1673,10 +1678,11 @@ function find_sub_child_sibling_node(container, s_tag) {
  * next page.
  * @param {HTMLElement} child Element to take children from (current page)
  * @param {HTMLElement} child_sibling Element to copy children to (next page)
- * @param {Function} stop_condition Check function that returns a boolean if content doesn't overflow anymore
- * @param {Boolean} not_first_child Should be unset. Used internally to let at least one child in the page
+ * @param {function} stop_condition Check function that returns a boolean if content doesn't overflow anymore
+ * @param {function(HTMLElement):boolean?} do_not_break Optional function that receives the current child element and should return true if the child should not be split over two pages but rather be moved directly to the next page
+ * @param {boolean?} not_first_child Should be unset. Used internally to let at least one child in the page
  */
-function move_children_forward_recursively(child, child_sibling, stop_condition, not_first_child) {
+function move_children_forward_recursively(child, child_sibling, stop_condition, do_not_break, not_first_child) {
   // if the child still has nodes and the current page still overflows
   while (child.childNodes.length && !stop_condition()) {
     // check if page has only one child tree left
@@ -1699,8 +1705,12 @@ function move_children_forward_recursively(child, child_sibling, stop_condition,
       }
     }
 
-    // if it is a node with no content (e.g. <img>), or a header title (e.g. <h1>) we simply move it
-    else if (!sub_child.childNodes.length || sub_child.tagName.match(/h\d/i)) {
+    // we simply move it to the next page if it is either:
+    // - a node with no content (e.g. <img>)
+    // - a header title (e.g. <h1>)
+    // - a table row (e.g. <tr>)
+    // - any element on whose user-custom `do_not_break` function returns true
+    else if (!sub_child.childNodes.length || sub_child.tagName.match(/h\d/i) || sub_child.tagName.match(/tr/i) || typeof do_not_break === "function" && do_not_break(sub_child)) {
       // just prevent moving the last child of the page
       if (!not_first_child) {
         console.log("Move-forward: first child reached with no stop condition. Aborting");
@@ -1726,7 +1736,7 @@ function move_children_forward_recursively(child, child_sibling, stop_condition,
       }
 
       // then move/clone its children and sub-children recursively
-      move_children_forward_recursively(sub_child, sub_child_sibling, stop_condition, not_first_child);
+      move_children_forward_recursively(sub_child, sub_child_sibling, stop_condition, do_not_break, not_first_child);
       sub_child_sibling.normalize(); // merge consecutive text nodes
     }
 
@@ -1746,7 +1756,7 @@ function move_children_forward_recursively(child, child_sibling, stop_condition,
  * merging sibling tags previously watermarked by "move_children_forward_recursively", if any.
  * @param {HTMLElement} page_html_div Current page element
  * @param {HTMLElement} next_page_html_div Next page element
- * @param {Function} stop_condition Check function that returns a boolean if content overflows
+ * @param {function} stop_condition Check function that returns a boolean if content overflows
  */
 function move_children_backwards_with_merging(page_html_div, next_page_html_div, stop_condition) {
   // loop until content is overflowing
@@ -1813,7 +1823,9 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
     zoom: {
       type: Number,
       default: 1.0
-    }
+    },
+    // "Do not break" test function: should return true on elements you don't want to be split over multiple pages but rather be moved to the next page
+    do_not_break: Function
   },
   data() {
     return {
@@ -1982,7 +1994,7 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
             }
 
             // move the content step by step to the next page, until it fits
-            move_children_forward_recursively(page.elt, next_page_elt, () => page.elt.clientHeight <= this.pages_height);
+            move_children_forward_recursively(page.elt, next_page_elt, () => page.elt.clientHeight <= this.pages_height, this.do_not_break);
           }
 
           // CLEANING
@@ -2227,6 +2239,7 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
         page.elt.style.position = "relative";
         page.elt.style.padding = typeof this.page_margins == "function" ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins;
         page.elt.style.breakBefore = page_idx ? "page" : "auto";
+        page.elt.style.overflow = "hidden";
 
         // add overlays if any
         const overlay_elt = this.pages_overlay_refs[page.uuid];
@@ -2319,15 +2332,15 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 });
 ;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js
  
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=287770f8&lang=css
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=5abf13c6&lang=css
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=287770f8&lang=css
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=5abf13c6&lang=css
 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=287770f8&scoped=true&lang=css
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=5abf13c6&scoped=true&lang=css
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=287770f8&scoped=true&lang=css
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=5abf13c6&scoped=true&lang=css
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/dist/exportHelper.js
 var exportHelper = __webpack_require__(3744);
@@ -2340,7 +2353,7 @@ var exportHelper = __webpack_require__(3744);
 
 
 
-const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.Z)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-287770f8"]])
+const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.Z)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-5abf13c6"]])
 
 /* harmony default export */ var DocumentEditor = (__exports__);
 ;// CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
