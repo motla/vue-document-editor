@@ -21,10 +21,11 @@ function find_sub_child_sibling_node (container, s_tag){
  * next page.
  * @param {HTMLElement} child Element to take children from (current page)
  * @param {HTMLElement} child_sibling Element to copy children to (next page)
- * @param {Function} stop_condition Check function that returns a boolean if content doesn't overflow anymore
- * @param {Boolean} not_first_child Should be unset. Used internally to let at least one child in the page
+ * @param {function} stop_condition Check function that returns a boolean if content doesn't overflow anymore
+ * @param {function(HTMLElement):boolean?} do_not_break Optional function that receives the current child element and should return true if the child should not be split over two pages but rather be moved directly to the next page
+ * @param {boolean?} not_first_child Should be unset. Used internally to let at least one child in the page
  */
-function move_children_forward_recursively (child, child_sibling, stop_condition, not_first_child) {
+function move_children_forward_recursively (child, child_sibling, stop_condition, do_not_break, not_first_child) {
 
   // if the child still has nodes and the current page still overflows
   while(child.childNodes.length && !stop_condition()){
@@ -49,8 +50,12 @@ function move_children_forward_recursively (child, child_sibling, stop_condition
       }
     }
 
-    // if it is a node with no content (e.g. <img>), or a header title (e.g. <h1>) we simply move it
-    else if(!sub_child.childNodes.length || sub_child.tagName.match(/h\d/i)) {
+    // we simply move it to the next page if it is either:
+    // - a node with no content (e.g. <img>)
+    // - a header title (e.g. <h1>)
+    // - a table row (e.g. <tr>)
+    // - any element on whose user-custom `do_not_break` function returns true
+    else if(!sub_child.childNodes.length || sub_child.tagName.match(/h\d/i) || sub_child.tagName.match(/tr/i) || (typeof do_not_break === "function" && do_not_break(sub_child))) {
       // just prevent moving the last child of the page
       if(!not_first_child){
         console.log("Move-forward: first child reached with no stop condition. Aborting");
@@ -76,7 +81,7 @@ function move_children_forward_recursively (child, child_sibling, stop_condition
       }
       
       // then move/clone its children and sub-children recursively
-      move_children_forward_recursively(sub_child, sub_child_sibling, stop_condition, not_first_child);
+      move_children_forward_recursively(sub_child, sub_child_sibling, stop_condition, do_not_break, not_first_child);
       sub_child_sibling.normalize(); // merge consecutive text nodes
     }
 
@@ -101,7 +106,7 @@ function move_children_forward_recursively (child, child_sibling, stop_condition
  * merging sibling tags previously watermarked by "move_children_forward_recursively", if any.
  * @param {HTMLElement} page_html_div Current page element
  * @param {HTMLElement} next_page_html_div Next page element
- * @param {Function} stop_condition Check function that returns a boolean if content overflows
+ * @param {function} stop_condition Check function that returns a boolean if content overflows
  */
 function move_children_backwards_with_merging (page_html_div, next_page_html_div, stop_condition) {
 

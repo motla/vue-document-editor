@@ -69,7 +69,10 @@ export default {
     zoom: {
       type: Number,
       default: 1.0
-    }
+    },
+
+    // "Do not break" test function: should return true on elements you don't want to be split over multiple pages but rather be moved to the next page
+    do_not_break: Function
   },
 
   data () {
@@ -222,7 +225,7 @@ export default {
             }
 
             // move the content step by step to the next page, until it fits
-            move_children_forward_recursively(page_elt, next_page_elt, () => (page_elt.clientHeight <= this.pages_height));
+            move_children_forward_recursively(page_elt, next_page_elt, () => (page_elt.clientHeight <= this.pages_height), this.do_not_break);
           }
         }
       }
@@ -420,6 +423,7 @@ export default {
         page_clone.style.position = "relative";
         page_clone.style.padding = (typeof this.page_margins == "function") ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins;
         page_clone.style.breakBefore = page_idx ? "page" : "auto";
+        page_clone.style.overflow = "hidden";
 
         // add overlays if any
         const overlay_elts = this.$refs[page.uuid+'-overlay'];

@@ -17,6 +17,7 @@
 - **page_format_mm**: `[width, height] (default:[210, 297])` - *Page format in mm*
 - **page_margins**: `String (default:"10mm 15mm") or Function(page: Number, total: Number) => String` - *Page margins in CSS format*
 - **zoom**: `Number (default:1.0)`- *Display zoom. Only acts on the screen display*
+- **do_not_break**: `Function(HTMLElement) => Boolean` (optional) - *Function that should return true on elements you don't want to be split over multiple pages but rather be moved to the next page (for example `:do_not_break="(elt) => elt.tagName.match(/section/i)"` prevents splitting `<section>` elements)*
 
 ## Data
 You can query data variables that contain the current state information about:
