@@ -262,6 +262,7 @@ module.exports = !fails(function () {
 var documentAll = typeof document == 'object' && document.all;
 
 // https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
+// eslint-disable-next-line unicorn/no-typeof-undefined -- required for testing
 var IS_HTMLDDA = typeof documentAll == 'undefined' && documentAll !== undefined;
 
 module.exports = {
@@ -304,11 +305,9 @@ module.exports = function (it) {
 /***/ }),
 
 /***/ 8113:
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+/***/ (function(module) {
 
-var getBuiltIn = __webpack_require__(5005);
-
-module.exports = getBuiltIn('navigator', 'userAgent') || '';
+module.exports = typeof navigator != 'undefined' && String(navigator.userAgent) || '';
 
 
 /***/ }),
@@ -559,7 +558,7 @@ module.exports =
   check(typeof self == 'object' && self) ||
   check(typeof __webpack_require__.g == 'object' && __webpack_require__.g) ||
   // eslint-disable-next-line no-new-func -- fallback
-  (function () { return this; })() || Function('return this')();
+  (function () { return this; })() || this || Function('return this')();
 
 
 /***/ }),
@@ -864,6 +863,7 @@ module.exports = function (obj) {
 /***/ 6339:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
+var uncurryThis = __webpack_require__(1702);
 var fails = __webpack_require__(7293);
 var isCallable = __webpack_require__(614);
 var hasOwn = __webpack_require__(2597);
@@ -874,8 +874,12 @@ var InternalStateModule = __webpack_require__(9909);
 
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
+var $String = String;
 // eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
+var stringSlice = uncurryThis(''.slice);
+var replace = uncurryThis(''.replace);
+var join = uncurryThis([].join);
 
 var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
   return defineProperty(function () { /* empty */ }, 'length', { value: 8 }).length !== 8;
@@ -884,8 +888,8 @@ var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
 var TEMPLATE = String(String).split('String');
 
 var makeBuiltIn = module.exports = function (value, name, options) {
-  if (String(name).slice(0, 7) === 'Symbol(') {
-    name = '[' + String(name).replace(/^Symbol\(([^)]*)\)/, '$1') + ']';
+  if (stringSlice($String(name), 0, 7) === 'Symbol(') {
+    name = '[' + replace($String(name), /^Symbol\(([^)]*)\)/, '$1') + ']';
   }
   if (options && options.getter) name = 'get ' + name;
   if (options && options.setter) name = 'set ' + name;
@@ -904,7 +908,7 @@ var makeBuiltIn = module.exports = function (value, name, options) {
   } catch (error) { /* empty */ }
   var state = enforceInternalState(value);
   if (!hasOwn(state, 'source')) {
-    state.source = TEMPLATE.join(typeof name == 'string' ? name : '');
+    state.source = join(TEMPLATE, typeof name == 'string' ? name : '');
   } return value;
 };
 
@@ -1197,10 +1201,10 @@ var store = __webpack_require__(5465);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.26.1',
+  version: '3.30.2',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.26.1/LICENSE',
+  copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
+  license: 'https://github.com/zloirock/core-js/blob/v3.30.2/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -1213,13 +1217,18 @@ var store = __webpack_require__(5465);
 /* eslint-disable es/no-symbol -- required for testing */
 var V8_VERSION = __webpack_require__(7392);
 var fails = __webpack_require__(7293);
+var global = __webpack_require__(7854);
+
+var $String = global.String;
 
 // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
   var symbol = Symbol();
   // Chrome 38 Symbol has incorrect toString conversion
   // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
-  return !String(symbol) || !(Object(symbol) instanceof Symbol) ||
+  // nb: Do not call `String` directly to avoid this being optimized out to `symbol+''` which will,
+  // of course, fail.
+  return !$String(symbol) || !(Object(symbol) instanceof Symbol) ||
     // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
     !Symbol.sham && V8_VERSION && V8_VERSION < 41;
 });
@@ -1443,21 +1452,15 @@ var uid = __webpack_require__(9711);
 var NATIVE_SYMBOL = __webpack_require__(6293);
 var USE_SYMBOL_AS_UID = __webpack_require__(3307);
 
-var WellKnownSymbolsStore = shared('wks');
 var Symbol = global.Symbol;
-var symbolFor = Symbol && Symbol['for'];
-var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol : Symbol && Symbol.withoutSetter || uid;
+var WellKnownSymbolsStore = shared('wks');
+var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol['for'] || Symbol : Symbol && Symbol.withoutSetter || uid;
 
 module.exports = function (name) {
-  if (!hasOwn(WellKnownSymbolsStore, name) || !(NATIVE_SYMBOL || typeof WellKnownSymbolsStore[name] == 'string')) {
-    var description = 'Symbol.' + name;
-    if (NATIVE_SYMBOL && hasOwn(Symbol, name)) {
-      WellKnownSymbolsStore[name] = Symbol[name];
-    } else if (USE_SYMBOL_AS_UID && symbolFor) {
-      WellKnownSymbolsStore[name] = symbolFor(description);
-    } else {
-      WellKnownSymbolsStore[name] = createWellKnownSymbol(description);
-    }
+  if (!hasOwn(WellKnownSymbolsStore, name)) {
+    WellKnownSymbolsStore[name] = NATIVE_SYMBOL && hasOwn(Symbol, name)
+      ? Symbol[name]
+      : createWellKnownSymbol('Symbol.' + name);
   } return WellKnownSymbolsStore[name];
 };
 
@@ -1482,18 +1485,20 @@ var INCORRECT_TO_LENGTH = fails(function () {
 
 // V8 and Safari <= 15.4, FF < 23 throws InternalError
 // https://bugs.chromium.org/p/v8/issues/detail?id=12681
-var SILENT_ON_NON_WRITABLE_LENGTH = !function () {
+var properErrorOnNonWritableLength = function () {
   try {
     // eslint-disable-next-line es/no-object-defineproperty -- safe
     Object.defineProperty([], 'length', { writable: false }).push();
   } catch (error) {
     return error instanceof TypeError;
   }
-}();
+};
+
+var FORCED = INCORRECT_TO_LENGTH || !properErrorOnNonWritableLength();
 
 // `Array.prototype.push` method
 // https://tc39.es/ecma262/#sec-array.prototype.push
-$({ target: 'Array', proto: true, arity: 1, forced: INCORRECT_TO_LENGTH || SILENT_ON_NON_WRITABLE_LENGTH }, {
+$({ target: 'Array', proto: true, arity: 1, forced: FORCED }, {
   // eslint-disable-next-line no-unused-vars -- required for `.length`
   push: function push(item) {
     var O = toObject(this);
@@ -1532,7 +1537,7 @@ $({ target: 'Array', proto: true, arity: 1, forced: INCORRECT_TO_LENGTH || SILEN
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -1601,7 +1606,7 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-;// CONCATENATED MODULE: ./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=3e4ec180&scoped=true&
+;// CONCATENATED MODULE: ./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=3822a990&scoped=true&
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
@@ -1676,10 +1681,11 @@ function find_sub_child_sibling_node(container, s_tag) {
  * next page.
  * @param {HTMLElement} child Element to take children from (current page)
  * @param {HTMLElement} child_sibling Element to copy children to (next page)
- * @param {Function} stop_condition Check function that returns a boolean if content doesn't overflow anymore
- * @param {Boolean} not_first_child Should be unset. Used internally to let at least one child in the page
+ * @param {function} stop_condition Check function that returns a boolean if content doesn't overflow anymore
+ * @param {function(HTMLElement):boolean?} do_not_break Optional function that receives the current child element and should return true if the child should not be split over two pages but rather be moved directly to the next page
+ * @param {boolean?} not_first_child Should be unset. Used internally to let at least one child in the page
  */
-function move_children_forward_recursively(child, child_sibling, stop_condition, not_first_child) {
+function move_children_forward_recursively(child, child_sibling, stop_condition, do_not_break, not_first_child) {
   // if the child still has nodes and the current page still overflows
   while (child.childNodes.length && !stop_condition()) {
     // check if page has only one child tree left
@@ -1702,8 +1708,12 @@ function move_children_forward_recursively(child, child_sibling, stop_condition,
       }
     }
 
-    // if it is a node with no content (e.g. <img>), or a header title (e.g. <h1>) we simply move it
-    else if (!sub_child.childNodes.length || sub_child.tagName.match(/h\d/i)) {
+    // we simply move it to the next page if it is either:
+    // - a node with no content (e.g. <img>)
+    // - a header title (e.g. <h1>)
+    // - a table row (e.g. <tr>)
+    // - any element on whose user-custom `do_not_break` function returns true
+    else if (!sub_child.childNodes.length || sub_child.tagName.match(/h\d/i) || sub_child.tagName.match(/tr/i) || typeof do_not_break === "function" && do_not_break(sub_child)) {
       // just prevent moving the last child of the page
       if (!not_first_child) {
         console.log("Move-forward: first child reached with no stop condition. Aborting");
@@ -1729,7 +1739,7 @@ function move_children_forward_recursively(child, child_sibling, stop_condition,
       }
 
       // then move/clone its children and sub-children recursively
-      move_children_forward_recursively(sub_child, sub_child_sibling, stop_condition, not_first_child);
+      move_children_forward_recursively(sub_child, sub_child_sibling, stop_condition, do_not_break, not_first_child);
       sub_child_sibling.normalize(); // merge consecutive text nodes
     }
 
@@ -1749,7 +1759,7 @@ function move_children_forward_recursively(child, child_sibling, stop_condition,
  * merging sibling tags previously watermarked by "move_children_forward_recursively", if any.
  * @param {HTMLElement} page_html_div Current page element
  * @param {HTMLElement} next_page_html_div Next page element
- * @param {Function} stop_condition Check function that returns a boolean if content overflows
+ * @param {function} stop_condition Check function that returns a boolean if content overflows
  */
 function move_children_backwards_with_merging(page_html_div, next_page_html_div, stop_condition) {
   // loop until content is overflowing
@@ -1815,7 +1825,9 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
     zoom: {
       type: Number,
       default: 1.0
-    }
+    },
+    // "Do not break" test function: should return true on elements you don't want to be split over multiple pages but rather be moved to the next page
+    do_not_break: Function
   },
   data() {
     return {
@@ -1969,7 +1981,7 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
             }
 
             // move the content step by step to the next page, until it fits
-            move_children_forward_recursively(page_elt, next_page_elt, () => page_elt.clientHeight <= this.pages_height);
+            move_children_forward_recursively(page_elt, next_page_elt, () => page_elt.clientHeight <= this.pages_height, this.do_not_break);
           }
         }
       }
@@ -2177,6 +2189,7 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
         page_clone.style.position = "relative";
         page_clone.style.padding = typeof this.page_margins == "function" ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins;
         page_clone.style.breakBefore = page_idx ? "page" : "auto";
+        page_clone.style.overflow = "hidden";
 
         // add overlays if any
         const overlay_elts = this.$refs[page.uuid + '-overlay'];
@@ -2244,15 +2257,15 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 });
 ;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js&
  /* harmony default export */ var DocumentEditor_DocumentEditorvue_type_script_lang_js_ = (DocumentEditorvue_type_script_lang_js_); 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=3e4ec180&prod&lang=css&
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=3822a990&prod&lang=css&
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=3e4ec180&prod&lang=css&
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=3822a990&prod&lang=css&
 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=3e4ec180&prod&scoped=true&lang=css&
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=3822a990&prod&scoped=true&lang=css&
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=3e4ec180&prod&scoped=true&lang=css&
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=3822a990&prod&scoped=true&lang=css&
 
 ;// CONCATENATED MODULE: ./node_modules/@vue/vue-loader-v15/lib/runtime/componentNormalizer.js
 /* globals __VUE_SSR_CONTEXT__ */
@@ -2368,7 +2381,7 @@ var component = normalizeComponent(
   staticRenderFns,
   false,
   null,
-  "3e4ec180",
+  "3822a990",
   null
   
 )
