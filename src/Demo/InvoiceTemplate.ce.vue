@@ -166,6 +166,7 @@ export default {
   }
   *[contenteditable="true"] {
     background: rgba(200, 250, 230, 0.4);
+    cursor: text;
     transition: padding 0.05s linear;
   }
   span[contenteditable="true"]:focus {

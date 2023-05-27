@@ -1,5 +1,12 @@
 # Vue 3
 
+## v2.3.0
+
+- Improvement on [Issue 28](https://github.com/motla/vue-document-editor/issues/28): Table Page Break. Now table rows don't split over pages but are simply moved if they overflow
+- Implementation of [Issue 27](https://github.com/motla/vue-document-editor/issues/27): Unwanted page break with `:do_not_break` parameter
+- Fix a part of [Issue 26](https://github.com/motla/vue-document-editor/issues/26):
+  - A blank page could appear at the end when printing with page overlays
+
 ## v2.2.2
 
 - Fix [Issue 24](https://github.com/motla/vue-document-editor/issues/24): Backspace key is broken with one page content
@@ -68,6 +75,13 @@
 - Dependencies upgrade
 
 # Vue 2
+
+## v1.5.0
+
+- Improvement on [Issue 28](https://github.com/motla/vue-document-editor/issues/28): Table Page Break. Now table rows don't split over pages but are simply moved if they overflow
+- Implementation of [Issue 27](https://github.com/motla/vue-document-editor/issues/27): Unwanted page break with `:do_not_break` parameter
+- Fix a part of [Issue 26](https://github.com/motla/vue-document-editor/issues/26):
+  - A blank page could appear at the end when printing with page overlays
 
 ## v1.4.1
 
