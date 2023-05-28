@@ -1,5 +1,9 @@
 # Vue 3
 
+## v2.3.1
+
+- Fix [Issue 26](https://github.com/motla/vue-document-editor/issues/26)
+
 ## v2.3.0
 
 - Improvement on [Issue 28](https://github.com/motla/vue-document-editor/issues/28): Table Page Break. Now table rows don't split over pages but are simply moved if they overflow
@@ -75,6 +79,10 @@
 - Dependencies upgrade
 
 # Vue 2
+
+## v1.5.1
+
+- Fix [Issue 26](https://github.com/motla/vue-document-editor/issues/26)
 
 ## v1.5.0
 

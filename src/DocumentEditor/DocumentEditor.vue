@@ -474,6 +474,9 @@ export default {
         page.elt.style.position = "relative";
         page.elt.style.padding = (typeof this.page_margins == "function") ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins;
         page.elt.style.breakBefore = page_idx ? "page" : "auto";
+        page.elt.style.width = "calc("+this.page_format_mm[0]+"mm - 2px)";
+        page.elt.style.height = "calc("+this.page_format_mm[1]+"mm - 2px)";
+        page.elt.style.boxSizing = "border-box";
         page.elt.style.overflow = "hidden";
 
         // add overlays if any
