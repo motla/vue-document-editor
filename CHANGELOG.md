@@ -1,5 +1,9 @@
 ###### :speech_balloon: For v2.x (Vue3) releases, see the master branch
 
+## v1.5.1
+
+- Fix [Issue 26](https://github.com/motla/vue-document-editor/issues/26)
+
 ## v1.5.0
 
 - Improvement on [Issue 28](https://github.com/motla/vue-document-editor/issues/28): Table Page Break. Now table rows don't split over pages but are simply moved if they overflow

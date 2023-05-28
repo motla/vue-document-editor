@@ -423,6 +423,9 @@ export default {
         page_clone.style.position = "relative";
         page_clone.style.padding = (typeof this.page_margins == "function") ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins;
         page_clone.style.breakBefore = page_idx ? "page" : "auto";
+        page_clone.style.width = "calc("+this.page_format_mm[0]+"mm - 2px)";
+        page_clone.style.height = "calc("+this.page_format_mm[1]+"mm - 2px)";
+        page_clone.style.boxSizing = "border-box";
         page_clone.style.overflow = "hidden";
 
         // add overlays if any
