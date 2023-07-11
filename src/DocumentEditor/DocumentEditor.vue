@@ -26,6 +26,7 @@ import { move_children_forward_recursively, move_children_backwards_with_merging
 import useDocumentEditor from '@/composables/useDocumentEditor';
 import useKeepFirstPage from '@/composables/useKeepFirstPage';
 import { toRef } from '@vueuse/core';
+import cssToString from '@/utils/cssToString';
 
 const nanoid = customAlphabet('1234567890', 5);
 
@@ -332,9 +333,6 @@ export default {
 			this.current_text_style = style;
 		},
 
-		// Utility to convert page_style to CSS string
-		css_to_string: (css) => Object.entries(css).map(([ k, v ]) => k.replace(/[A-Z]/g, match => ('-' + match.toLowerCase())) + ':' + v).join(';'),
-
 		// Prepare content before opening the native print box
 		before_print() {
 			// set the printing mode flag
@@ -408,11 +406,11 @@ export default {
 
 			// restore pages and overlays
 			for (const [ page_idx, page ] of this.pages.entries()) {
-				page.elt.style = this.css_to_string(this.page_style(page_idx, page.template ? false : true));
+				page.elt.style = this.cssToString(this.page_style(page_idx, page.template ? false : true));
 				this.$refs.contentRef.append(page.elt);
 				const overlay_elt = this.pages_overlay_refs[page.uuid];
 				if (overlay_elt) {
-					overlay_elt.style = this.css_to_string(this.page_style(page_idx, false));
+					overlay_elt.style = this.cssToString(this.page_style(page_idx, false));
 					this.$refs.overlays.append(overlay_elt);
 				}
 			}
@@ -448,26 +446,6 @@ export default {
 	},
 
 	setup(props, { emit }) {
-		const {
-			pages,
-			pages_overlay_refs,
-			pages_height,
-			editor_width,
-			prevent_next_content_update_from_parent,
-			current_text_style,
-			printing_mode,
-
-			css_media_style,
-
-			contentRef,
-			editorRef,
-
-			page_style,
-			updatePagesELTs,
-			update_editor_width,
-			update_css_media_style,
-		} = useDocumentEditor(props, emit);
-
 		const propContentRef = toRef(props, 'content');
 
 		const {
@@ -475,25 +453,10 @@ export default {
 		} = useKeepFirstPage(propContentRef);
 
 		return {
-			pages,
-			pages_overlay_refs,
-			pages_height,
-			editor_width,
-			prevent_next_content_update_from_parent,
-			current_text_style,
-			printing_mode,
-
-			css_media_style,
-
-			contentRef,
-			editorRef,
-
-			page_style,
-			updatePagesELTs,
-			update_editor_width,
-			update_css_media_style,
+			...useDocumentEditor(props, emit),
 
 			onKeydown,
+			cssToString,
 		}
 	}
 }
