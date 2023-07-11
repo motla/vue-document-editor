@@ -155,7 +155,7 @@ export default {
         { html: "<b>H3</b>", title: "Header 3", active: this.isH3, disabled: !this.current_text_style, click: () => document.execCommand('formatBlock', false, '<h3>') },
         { icon: "format_clear", title: "Clear format", disabled: !this.current_text_style, click () { document.execCommand('removeFormat'); document.execCommand('formatBlock', false, '<div>'); } },
         { icon: "splitscreen", title: "Page break", disabled: !this.current_text_style, click: () => this.insertPageBreak() },
-        
+
         { is: "spacer" },
 
         { // Format menu
@@ -271,29 +271,29 @@ export default {
 
     // Current text style management
     current_text_style () { return this.mounted ? this.$refs.editor.current_text_style : false; },
-    isLeftAligned () { return ["start", "left", "-moz-left"].includes(this.current_text_style.textAlign); },
-    isRightAligned () { return ["end", "right", "-moz-right"].includes(this.current_text_style.textAlign); },
-    isCentered () { return ["center", "-moz-center"].includes(this.current_text_style.textAlign); },
-    isJustified () { return ["justify", "justify-all"].includes(this.current_text_style.textAlign); },
+    isLeftAligned () { return ["start", "left", "-moz-left"].includes(this.current_text_style?.textAlign); },
+    isRightAligned () { return ["end", "right", "-moz-right"].includes(this.current_text_style?.textAlign); },
+    isCentered () { return ["center", "-moz-center"].includes(this.current_text_style?.textAlign); },
+    isJustified () { return ["justify", "justify-all"].includes(this.current_text_style?.textAlign); },
     isBold () {
-      const fontWeight = this.current_text_style.fontWeight;
+      const fontWeight = this.current_text_style?.fontWeight;
       return fontWeight && (parseInt(fontWeight) > 400 || fontWeight.indexOf("bold") == 0);
     },
-    isItalic () { return this.current_text_style.fontStyle == "italic"; },
+    isItalic () { return this.current_text_style?.fontStyle == "italic"; },
     isUnderline () { // text-decoration is not overridden by children, so we query the parent stack
-      const stack = this.current_text_style.textDecorationStack;
+      const stack = this.current_text_style?.textDecorationStack;
       return stack && stack.some(d => (d.indexOf("underline") == 0));
     },
     isStrikeThrough () { // text-decoration is not overridden by children, so we query the parent stack
-      const stack = this.current_text_style.textDecorationStack;
+      const stack = this.current_text_style?.textDecorationStack;
       return stack && stack.some(d => (d.indexOf("line-through") == 0));
     },
-    isNumberedList () { return this.current_text_style.isList && this.current_text_style.listStyleType == "decimal"; },
-    isBulletedList () { return this.current_text_style.isList && ["disc", "circle"].includes(this.current_text_style.listStyleType); },
-    isH1 () { return this.current_text_style.headerLevel == 1; },
-    isH2 () { return this.current_text_style.headerLevel == 2; },
-    isH3 () { return this.current_text_style.headerLevel == 3; },
-    curColor () { return this.current_text_style.color || "transparent"; },
+    isNumberedList () { return this.current_text_style?.isList && this.current_text_style?.listStyleType == "decimal"; },
+    isBulletedList () { return this.current_text_style?.isList && ["disc", "circle"].includes(this.current_text_style?.listStyleType); },
+    isH1 () { return this.current_text_style?.headerLevel == 1; },
+    isH2 () { return this.current_text_style?.headerLevel == 2; },
+    isH3 () { return this.current_text_style?.headerLevel == 3; },
+    curColor () { return this.current_text_style?.color || "transparent"; },
 
     // Platform management
     isMacLike: () => /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform),

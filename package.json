@@ -6,7 +6,34 @@
     "name": "Romain Lamothe",
     "url": "http://www.motla.fr/"
   },
-  "license": "MIT",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build --dest docs && vue-cli-service build --target lib --name VueDocumentEditor src/DocumentEditor/DocumentEditor.vue",
+    "version": "npm run build && git add -A"
+  },
+  "main": "src/DocumentEditor/DocumentEditor.vue",
+  "dependencies": {
+    "@vueuse/core": "^10.2.1",
+    "docx": "^8.2.0",
+    "nanoid": "^4.0.2"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^5.0.8",
+    "@vue/cli-plugin-typescript": "~5.0.0",
+    "@vue/cli-service": "^5.0.8",
+    "typescript": "~4.5.5",
+    "vue": "^3.2.45",
+    "vue-file-toolbar-menu": "^2.2.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "bugs": {
+    "url": "https://github.com/motla/vue-document-editor/issues"
+  },
+  "homepage": "https://github.com/motla/vue-document-editor",
   "keywords": [
     "vue",
     "vuejs",
@@ -19,29 +46,9 @@
     "processor",
     "application"
   ],
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/motla/vue-document-editor.git"
-  },
-  "bugs": {
-    "url": "https://github.com/motla/vue-document-editor/issues"
-  },
-  "homepage": "https://github.com/motla/vue-document-editor",
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --dest docs && vue-cli-service build --target lib --name VueDocumentEditor src/DocumentEditor/DocumentEditor.vue",
-    "version": "npm run build && git add -A"
-  },
-  "main": "src/DocumentEditor/DocumentEditor.vue",
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "^5.0.8",
-    "@vue/cli-service": "^5.0.8",
-    "vue": "^3.2.45",
-    "vue-file-toolbar-menu": "^2.2.0"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+  }
 }

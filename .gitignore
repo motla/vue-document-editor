@@ -1,5 +1,6 @@
 .DS_Store
 node_modules
+docs
 dist/demo.html
 package-lock.json
 
@@ -12,3 +13,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/.gitignore
+/.idea/deployment.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/vue-document-editor.iml
