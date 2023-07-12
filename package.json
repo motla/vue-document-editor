@@ -8,7 +8,9 @@
   },
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --dest docs && vue-cli-service build --target lib --name VueDocumentEditor src/DocumentEditor/DocumentEditor.vue",
+    "build:use-document": "vue-cli-service build --target lib --name useDocument src/composables/useDocument.ts",
+    "build:document-editor": "vue-cli-service build --target lib --name VueDocumentEditor src/DocumentEditor/DocumentEditor.vue",
+    "build": "vue-cli-service build --dest docs && npm run build:document-editor && npm run build:use-document",
     "version": "npm run build && git add -A"
   },
   "main": "src/DocumentEditor/DocumentEditor.vue",
