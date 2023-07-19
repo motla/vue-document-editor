@@ -22,6 +22,8 @@ import VueDocumentEditor from '../DocumentEditor/DocumentEditor.vue'; // set fro
 import InvoiceTemplate from './InvoiceTemplate.ce.vue';
 import { markRaw } from 'vue';
 import useDocument from "@/composables/useDocument.ts";
+import useImageUpload from "@/composables/useImageUpload";
+
 
 export default {
   components: { VueDocumentEditor, VueFileToolbarMenu },
@@ -127,6 +129,7 @@ export default {
         // Main commands
         { text: "New", title: "New", icon: "description", click: () => { if(confirm("This will create an empty document. Are you sure?")){ this.content = [""]; this.resetContentHistory(); } } },
         { text: "Print", title: "Print", icon: "print", click: () => window.print() },
+        { text: "Insert Image", icon: "image", disabled: !this.current_text_style, title: "Insert Image", click: () => this.addImage() },
 
         { is: "spacer" },
 
@@ -384,9 +387,13 @@ export default {
         canUndo,
     } = useDocument();
 
+    const {
+      addImage,
+    } = useImageUpload();
 
     return {
         content,
+        addImage,
         undo,
         redo,
         canRedo,
