@@ -7,7 +7,7 @@
 
 **vue-document-editor** is a rich-text editor built on top of [Vue.js](https://vuejs.org/), using the native [*contenteditable*](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Editable_content) browser implementation and some JavaScript trickery to spread content over paper-sized pages. It is mainly designed to allow **targeted modifications** to pre-formatted documents using HTML or **interactive templates**.
 
-###### :speech_balloon: This package does not intend to replace a proper document editor with full functionality. If you're looking for a powerful word processor, check out [CKEditor for Vue.js](https://github.com/ckeditor/ckeditor5-vue).
+###### :speech_balloon: This package does not intend to replace a proper document editor with full functionality. If you're looking for a powerful word processor, check out [CKEditor for Vue.js](https://github.com/ckeditor/ckeditor5-vue) or [Collabora Online Development Edition](https://collaboraonline.github.io/).
 
 ## Features
 ### :rocket: [See live demo](https://motla.github.io/vue-document-editor/)
