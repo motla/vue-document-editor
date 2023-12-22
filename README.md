@@ -12,7 +12,7 @@
 ## Features
 ### :rocket: [See live demo](https://motla.github.io/vue-document-editor/)
 - Use Vue.js components as interactive page templates
-- Word-by-word page splitting with forward and backward propagation (*still experimental*)
+- Word-by-word page splitting (*still experimental - only for plain HTML content*)
 - Native Print compatible
 - Dynamic document format and margins in millimeters
 - Custom page overlays (headers, footers, page numbers)
@@ -136,6 +136,7 @@ For the list of props, data and styling variables: **:blue_book: read the [API](
 - **Performance**: For now, large texts must be divided into multiple paragraphs and large page numbers can slow down the entire document (see [Issue 14](https://github.com/motla/vue-document-editor/issues/14)).
 - **Safari print**: Safari adds print margins unless you choose a borderless paper format in the print box. This has to be done manually. I guess there is no workaround for this issue yet.
 - **Tables, images**: Image/table placement and sizing is not included. You can implement it specifically for your needs. However, table rows split fine over multiple pages.
+- **Page splitting doesn't work with Vue page templates**: This library cannot act on the content managed by Vue (like .vue page templates), because then Vue is lost and the template pages are no more interactive. The only choice you have is writing plain HTML in the content instead of using .vue templates. You can do interactivity by using HTML elements with the attributes `contenteditable="false"` and `onclick="..."` containing your own JavaScript code.
 
 ## Project development
 - `npm run serve` compiles and hot-reloads demo for development
