@@ -308,7 +308,7 @@ export default {
             while(elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
               elt = elt.firstChild;
             }
-            return (elt.innerHTML == "<br>" ? "" : elt.innerHTML); // treat a page containing a single <br> as an empty content
+            return ((elt.innerHTML == "<br>" || elt.innerHTML == "<!---->") ? "" : elt.innerHTML); // treat a page containing a single <br> or an empty comment as an empty content
           }).join('');
         }
         // if item is a component, just clone the item
