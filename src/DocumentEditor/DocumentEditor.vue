@@ -9,7 +9,7 @@
     </div>
 
     <!-- Document editor -->
-    <div class="content" ref="content" :contenteditable="editable" :style="page_style(-1)" @input="input" @keyup="process_current_text_style" @keydown="keydown">
+    <div class="content" ref="content" :contenteditable="editable" :style="page_style(-1)" @input="input" @keyup="process_current_text_style">
       <!-- Contains every page of the document (can be modified by the DOM afterwards) -->
       <div v-for="(page, page_idx) in pages" class="page"
         :key="page.uuid" :ref="page.uuid" :data-content-idx="page.content_idx" :data-page-idx="page_idx"
@@ -142,7 +142,7 @@ export default {
         const page_elt = this.$refs[page.uuid][0];
 
         // set raw HTML content
-        if(!this.content[page.content_idx]) page_elt.innerHTML = "<div><br></div>";
+        if(!this.content[page.content_idx]) page_elt.innerHTML = "<div><br></div>"; // ensure empty pages are filled with at least <div><br></div>, otherwise editing fails on Chrome
         else if(typeof this.content[page.content_idx] == "string") page_elt.innerHTML = "<div>"+this.content[page.content_idx]+"</div>";
         // (else content is a component that is set in Vue.js <template>)
 
@@ -173,6 +173,7 @@ export default {
 
       // If all the document was wiped out, start a new empty document
       if(!this.pages.length){
+        this.fit_in_progress = false; // clear "fit in progress" flag
         this.$emit("update:content", [""]);
         return;
       }
@@ -230,6 +231,10 @@ export default {
         }
       }
       
+      // Normalize pages HTML content
+      for(const page of this.pages) {
+        this.$refs[page.uuid][0].normalize(); // normalize HTML (merge text nodes)
+      }
 
       // Restore selection and remove empty elements
       if(document.body.contains(start_marker)){
@@ -242,11 +247,9 @@ export default {
       if(start_marker.parentElement) start_marker.parentElement.removeChild(start_marker);
       if(end_marker.parentElement) end_marker.parentElement.removeChild(end_marker);
 
-      // Normalize and store current page HTML content
+      // Store pages HTML content
       for(const page of this.pages) {
-        const page_elt = this.$refs[page.uuid][0];
-        page_elt.normalize(); // normalize HTML (merge text nodes)
-        page.prev_innerHTML = page_elt.innerHTML; // store current pages innerHTML for next call
+        page.prev_innerHTML = this.$refs[page.uuid][0].innerHTML; // store current pages innerHTML for next call
       }
     },
 
@@ -256,16 +259,6 @@ export default {
       await this.fit_content_over_pages(); // fit content according to modifications
       this.emit_new_content(); // emit content modification
       if(e.inputType != "insertText") this.process_current_text_style(); // update current style if it has changed
-    },
-
-    // Keydown event
-    keydown (e) {
-      // if the document is empty, prevent removing the first page container with a backspace input (keycode 8)
-      // which is now the default behavior for web browsers
-      if(e.keyCode == 8 && this.content.length <= 1 && typeof(this.content[0]) == "string") {
-        const text = this.content[0].replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, '');
-        if(!text) e.preventDefault();
-      }
     },
 
     // Emit content change to parent
@@ -291,13 +284,13 @@ export default {
             while(elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
               elt = elt.firstChild;
             }
-            return elt.innerHTML;
-          }).join('') || false;
+            return ((elt.innerHTML == "<br>" || elt.innerHTML == "<!---->") ? "" : elt.innerHTML); // treat a page containing a single <br> or an empty comment as an empty content
+          }).join('');
         }
 
         // if item is a component, just clone the item
         else return { template: item.template, props: { ...item.props }};
-      }).filter(item => (item != false)); // remove empty items
+      }).filter(item => (item !== false)); // remove empty items
 
       // avoid calling reset_content after the parent content is updated (infinite loop)
       if(!removed_pages_flag) this.prevent_next_content_update_from_parent = true;

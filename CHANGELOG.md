@@ -1,5 +1,10 @@
 ###### :speech_balloon: For v2.x (Vue3) releases, see the master branch
 
+## v1.5.2
+
+- Fix [Issue 36](https://github.com/motla/vue-document-editor/issues/26): Better handling of deleting on an empty page (no more user action is prevented on the keydown event, instead we deal with the result in the input event and ensure at least a `<div><br></div>` is always present in the content).
+- Fix a Safari bug with the cursor, which appeared only on recent versions of Safari (`normalize()` must now be called before selection `<null>` tags removal)
+
 ## v1.5.1
 
 - Fix [Issue 26](https://github.com/motla/vue-document-editor/issues/26)
