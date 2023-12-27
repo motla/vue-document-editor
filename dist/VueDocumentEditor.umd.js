@@ -1606,7 +1606,7 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-;// CONCATENATED MODULE: ./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=214528ab&scoped=true&
+;// CONCATENATED MODULE: ./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/templateLoader.js??ruleSet[1].rules[3]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=fabae3b4&scoped=true&
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
@@ -1635,8 +1635,7 @@ var render = function render() {
     },
     on: {
       "input": _vm.input,
-      "keyup": _vm.process_current_text_style,
-      "keydown": _vm.keydown
+      "keyup": _vm.process_current_text_style
     }
   }, _vm._l(_vm.pages, function (page, page_idx) {
     return _c('div', {
@@ -1899,7 +1898,8 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
         const page_elt = this.$refs[page.uuid][0];
 
         // set raw HTML content
-        if (!this.content[page.content_idx]) page_elt.innerHTML = "<div><br></div>";else if (typeof this.content[page.content_idx] == "string") page_elt.innerHTML = "<div>" + this.content[page.content_idx] + "</div>";
+        if (!this.content[page.content_idx]) page_elt.innerHTML = "<div><br></div>"; // ensure empty pages are filled with at least <div><br></div>, otherwise editing fails on Chrome
+        else if (typeof this.content[page.content_idx] == "string") page_elt.innerHTML = "<div>" + this.content[page.content_idx] + "</div>";
         // (else content is a component that is set in Vue.js <template>)
 
         // restore page in DOM in case it was removed
@@ -1928,6 +1928,7 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 
       // If all the document was wiped out, start a new empty document
       if (!this.pages.length) {
+        this.fit_in_progress = false; // clear "fit in progress" flag
         this.$emit("update:content", [""]);
         return;
       }
@@ -1986,6 +1987,11 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
         }
       }
 
+      // Normalize pages HTML content
+      for (const page of this.pages) {
+        this.$refs[page.uuid][0].normalize(); // normalize HTML (merge text nodes)
+      }
+
       // Restore selection and remove empty elements
       if (document.body.contains(start_marker)) {
         const range = document.createRange();
@@ -1997,11 +2003,9 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
       if (start_marker.parentElement) start_marker.parentElement.removeChild(start_marker);
       if (end_marker.parentElement) end_marker.parentElement.removeChild(end_marker);
 
-      // Normalize and store current page HTML content
+      // Store pages HTML content
       for (const page of this.pages) {
-        const page_elt = this.$refs[page.uuid][0];
-        page_elt.normalize(); // normalize HTML (merge text nodes)
-        page.prev_innerHTML = page_elt.innerHTML; // store current pages innerHTML for next call
+        page.prev_innerHTML = this.$refs[page.uuid][0].innerHTML; // store current pages innerHTML for next call
       }
     },
 
@@ -2013,15 +2017,6 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
       if (e.inputType != "insertText") this.process_current_text_style(); // update current style if it has changed
     },
 
-    // Keydown event
-    keydown(e) {
-      // if the document is empty, prevent removing the first page container with a backspace input (keycode 8)
-      // which is now the default behavior for web browsers
-      if (e.keyCode == 8 && this.content.length <= 1 && typeof this.content[0] == "string") {
-        const text = this.content[0].replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, '');
-        if (!text) e.preventDefault();
-      }
-    },
     // Emit content change to parent
     emit_new_content() {
       let removed_pages_flag = false; // flag to call reset_content if some pages were removed by the user
@@ -2045,8 +2040,8 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
             while (elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
               elt = elt.firstChild;
             }
-            return elt.innerHTML;
-          }).join('') || false;
+            return elt.innerHTML == "<br>" || elt.innerHTML == "<!---->" ? "" : elt.innerHTML; // treat a page containing a single <br> or an empty comment as an empty content
+          }).join('');
         }
 
         // if item is a component, just clone the item
@@ -2056,7 +2051,7 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
             ...item.props
           }
         };
-      }).filter(item => item != false); // remove empty items
+      }).filter(item => item !== false); // remove empty items
 
       // avoid calling reset_content after the parent content is updated (infinite loop)
       if (!removed_pages_flag) this.prevent_next_content_update_from_parent = true;
@@ -2260,15 +2255,15 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 });
 ;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js&
  /* harmony default export */ var DocumentEditor_DocumentEditorvue_type_script_lang_js_ = (DocumentEditorvue_type_script_lang_js_); 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=214528ab&prod&lang=css&
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=fabae3b4&prod&lang=css&
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=214528ab&prod&lang=css&
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=fabae3b4&prod&lang=css&
 
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=214528ab&prod&scoped=true&lang=css&
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/@vue/vue-loader-v15/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/@vue/vue-loader-v15/lib/index.js??vue-loader-options!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=fabae3b4&prod&scoped=true&lang=css&
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=214528ab&prod&scoped=true&lang=css&
+;// CONCATENATED MODULE: ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=fabae3b4&prod&scoped=true&lang=css&
 
 ;// CONCATENATED MODULE: ./node_modules/@vue/vue-loader-v15/lib/runtime/componentNormalizer.js
 /* globals __VUE_SSR_CONTEXT__ */
@@ -2384,7 +2379,7 @@ var component = normalizeComponent(
   staticRenderFns,
   false,
   null,
-  "214528ab",
+  "fabae3b4",
   null
   
 )
