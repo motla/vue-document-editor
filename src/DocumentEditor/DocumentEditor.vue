@@ -9,7 +9,7 @@
     </div>
 
     <!-- Document editor -->
-    <div class="content" ref="content" :contenteditable="editable" :style="page_style(-1)" @input="input" @keyup="process_current_text_style" @keydown="keydown">
+    <div class="content" ref="content" :contenteditable="editable" :style="page_style(-1)" @input="input" @keyup="process_current_text_style">
       <!-- This is a Vue "hoisted" static <div> which contains every page of the document and can be modified by the DOM -->
     </div>
 
@@ -148,7 +148,7 @@ export default {
       for(const page of this.pages) {
 
         // set raw HTML content
-        if(!this.content[page.content_idx]) page.elt.innerHTML = "<div><br></div>";
+        if(!this.content[page.content_idx]) page.elt.innerHTML = "<div><br></div>"; // ensure empty pages are filled with at least <div><br></div>, otherwise editing fails on Chrome
         else if(typeof this.content[page.content_idx] == "string") page.elt.innerHTML = "<div>"+this.content[page.content_idx]+"</div>";
         else if(page.template) {
           const componentElement = defineCustomElement(page.template);
@@ -189,6 +189,7 @@ export default {
 
       // If all the document was wiped out, start a new empty document
       if(!this.pages.length){
+        this.fit_in_progress = false; // clear "fit in progress" flag
         this.$emit("update:content", [""]);
         return;
       }
@@ -252,6 +253,10 @@ export default {
         this.update_pages_elts();
       }
       
+      // Normalize pages HTML content
+      for(const page of this.pages) {
+        if(!page.template) page.elt.normalize(); // normalize HTML (merge text nodes) - don't touch template pages or it can break Vue
+      }
 
       // Restore selection and remove empty elements
       if(document.body.contains(start_marker)){
@@ -264,9 +269,8 @@ export default {
       if(start_marker.parentElement) start_marker.parentElement.removeChild(start_marker);
       if(end_marker.parentElement) end_marker.parentElement.removeChild(end_marker);
 
-      // Normalize and store current page HTML content
+      // Store pages HTML content
       for(const page of this.pages) {
-        if(!page.template) page.elt.normalize(); // normalize HTML (merge text nodes) - don't touch template pages or it can break Vue
         page.prev_innerHTML = page.elt.innerHTML; // store current pages innerHTML for next call
       }
 
@@ -280,16 +284,6 @@ export default {
       this.fit_content_over_pages(); // fit content according to modifications
       this.emit_new_content(); // emit content modification
       if(e.inputType != "insertText") this.process_current_text_style(); // update current style if it has changed
-    },
-
-    // Keydown event
-    keydown (e) {
-      // if the document is empty, prevent removing the first page container with a backspace input (keycode 8)
-      // which is now the default behavior for web browsers
-      if(e.keyCode == 8 && this.content.length <= 1 && typeof(this.content[0]) == "string") {
-        const text = this.content[0].replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, '');
-        if(!text) e.preventDefault();
-      }
     },
 
     // Emit content change to parent
@@ -314,12 +308,12 @@ export default {
             while(elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
               elt = elt.firstChild;
             }
-            return elt.innerHTML;
-          }).join('') || false;
+            return (elt.innerHTML == "<br>" ? "" : elt.innerHTML); // treat a page containing a single <br> as an empty content
+          }).join('');
         }
         // if item is a component, just clone the item
         else return { template: item.template, props: { ...item.props }};
-      }).filter(item => (item != false)); // remove empty items
+      }).filter(item => (item !== false)); // remove empty items
 
       // avoid calling reset_content after the parent content is updated (infinite loop)
       if(!removed_pages_flag) this.prevent_next_content_update_from_parent = true;
