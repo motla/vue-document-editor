@@ -139,7 +139,7 @@ For the list of props, data and styling variables: **:blue_book: read the [API](
 - **Page splitting doesn't work with Vue page templates**: This library cannot act on the content managed by Vue (like .vue page templates), because then Vue is lost and the template pages are no longer interactive. The only choice you have is writing plain HTML in the content instead of using .vue templates. You can do interactivity by using HTML elements with the attributes `contenteditable="false"` and `onclick="..."` containing your own JavaScript code.
 
 ## Project development
-- `npm run serve` compiles and hot-reloads demo for development
+- `npm run serve` compiles, serves and hot-reloads demo for development
 - `npm run build` compiles and minifies production files and demo
 
 ## Licensing
