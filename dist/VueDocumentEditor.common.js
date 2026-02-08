@@ -3268,40 +3268,7 @@ $({ target: 'Set', proto: true, real: true, forced: FORCED }, {
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = __webpack_modules__;
-/******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/create fake namespace object */
-/******/ 	!function() {
-/******/ 		var getProto = Object.getPrototypeOf ? function(obj) { return Object.getPrototypeOf(obj); } : function(obj) { return obj.__proto__; };
-/******/ 		var leafPrototypes;
-/******/ 		// create a fake namespace object
-/******/ 		// mode & 1: value is a module id, require it
-/******/ 		// mode & 2: merge all properties of value into the ns
-/******/ 		// mode & 4: return value when already ns object
-/******/ 		// mode & 16: return value when it's Promise-like
-/******/ 		// mode & 8|1: behave like require
-/******/ 		__webpack_require__.t = function(value, mode) {
-/******/ 			if(mode & 1) value = this(value);
-/******/ 			if(mode & 8) return value;
-/******/ 			if(typeof value === 'object' && value) {
-/******/ 				if((mode & 4) && value.__esModule) return value;
-/******/ 				if((mode & 16) && typeof value.then === 'function') return value;
-/******/ 			}
-/******/ 			var ns = Object.create(null);
-/******/ 			__webpack_require__.r(ns);
-/******/ 			var def = {};
-/******/ 			leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
-/******/ 			for(var current = mode & 2 && value; (typeof current == 'object' || typeof current == 'function') && !~leafPrototypes.indexOf(current); current = getProto(current)) {
-/******/ 				Object.getOwnPropertyNames(current).forEach(function(key) { def[key] = function() { return value[key]; }; });
-/******/ 			}
-/******/ 			def['default'] = function() { return value; };
-/******/ 			__webpack_require__.d(ns, def);
-/******/ 			return ns;
-/******/ 		};
-/******/ 	}();
-/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	!function() {
 /******/ 		// define getter functions for harmony exports
@@ -3311,37 +3278,6 @@ $({ target: 'Set', proto: true, real: true, forced: FORCED }, {
 /******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
 /******/ 				}
 /******/ 			}
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/ensure chunk */
-/******/ 	!function() {
-/******/ 		__webpack_require__.f = {};
-/******/ 		// This file contains only the entry chunk.
-/******/ 		// The chunk loading function for additional chunks
-/******/ 		__webpack_require__.e = function(chunkId) {
-/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce(function(promises, key) {
-/******/ 				__webpack_require__.f[key](chunkId, promises);
-/******/ 				return promises;
-/******/ 			}, []));
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/get javascript chunk filename */
-/******/ 	!function() {
-/******/ 		// This function allow to reference async chunks
-/******/ 		__webpack_require__.u = function(chunkId) {
-/******/ 			// return url for filenames based on template
-/******/ 			return "VueDocumentEditor.common." + chunkId + ".js";
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/get mini-css chunk filename */
-/******/ 	!function() {
-/******/ 		// This function allow to reference async chunks
-/******/ 		__webpack_require__.miniCssF = function(chunkId) {
-/******/ 			// return url for filenames based on template
-/******/ 			return undefined;
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -3362,157 +3298,9 @@ $({ target: 'Set', proto: true, real: true, forced: FORCED }, {
 /******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
 /******/ 	}();
 /******/ 	
-/******/ 	/* webpack/runtime/load script */
-/******/ 	!function() {
-/******/ 		var inProgress = {};
-/******/ 		var dataWebpackPrefix = "vue-document-editor:";
-/******/ 		// loadScript function to load a script via script tag
-/******/ 		__webpack_require__.l = function(url, done, key, chunkId) {
-/******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
-/******/ 			var script, needAttach;
-/******/ 			if(key !== undefined) {
-/******/ 				var scripts = document.getElementsByTagName("script");
-/******/ 				for(var i = 0; i < scripts.length; i++) {
-/******/ 					var s = scripts[i];
-/******/ 					if(s.getAttribute("src") == url || s.getAttribute("data-webpack") == dataWebpackPrefix + key) { script = s; break; }
-/******/ 				}
-/******/ 			}
-/******/ 			if(!script) {
-/******/ 				needAttach = true;
-/******/ 				script = document.createElement('script');
-/******/ 		
-/******/ 				script.charset = 'utf-8';
-/******/ 				if (__webpack_require__.nc) {
-/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
-/******/ 				}
-/******/ 				script.setAttribute("data-webpack", dataWebpackPrefix + key);
-/******/ 		
-/******/ 				script.src = url;
-/******/ 			}
-/******/ 			inProgress[url] = [done];
-/******/ 			var onScriptComplete = function(prev, event) {
-/******/ 				// avoid mem leaks in IE.
-/******/ 				script.onerror = script.onload = null;
-/******/ 				clearTimeout(timeout);
-/******/ 				var doneFns = inProgress[url];
-/******/ 				delete inProgress[url];
-/******/ 				script.parentNode && script.parentNode.removeChild(script);
-/******/ 				doneFns && doneFns.forEach(function(fn) { return fn(event); });
-/******/ 				if(prev) return prev(event);
-/******/ 			}
-/******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
-/******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
-/******/ 			script.onload = onScriptComplete.bind(null, script.onload);
-/******/ 			needAttach && document.head.appendChild(script);
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	!function() {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = function(exports) {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	}();
-/******/ 	
 /******/ 	/* webpack/runtime/publicPath */
 /******/ 	!function() {
 /******/ 		__webpack_require__.p = "";
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/jsonp chunk loading */
-/******/ 	!function() {
-/******/ 		// no baseURI
-/******/ 		
-/******/ 		// object to store loaded and loading chunks
-/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
-/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
-/******/ 		var installedChunks = {
-/******/ 			654: 0
-/******/ 		};
-/******/ 		
-/******/ 		__webpack_require__.f.j = function(chunkId, promises) {
-/******/ 				// JSONP chunk loading for javascript
-/******/ 				var installedChunkData = __webpack_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
-/******/ 				if(installedChunkData !== 0) { // 0 means "already installed".
-/******/ 		
-/******/ 					// a Promise means "currently loading".
-/******/ 					if(installedChunkData) {
-/******/ 						promises.push(installedChunkData[2]);
-/******/ 					} else {
-/******/ 						if(true) { // all chunks have JS
-/******/ 							// setup Promise in chunk cache
-/******/ 							var promise = new Promise(function(resolve, reject) { installedChunkData = installedChunks[chunkId] = [resolve, reject]; });
-/******/ 							promises.push(installedChunkData[2] = promise);
-/******/ 		
-/******/ 							// start chunk loading
-/******/ 							var url = __webpack_require__.p + __webpack_require__.u(chunkId);
-/******/ 							// create error before stack unwound to get useful stacktrace later
-/******/ 							var error = new Error();
-/******/ 							var loadingEnded = function(event) {
-/******/ 								if(__webpack_require__.o(installedChunks, chunkId)) {
-/******/ 									installedChunkData = installedChunks[chunkId];
-/******/ 									if(installedChunkData !== 0) installedChunks[chunkId] = undefined;
-/******/ 									if(installedChunkData) {
-/******/ 										var errorType = event && (event.type === 'load' ? 'missing' : event.type);
-/******/ 										var realSrc = event && event.target && event.target.src;
-/******/ 										error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
-/******/ 										error.name = 'ChunkLoadError';
-/******/ 										error.type = errorType;
-/******/ 										error.request = realSrc;
-/******/ 										installedChunkData[1](error);
-/******/ 									}
-/******/ 								}
-/******/ 							};
-/******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId, chunkId);
-/******/ 						}
-/******/ 					}
-/******/ 				}
-/******/ 		};
-/******/ 		
-/******/ 		// no prefetching
-/******/ 		
-/******/ 		// no preloaded
-/******/ 		
-/******/ 		// no HMR
-/******/ 		
-/******/ 		// no HMR manifest
-/******/ 		
-/******/ 		// no on chunks loaded
-/******/ 		
-/******/ 		// install a JSONP callback for chunk loading
-/******/ 		var webpackJsonpCallback = function(parentChunkLoadingFunction, data) {
-/******/ 			var chunkIds = data[0];
-/******/ 			var moreModules = data[1];
-/******/ 			var runtime = data[2];
-/******/ 			// add "moreModules" to the modules object,
-/******/ 			// then flag all "chunkIds" as loaded and fire callback
-/******/ 			var moduleId, chunkId, i = 0;
-/******/ 			if(chunkIds.some(function(id) { return installedChunks[id] !== 0; })) {
-/******/ 				for(moduleId in moreModules) {
-/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
-/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
-/******/ 					}
-/******/ 				}
-/******/ 				if(runtime) var result = runtime(__webpack_require__);
-/******/ 			}
-/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
-/******/ 			for(;i < chunkIds.length; i++) {
-/******/ 				chunkId = chunkIds[i];
-/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
-/******/ 					installedChunks[chunkId][0]();
-/******/ 				}
-/******/ 				installedChunks[chunkId] = 0;
-/******/ 			}
-/******/ 		
-/******/ 		}
-/******/ 		
-/******/ 		var chunkLoadingGlobal = (typeof self !== 'undefined' ? self : this)["webpackChunkvue_document_editor"] = (typeof self !== 'undefined' ? self : this)["webpackChunkvue_document_editor"] || [];
-/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
-/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
 /******/ 	}();
 /******/ 	
 /************************************************************************/
@@ -3543,121 +3331,215 @@ if (typeof window !== 'undefined') {
 
 ;// external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
 var external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject = require("vue");
-;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=24e4f0ab&scoped=true
-
-const _hoisted_1 = {
-  class: "editor",
-  ref: "editor"
-};
-const _hoisted_2 = {
-  key: 0,
-  class: "overlays",
-  ref: "overlays"
-};
-const _hoisted_3 = ["innerHTML", "onDblclick"];
-const _hoisted_4 = ["innerHTML", "onDblclick"];
-const _hoisted_5 = ["innerHTML"];
-const _hoisted_6 = ["contenteditable"];
-const _hoisted_7 = {
-  class: "vde-progress-indicator",
-  ref: "progress_indicator"
-};
-const _hoisted_8 = {
-  class: "vde-progress-text",
-  ref: "progress_text"
-};
-const _hoisted_9 = {
-  class: "vde-paste-overlay",
-  ref: "paste_overlay"
-};
-const _hoisted_10 = {
-  class: "vde-paste-box"
-};
-const _hoisted_11 = {
-  class: "vde-paste-text",
-  ref: "paste_text"
-};
-function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", _hoisted_1, [$props.overlay || $props.header != null || $props.footer != null ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", _hoisted_2, [((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(true), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)(external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.Fragment, null, (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.renderList)($data.pages, (page, page_idx) => {
-    return (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
-      class: "overlay",
-      key: page.uuid + '-overlay',
-      ref_for: true,
-      ref: elt => $data.pages_overlay_refs[page.uuid] = elt,
-      style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)($options.page_style(page_idx, false))
-    }, [$props.header != null ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)(external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.Fragment, {
-      key: 0
-    }, [$data.editing_hf === 'header' && $data.editing_hf_page === page_idx ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
-      key: 0,
-      class: "hf-zone hf-header hf-active",
-      style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)($options.hf_header_style),
-      contenteditable: "true",
-      onInput: _cache[0] || (_cache[0] = $event => $options.on_hf_input('header')),
-      onKeyup: _cache[1] || (_cache[1] = (...args) => $options.process_current_text_style && $options.process_current_text_style(...args)),
-      onKeydown: _cache[2] || (_cache[2] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withKeys)((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withModifiers)((...args) => $options.stop_editing_hf && $options.stop_editing_hf(...args), ["prevent"]), ["esc"])),
-      "data-hf-label": "Cabeçalho"
-    }, null, 36)) : ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
-      key: 1,
-      class: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeClass)(["hf-zone hf-header", {
-        'hf-dim': $data.editing_hf === 'footer'
-      }]),
-      style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)($options.hf_header_style),
-      innerHTML: $props.header,
-      onDblclick: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withModifiers)($event => $options.start_editing_hf('header', page_idx), ["stop"])
-    }, null, 46, _hoisted_3))], 64)) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createCommentVNode)("", true), $props.footer != null ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)(external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.Fragment, {
-      key: 1
-    }, [$data.editing_hf === 'footer' && $data.editing_hf_page === page_idx ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
-      key: 0,
-      class: "hf-zone hf-footer hf-active",
-      style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)($options.hf_footer_style),
-      contenteditable: "true",
-      onInput: _cache[3] || (_cache[3] = $event => $options.on_hf_input('footer')),
-      onKeyup: _cache[4] || (_cache[4] = (...args) => $options.process_current_text_style && $options.process_current_text_style(...args)),
-      onKeydown: _cache[5] || (_cache[5] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withKeys)((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withModifiers)((...args) => $options.stop_editing_hf && $options.stop_editing_hf(...args), ["prevent"]), ["esc"])),
-      "data-hf-label": "Rodapé"
-    }, null, 36)) : ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
-      key: 1,
-      class: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeClass)(["hf-zone hf-footer", {
-        'hf-dim': $data.editing_hf === 'header'
-      }]),
-      style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)($options.hf_footer_style),
-      innerHTML: $props.footer,
-      onDblclick: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withModifiers)($event => $options.start_editing_hf('footer', page_idx), ["stop"])
-    }, null, 46, _hoisted_4))], 64)) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createCommentVNode)("", true), $props.overlay ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
-      key: 2,
-      innerHTML: $props.overlay(page_idx + 1, $data.pages.length),
-      style: {
-        "pointer-events": "none"
-      }
-    }, null, 8, _hoisted_5)) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createCommentVNode)("", true)], 4);
-  }), 128))], 512)) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createCommentVNode)("", true), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", {
-    class: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeClass)(["content", {
-      'hf-body-dim': !!$data.editing_hf
-    }]),
-    ref: "content",
-    contenteditable: $props.editable && !$data.editing_hf,
-    style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)($options.page_style(-1)),
-    onInput: _cache[6] || (_cache[6] = (...args) => $options.input && $options.input(...args)),
-    onKeyup: _cache[7] || (_cache[7] = (...args) => $options.process_current_text_style && $options.process_current_text_style(...args)),
-    onClick: _cache[8] || (_cache[8] = (...args) => $options.on_content_click && $options.on_content_click(...args))
-  }, null, 46, _hoisted_6), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", _hoisted_7, [_cache[9] || (_cache[9] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", {
-    class: "vde-progress-spinner"
-  }, null, -1)), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("span", _hoisted_8, null, 512)], 512), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", _hoisted_9, [(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", _hoisted_10, [_cache[10] || (_cache[10] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", {
-    class: "vde-paste-spinner"
-  }, null, -1)), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("span", _hoisted_11, "Colando texto...", 512)])], 512)], 512);
-}
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=24e4f0ab&scoped=true
-
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
-var es_array_push = __webpack_require__(4114);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.constructor.js
 var es_iterator_constructor = __webpack_require__(8111);
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.filter.js
-var es_iterator_filter = __webpack_require__(2489);
-// EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.find.js
-var es_iterator_find = __webpack_require__(116);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.map.js
 var es_iterator_map = __webpack_require__(1701);
+;// ./src/DocumentEditor/core/utils.js
+
+
+// Pure utility functions (no dependencies)
+
+function debounce(fn, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+function new_uuid() {
+  return Math.random().toString(36).slice(-5);
+}
+function css_to_string(css) {
+  return Object.entries(css).map(([k, v]) => k.replace(/[A-Z]/g, match => "-" + match.toLowerCase()) + ":" + v).join(';');
+}
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.find.js
+var es_iterator_find = __webpack_require__(116);
+;// ./src/DocumentEditor/core/page-layout.js
+
+
+// Page positioning, sizing, and DOM management
+
+function setupPageLayout(ctx) {
+  const {
+    state,
+    props,
+    refs
+  } = ctx;
+  ctx.page_style = function (page_idx, allow_overflow) {
+    const px_in_mm = 0.2645833333333;
+    const page_width = props.page_format_mm[0] / px_in_mm;
+    const page_spacing_mm = 10;
+    const page_with_plus_spacing = (page_spacing_mm + props.page_format_mm[0]) * props.zoom / px_in_mm;
+    const view_padding = 20;
+    const inner_width = state.editor_width - 2 * view_padding;
+    let nb_pages_x = 1,
+      page_column,
+      x_pos,
+      x_ofx,
+      left_px,
+      top_mm,
+      bkg_width_mm,
+      bkg_height_mm;
+    if (props.display == "horizontal") {
+      if (inner_width > state.pages.length * page_with_plus_spacing) {
+        nb_pages_x = Math.floor(inner_width / page_with_plus_spacing);
+        left_px = inner_width / (nb_pages_x * 2) * (1 + page_idx * 2) - page_width / 2;
+      } else {
+        nb_pages_x = state.pages.length;
+        left_px = page_with_plus_spacing * page_idx + page_width / 2 * (props.zoom - 1);
+      }
+      top_mm = 0;
+      bkg_width_mm = props.zoom * (props.page_format_mm[0] * nb_pages_x + (nb_pages_x - 1) * page_spacing_mm);
+      bkg_height_mm = props.page_format_mm[1] * props.zoom;
+    } else {
+      nb_pages_x = Math.floor(inner_width / page_with_plus_spacing);
+      if (nb_pages_x < 1 || props.display == "vertical") nb_pages_x = 1;
+      page_column = page_idx % nb_pages_x;
+      x_pos = inner_width / (nb_pages_x * 2) * (1 + page_column * 2) - page_width / 2;
+      x_ofx = Math.max(0, (page_width * props.zoom - inner_width) / 2);
+      left_px = x_pos + x_ofx;
+      top_mm = (props.page_format_mm[1] + page_spacing_mm) * props.zoom * Math.floor(page_idx / nb_pages_x);
+      const nb_pages_y = Math.ceil(state.pages.length / nb_pages_x);
+      bkg_width_mm = props.zoom * (props.page_format_mm[0] * nb_pages_x + (nb_pages_x - 1) * page_spacing_mm);
+      bkg_height_mm = props.zoom * (props.page_format_mm[1] * nb_pages_y + (nb_pages_y - 1) * page_spacing_mm);
+    }
+    if (page_idx >= 0) {
+      const epm = ctx.effective_page_margins.value;
+      const style = {
+        position: "absolute",
+        left: "calc(" + left_px + "px + " + view_padding + "px)",
+        top: "calc(" + top_mm + "mm + " + view_padding + "px)",
+        width: props.page_format_mm[0] + "mm",
+        padding: typeof epm == "function" ? epm(page_idx + 1, state.pages.length) : epm,
+        transform: "scale(" + props.zoom + ")"
+      };
+      style[allow_overflow ? "minHeight" : "height"] = props.page_format_mm[1] + "mm";
+      return style;
+    } else {
+      return {
+        width: "calc(" + bkg_width_mm + "mm + " + 2 * view_padding + "px)",
+        height: "calc(" + bkg_height_mm + "mm + " + 2 * view_padding + "px)"
+      };
+    }
+  };
+  ctx.update_pages_elts = function () {
+    const deleted_pages = [...refs.content.value.children].filter(page_elt => !state.pages.find(page => page.elt == page_elt));
+    for (const page_elt of deleted_pages) {
+      page_elt.remove();
+    }
+    for (const [page_idx, page] of state.pages.entries()) {
+      if (!page.elt) {
+        page.elt = document.createElement("div");
+        page.elt.className = "page";
+        page.elt.dataset.isVDEPage = "";
+        const next_page = state.pages[page_idx + 1];
+        refs.content.value.insertBefore(page.elt, next_page ? next_page.elt : null);
+      }
+      page.elt.dataset.contentIdx = page.content_idx;
+      if (!state.printing_mode) page.elt.style = css_to_string(ctx.page_style(page_idx, page.template ? false : true));
+      page.elt.contentEditable = props.editable && !page.template ? true : false;
+    }
+  };
+  ctx.update_editor_width = function () {
+    refs.editor.value.classList.add("hide_children");
+    state.editor_width = refs.editor.value.clientWidth;
+    ctx.update_pages_elts();
+    refs.editor.value.classList.remove("hide_children");
+  };
+  ctx.update_css_media_style = function () {
+    ctx.css_media_style.value.innerHTML = "@media print { @page { size: " + props.page_format_mm[0] + "mm " + props.page_format_mm[1] + "mm; margin: 0 !important; } .hidden-print { display: none !important; } }";
+  };
+}
+;// ./src/DocumentEditor/core/virtual-scroll.js
+// Virtual scrolling: viewport-based page virtualization
+
+function setupVirtualScroll(ctx) {
+  const {
+    state,
+    props,
+    refs
+  } = ctx;
+  ctx.get_scroll_container = function () {
+    let el = refs.editor.value;
+    while (el) {
+      const style = window.getComputedStyle(el);
+      if (style.overflow === 'auto' || style.overflow === 'scroll' || style.overflowY === 'auto' || style.overflowY === 'scroll') {
+        return el;
+      }
+      el = el.parentElement;
+    }
+    return window;
+  };
+  ctx.calculate_visible_range = function () {
+    const px_in_mm = 0.2645833333333;
+    const page_height_px = (props.page_format_mm[1] + 10) * props.zoom / px_in_mm;
+    const container = ctx.get_scroll_container();
+    let scroll_top, viewport_height;
+    if (container === window) {
+      scroll_top = window.scrollY || document.documentElement.scrollTop;
+      viewport_height = window.innerHeight;
+    } else {
+      scroll_top = container.scrollTop;
+      viewport_height = container.clientHeight;
+    }
+    const view_padding = 20;
+    const inner_width = state.editor_width - 2 * view_padding;
+    const page_with_plus_spacing = (10 + props.page_format_mm[0]) * props.zoom / px_in_mm;
+    let nb_pages_x = 1;
+    if (props.display === "horizontal") {
+      nb_pages_x = state.pages.length;
+    } else {
+      nb_pages_x = Math.floor(inner_width / page_with_plus_spacing);
+      if (nb_pages_x < 1 || props.display === "vertical") nb_pages_x = 1;
+    }
+    if (props.display === "horizontal") {
+      return {
+        start: 0,
+        end: state.pages.length - 1
+      };
+    }
+    const first_visible_row = Math.max(0, Math.floor((scroll_top - view_padding) / page_height_px));
+    const last_visible_row = Math.floor((scroll_top + viewport_height) / page_height_px);
+    const buffer = 2;
+    const start = Math.max(0, (first_visible_row - buffer) * nb_pages_x);
+    const end = Math.min(state.pages.length - 1, (last_visible_row + buffer + 1) * nb_pages_x - 1);
+    return {
+      start,
+      end
+    };
+  };
+  ctx.virtualize_pages = function () {
+    if (!state.virtualization_enabled || state.printing_mode) return;
+    const range = ctx.calculate_visible_range();
+    state.visible_range = range;
+    for (let i = 0; i < state.pages.length; i++) {
+      const page = state.pages[i];
+      if (!page.elt) continue;
+      const is_in_range = i >= range.start && i <= range.end;
+      if (!is_in_range && !page.nao_renderizada && !page.template) {
+        page.cached_html = page.elt.innerHTML;
+        page.elt.innerHTML = '';
+        page.nao_renderizada = true;
+        page.elt.classList.add('nao-renderizada');
+      } else if (is_in_range && page.nao_renderizada) {
+        if (page.cached_html != null) {
+          page.elt.innerHTML = page.cached_html;
+          page.cached_html = null;
+        }
+        page.nao_renderizada = false;
+        page.elt.classList.remove('nao-renderizada');
+      }
+    }
+  };
+  ctx.on_scroll = function () {
+    if (!state.virtualization_enabled || state.printing_mode) return;
+    ctx.virtualize_pages();
+    ctx._update_page_statuses();
+  };
+}
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.filter.js
+var es_iterator_filter = __webpack_require__(2489);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.set.difference.v2.js
 var es_set_difference_v2 = __webpack_require__(7642);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.set.intersection.v2.js
@@ -3672,6 +3554,229 @@ var es_set_is_superset_of_v2 = __webpack_require__(2475);
 var es_set_symmetric_difference_v2 = __webpack_require__(5024);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.set.union.v2.js
 var es_set_union_v2 = __webpack_require__(1698);
+;// ./src/DocumentEditor/core/overlays.js
+
+
+
+
+
+
+
+
+
+
+// Progress indicators, paste overlays, and page status overlays
+
+function setupOverlays(ctx) {
+  const {
+    state,
+    refs
+  } = ctx;
+  ctx._show_progress = function (current_page, total_pages) {
+    const el = refs.progress_indicator.value;
+    const txt = refs.progress_text.value;
+    if (el) el.style.display = 'flex';
+    if (txt) txt.textContent = `Atualizando página ${current_page + 1}/${total_pages}`;
+  };
+  ctx._hide_progress = function () {
+    const el = refs.progress_indicator.value;
+    if (el) el.style.display = 'none';
+  };
+  ctx._show_paste_overlay = function (text) {
+    const el = refs.paste_overlay.value;
+    const txt = refs.paste_text.value;
+    if (el) el.style.display = 'flex';
+    if (txt) txt.textContent = text;
+  };
+  ctx._hide_paste_overlay = function () {
+    const el = refs.paste_overlay.value;
+    if (el) el.style.display = 'none';
+  };
+  ctx._update_page_statuses = function () {
+    const editing_idx = ctx._get_editing_page_idx();
+    const visible = ctx.calculate_visible_range();
+    for (let i = 0; i < state.pages.length; i++) {
+      const page = state.pages[i];
+      let status;
+      if (ctx._dirty_from_page === null || i < ctx._dirty_from_page) {
+        if (i === editing_idx || i === editing_idx + 1) {
+          status = 'editing';
+        } else {
+          status = 'ready';
+        }
+      } else {
+        if (i >= visible.start && i <= visible.end) {
+          status = 'loading';
+        } else {
+          status = 'await';
+        }
+      }
+      page.pg_status = status;
+    }
+    ctx._render_page_status_overlays();
+  };
+  ctx._render_page_status_overlays = function () {
+    if (!ctx._status_overlay_container) {
+      ctx._status_overlay_container = document.createElement('div');
+      ctx._status_overlay_container.className = 'page-status-overlays';
+      refs.editor.value.appendChild(ctx._status_overlay_container);
+    }
+    if (state._paste_in_progress) {
+      ctx._status_overlay_container.innerHTML = '';
+      return;
+    }
+    const overlay_pages = state.pages.filter(p => p.pg_status === 'loading' || p.pg_status === 'await');
+    const overlay_uuids = new Set(overlay_pages.map(p => p.uuid));
+    const existing_overlays = [...ctx._status_overlay_container.children];
+    for (const el of existing_overlays) {
+      if (!overlay_uuids.has(el.dataset.pageUuid)) {
+        el.remove();
+      }
+    }
+    for (const [page_idx, page] of state.pages.entries()) {
+      if (page.pg_status !== 'loading' && page.pg_status !== 'await') continue;
+      let overlay_el = ctx._status_overlay_container.querySelector(`[data-page-uuid="${page.uuid}"]`);
+      if (!overlay_el) {
+        overlay_el = document.createElement('div');
+        overlay_el.className = 'page-status-overlay';
+        overlay_el.dataset.pageUuid = page.uuid;
+        ctx._status_overlay_container.appendChild(overlay_el);
+      }
+      overlay_el.classList.toggle('pg-loading', page.pg_status === 'loading');
+      overlay_el.classList.toggle('pg-await', page.pg_status === 'await');
+      if (page.pg_status === 'loading' && !overlay_el.querySelector('.status-spinner')) {
+        overlay_el.innerHTML = '<div class="status-spinner"></div>';
+      } else if (page.pg_status === 'await' && !overlay_el.querySelector('.status-await-icon')) {
+        overlay_el.innerHTML = '<div class="status-await-icon"></div>';
+      }
+      const style = ctx.page_style(page_idx, false);
+      overlay_el.style = css_to_string(style);
+      overlay_el.style.overflow = 'hidden';
+    }
+  };
+  ctx._clear_page_statuses = function () {
+    if (ctx._status_overlay_container) {
+      ctx._status_overlay_container.innerHTML = '';
+    }
+    for (const page of state.pages) {
+      page.pg_status = 'ready';
+    }
+  };
+}
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
+var es_array_push = __webpack_require__(4114);
+;// ./src/DocumentEditor/core/deferred-reflow.js
+
+// Deferred reflow: background page processing with rAF+setTimeout pattern
+
+function setupDeferredReflow(ctx) {
+  const {
+    state,
+    refs
+  } = ctx;
+  ctx._cancel_deferred_reflow = function () {
+    if (ctx._deferred_raf_id) {
+      cancelAnimationFrame(ctx._deferred_raf_id);
+      ctx._deferred_raf_id = null;
+    }
+  };
+
+  // Pre-splits pages whose content is much larger than page height into roughly page-sized chunks
+  ctx._pre_split_large_pages = function () {
+    if (!state.pages_height) return;
+    let did_split = false;
+    for (let pi = 0; pi < state.pages.length; pi++) {
+      const page = state.pages[pi];
+      if (page.template) continue;
+      const scroll_h = page.elt.scrollHeight;
+      const ratio = scroll_h / state.pages_height;
+      if (ratio <= 3) continue;
+      const wrapper = page.elt.firstChild;
+      if (!wrapper || !wrapper.children || wrapper.children.length < 2) continue;
+      const children = [...wrapper.children];
+      const est_pages = state._import_page_count && state._import_page_count > ratio ? state._import_page_count : Math.ceil(ratio);
+      const per_page = Math.max(1, Math.ceil(children.length / est_pages));
+      const num_new_pages = Math.ceil(children.length / per_page) - 1;
+      if (num_new_pages < 1) continue;
+      const new_pages = [];
+      for (let i = 0; i < num_new_pages; i++) {
+        new_pages.push({
+          uuid: new_uuid(),
+          content_idx: page.content_idx
+        });
+      }
+      state.pages.splice(pi + 1, 0, ...new_pages);
+      ctx.update_pages_elts();
+      for (let g = 0; g < num_new_pages; g++) {
+        const target = state.pages[pi + 1 + g];
+        const new_wrapper = document.createElement('div');
+        const start = (g + 1) * per_page;
+        const end = Math.min((g + 2) * per_page, children.length);
+        for (let ci = start; ci < end; ci++) {
+          new_wrapper.appendChild(children[ci]);
+        }
+        target.elt.appendChild(new_wrapper);
+      }
+      pi += num_new_pages;
+      did_split = true;
+    }
+    if (did_split) {
+      for (const page of state.pages) {
+        refs.content.value.appendChild(page.elt);
+      }
+    }
+  };
+  ctx._schedule_deferred_reflow = function () {
+    ctx._cancel_deferred_reflow();
+    ctx._deferred_raf_id = requestAnimationFrame(() => {
+      setTimeout(() => {
+        ctx._deferred_raf_id = null;
+        ctx._deferred_reflow_step();
+      }, 0);
+    });
+  };
+  ctx._deferred_reflow_step = function () {
+    if (ctx._dirty_from_page === null || ctx._dirty_from_page >= state.pages.length) {
+      ctx._dirty_from_page = null;
+      ctx._update_page_statuses();
+      ctx._hide_progress();
+      if (state._paste_in_progress) {
+        state._paste_in_progress = false;
+        ctx._hide_paste_overlay();
+      }
+      state._import_page_count = 0;
+      ctx.emit_new_content();
+      return;
+    }
+    const total_pages = state._import_page_count && state._import_page_count > state.pages.length ? state._import_page_count : state.pages.length;
+    const pct = Math.round(ctx._dirty_from_page / total_pages * 100);
+    if (state._paste_in_progress) {
+      ctx._show_paste_overlay(`Processando página ${ctx._dirty_from_page + 1} de ${total_pages} (${pct}%)`);
+    } else {
+      ctx._show_progress(ctx._dirty_from_page, total_pages);
+    }
+    const batch_size = state._paste_in_progress ? 5 : 1;
+    ctx.fit_content_over_pages(batch_size, ctx._dirty_from_page);
+    ctx._update_page_statuses();
+    if (ctx._dirty_from_page !== null) {
+      const pct2 = Math.round(ctx._dirty_from_page / total_pages * 100);
+      if (state._paste_in_progress) {
+        ctx._show_paste_overlay(`Processando página ${ctx._dirty_from_page + 1} de ${total_pages} (${pct2}%)`);
+      } else {
+        ctx._show_progress(ctx._dirty_from_page, total_pages);
+      }
+      ctx._schedule_deferred_reflow();
+    } else {
+      ctx._hide_progress();
+      if (state._paste_in_progress) {
+        state._paste_in_progress = false;
+        ctx._hide_paste_overlay();
+      }
+      state._import_page_count = 0;
+      ctx.emit_new_content();
+    }
+  };
+}
 ;// ./src/DocumentEditor/imports/page-transition-mgmt.js
 /**
  * Utility function that acts like an Array.filter on childNodes of "container"
@@ -3798,7 +3903,7 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
   }
 }
 
-;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js
+;// ./src/DocumentEditor/core/reflow-engine.js
 
 
 
@@ -3809,1539 +3914,960 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 
 
 
+// Core reflow engine: reset_content, fit_content_over_pages, content emission
 
 
 
-
-
-// Simple debounce helper (no external dependency)
-function debounce(fn, delay) {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), delay);
+function setupReflowEngine(ctx) {
+  const {
+    state,
+    props,
+    emit,
+    refs
+  } = ctx;
+  ctx._get_editing_page_idx = function () {
+    const sel = document.getSelection();
+    if (!sel || !sel.anchorNode) return 0;
+    let node = sel.anchorNode;
+    while (node && node.parentElement) {
+      if (node.dataset && node.dataset.isVDEPage !== undefined) {
+        const idx = state.pages.findIndex(p => p.elt === node);
+        return idx >= 0 ? idx : 0;
+      }
+      node = node.parentElement;
+    }
+    return 0;
+  };
+  ctx.reset_content = function () {
+    if (ctx._reset_in_progress) return;
+    ctx._reset_in_progress = true;
+    ctx._cancel_deferred_reflow();
+    if (!props.content.length) {
+      ctx._reset_in_progress = false;
+      emit("update:content", [""]);
+      return;
+    }
+    state.pages = props.content.map((content, content_idx) => ({
+      uuid: new_uuid(),
+      content_idx,
+      template: content.template,
+      props: content.props
+    }));
+    ctx.update_pages_elts();
+    const first_page_elt = state.pages[0].elt;
+    if (!refs.content.value.contains(first_page_elt)) refs.content.value.appendChild(first_page_elt);
+    state.pages_height = first_page_elt.clientHeight + 1;
+    for (const page of state.pages) {
+      if (!props.content[page.content_idx]) page.elt.innerHTML = "<div><br></div>";else if (typeof props.content[page.content_idx] == "string") page.elt.innerHTML = "<div>" + props.content[page.content_idx] + "</div>";else if (page.template) {
+        const componentElement = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.defineCustomElement)(page.template);
+        customElements.define('component-' + page.uuid, componentElement);
+        page.elt.appendChild(new componentElement({
+          modelValue: page.props
+        }));
+      }
+      if (!refs.content.value.contains(page.elt)) refs.content.value.appendChild(page.elt);
+    }
+    ctx._pre_split_large_pages();
+    state._paste_in_progress = true;
+    ctx._show_paste_overlay('Processando documento...');
+    ctx._dirty_from_page = 0;
+    refs.content.value.blur();
+    state.virtualization_enabled = true;
+    ctx.virtualize_pages();
+    ctx._reset_in_progress = false;
+    ctx._update_page_statuses();
+    if (ctx._dirty_from_page !== null) {
+      ctx._schedule_deferred_reflow();
+    } else {
+      state._paste_in_progress = false;
+      ctx._hide_paste_overlay();
+    }
+  };
+  ctx.fit_content_over_pages = function (max_pages, start_from) {
+    if (max_pages === undefined) max_pages = Infinity;
+    if (start_from === undefined) start_from = 0;
+    if (!state.pages_height) return;
+    if (ctx._fit_in_progress) return;
+    ctx._fit_in_progress = true;
+    for (let page_idx = state.pages.length - 1; page_idx >= 0; page_idx--) {
+      const page = state.pages[page_idx];
+      if (!page.elt || !document.body.contains(page.elt)) state.pages.splice(page_idx, 1);
+    }
+    if (!state.pages.length) {
+      ctx._fit_in_progress = false;
+      emit("update:content", [""]);
+      return;
+    }
+    const selection = window.getSelection();
+    const start_marker = document.createElement("null");
+    const end_marker = document.createElement("null");
+    if (selection && selection.rangeCount && selection.anchorNode && !(selection.anchorNode.dataset && selection.anchorNode.dataset.isVDEPage != null)) {
+      const range = selection.getRangeAt(0);
+      range.insertNode(start_marker);
+      range.collapse(false);
+      range.insertNode(end_marker);
+    }
+    const touched_pages = new Set();
+    let pages_added_or_removed = false;
+    let cascade_truncated = false;
+    let prev_page_modified_flag = start_from > 0;
+    let cascade_count = 0;
+    for (let page_idx = start_from; page_idx < state.pages.length; page_idx++) {
+      const page = state.pages[page_idx];
+      if (page.nao_renderizada && !prev_page_modified_flag) {
+        continue;
+      }
+      if (max_pages !== Infinity && cascade_count >= max_pages && prev_page_modified_flag) {
+        ctx._dirty_from_page = page_idx;
+        cascade_truncated = true;
+        break;
+      }
+      if (page.nao_renderizada) {
+        if (page.cached_html != null) {
+          page.elt.innerHTML = page.cached_html;
+          page.cached_html = null;
+        }
+        page.nao_renderizada = false;
+        page.elt.classList.remove('nao-renderizada');
+      }
+      let next_page = state.pages[page_idx + 1];
+      let next_page_elt = next_page ? next_page.elt : null;
+      if (next_page && next_page.nao_renderizada && (prev_page_modified_flag || page.elt.innerHTML != page.prev_innerHTML)) {
+        if (next_page.cached_html != null) {
+          next_page.elt.innerHTML = next_page.cached_html;
+          next_page.cached_html = null;
+        }
+        next_page.nao_renderizada = false;
+        next_page.elt.classList.remove('nao-renderizada');
+        next_page_elt = next_page.elt;
+      }
+      if (!page.template && (prev_page_modified_flag || page.elt.innerHTML != page.prev_innerHTML || next_page_elt && !next_page.template && !next_page.nao_renderizada && next_page_elt.innerHTML != next_page.prev_innerHTML)) {
+        cascade_count++;
+        const next_page_html_before = next_page_elt && !next_page.nao_renderizada ? next_page_elt.innerHTML : null;
+        touched_pages.add(page_idx);
+        if (page.elt.clientHeight <= state.pages_height && next_page && next_page.content_idx == page.content_idx) {
+          move_children_backwards_with_merging(page.elt, next_page_elt, () => !next_page_elt.childNodes.length || page.elt.clientHeight > state.pages_height);
+        }
+        if (page.elt.clientHeight > state.pages_height) {
+          if (!next_page || next_page.content_idx != page.content_idx) {
+            next_page = {
+              uuid: new_uuid(),
+              content_idx: page.content_idx
+            };
+            state.pages.splice(page_idx + 1, 0, next_page);
+            ctx.update_pages_elts();
+            next_page_elt = next_page.elt;
+            pages_added_or_removed = true;
+          }
+          move_children_forward_recursively(page.elt, next_page_elt, () => page.elt.clientHeight <= state.pages_height, props.do_not_break);
+        }
+        if (next_page_elt && next_page.content_idx == page.content_idx && !next_page_elt.childNodes.length) {
+          state.pages.splice(page_idx + 1, 1);
+          pages_added_or_removed = true;
+        }
+        const current_next_page = state.pages[page_idx + 1];
+        const current_next_elt = current_next_page ? current_next_page.elt : null;
+        if (current_next_elt && next_page_html_before !== null && !current_next_page.nao_renderizada && current_next_elt.innerHTML === next_page_html_before) {
+          prev_page_modified_flag = false;
+        } else {
+          prev_page_modified_flag = true;
+          if (current_next_page) touched_pages.add(page_idx + 1);
+        }
+      } else {
+        touched_pages.add(page_idx);
+      }
+    }
+    if (!cascade_truncated) {
+      ctx._dirty_from_page = null;
+    }
+    if (pages_added_or_removed) {
+      ctx.update_pages_elts();
+    }
+    for (const page_idx of touched_pages) {
+      const page = state.pages[page_idx];
+      if (page && !page.template && !page.nao_renderizada) page.elt.normalize();
+    }
+    if (document.body.contains(start_marker)) {
+      const range = document.createRange();
+      range.setStart(start_marker, 0);
+      if (document.body.contains(end_marker)) range.setEnd(end_marker, 0);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+    if (start_marker.parentElement) start_marker.parentElement.removeChild(start_marker);
+    if (end_marker.parentElement) end_marker.parentElement.removeChild(end_marker);
+    for (const page_idx of touched_pages) {
+      const page = state.pages[page_idx];
+      if (page && !page.nao_renderizada) {
+        page.prev_innerHTML = page.elt.innerHTML;
+      }
+    }
+    if (state.virtualization_enabled) {
+      ctx.virtualize_pages();
+    }
+    ctx._fit_in_progress = false;
+  };
+  ctx.emit_new_content = function () {
+    let removed_pages_flag = false;
+    const new_content = props.content.map((item, content_idx) => {
+      const pages = state.pages.filter(page => page.content_idx == content_idx);
+      if (!pages.length) {
+        removed_pages_flag = true;
+        return false;
+      } else if (typeof item == "string") {
+        return pages.map(page => {
+          if (page.nao_renderizada && page.cached_html != null) {
+            const temp = document.createElement('div');
+            temp.innerHTML = page.cached_html;
+            let elt = temp;
+            while (elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
+              elt = elt.firstChild;
+            }
+            return elt.innerHTML == "<br>" || elt.innerHTML == "<!---->" ? "" : elt.innerHTML;
+          }
+          let elt = page.elt;
+          while (elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
+            elt = elt.firstChild;
+          }
+          return elt.innerHTML == "<br>" || elt.innerHTML == "<!---->" ? "" : elt.innerHTML;
+        }).join('');
+      } else return {
+        template: item.template,
+        props: {
+          ...item.props
+        }
+      };
+    }).filter(item => item !== false);
+    if (!removed_pages_flag) state.prevent_next_content_update_from_parent = true;
+    emit("update:content", new_content);
   };
 }
-/* harmony default export */ var DocumentEditorvue_type_script_lang_js = ({
+;// ./src/DocumentEditor/core/input-handler.js
+
+// Input handling (keystrokes, paste) and text style detection
+
+function setupInputHandler(ctx) {
+  const {
+    state
+  } = ctx;
+  ctx.process_current_text_style = function () {
+    let style = false;
+    const sel = window.getSelection();
+    if (sel.focusNode) {
+      const element = sel.focusNode.tagName ? sel.focusNode : sel.focusNode.parentElement;
+      if (element && element.isContentEditable) {
+        style = window.getComputedStyle(element);
+        style.textDecorationStack = [];
+        style.headerLevel = 0;
+        style.isList = false;
+        let parent = element;
+        while (parent) {
+          const parent_style = window.getComputedStyle(parent);
+          style.textDecorationStack.push(parent_style.textDecoration);
+          if (parent_style.display == "list-item") style.isList = true;
+          if (!style.headerLevel) {
+            for (let i = 1; i <= 6; i++) {
+              if (parent.tagName.toUpperCase() == "H" + i) {
+                style.headerLevel = i;
+                break;
+              }
+            }
+          }
+          parent = parent.parentElement;
+        }
+      }
+    }
+    state.current_text_style = style;
+  };
+  ctx._do_input_work = function () {
+    ctx._cancel_deferred_reflow();
+    ctx.fit_content_over_pages(2);
+    ctx.emit_new_content();
+    if (ctx._last_input_type != "insertText") ctx.process_current_text_style();
+    ctx._update_page_statuses();
+    if (ctx._dirty_from_page !== null) {
+      ctx._schedule_deferred_reflow();
+    } else {
+      if (state._paste_in_progress) {
+        state._paste_in_progress = false;
+        ctx._hide_paste_overlay();
+      }
+    }
+  };
+  ctx.onInput = function (e) {
+    if (!e) return;
+    ctx._last_input_type = e.inputType;
+    if (ctx._input_timer) clearTimeout(ctx._input_timer);
+    const is_paste = e.inputType === 'insertFromPaste' || e.inputType === 'insertFromDrop';
+    if (is_paste) {
+      state._paste_in_progress = true;
+      ctx._show_paste_overlay('Colando texto...');
+      ctx._input_timer = setTimeout(() => {
+        ctx._input_timer = null;
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            ctx._do_input_work();
+          }, 0);
+        });
+      }, 10);
+    } else {
+      ctx._input_timer = setTimeout(() => {
+        ctx._input_timer = null;
+        ctx._do_input_work();
+      }, 10);
+    }
+  };
+}
+;// ./src/DocumentEditor/core/print.js
+// Print management: before_print / after_print
+
+function setupPrint(ctx) {
+  const {
+    state,
+    props,
+    refs
+  } = ctx;
+  ctx.before_print = function () {
+    if (state.editing_hf) ctx.stop_editing_hf();
+    state.printing_mode = true;
+    ctx._cancel_deferred_reflow();
+    if (ctx._dirty_from_page !== null) {
+      ctx.fit_content_over_pages(Infinity, ctx._dirty_from_page);
+      ctx._dirty_from_page = null;
+    }
+    ctx._clear_page_statuses();
+    for (const page of state.pages) {
+      if (page.nao_renderizada && page.cached_html != null) {
+        page.elt.innerHTML = page.cached_html;
+        page.cached_html = null;
+        page.nao_renderizada = false;
+        page.elt.classList.remove('nao-renderizada');
+      }
+    }
+    ctx._page_body = document.body;
+    const print_body = document.createElement("body");
+    print_body.style.margin = "0";
+    print_body.style.padding = "0";
+    print_body.style.background = "white";
+    print_body.style.font = window.getComputedStyle(refs.editor.value).font;
+    print_body.className = refs.editor.value.className;
+    for (const [page_idx, page] of state.pages.entries()) {
+      page.elt.style = "";
+      page.elt.style.position = "relative";
+      const epm = ctx.effective_page_margins.value;
+      page.elt.style.padding = typeof epm == "function" ? epm(page_idx + 1, state.pages.length) : epm;
+      page.elt.style.breakBefore = page_idx ? "page" : "auto";
+      page.elt.style.width = "calc(" + props.page_format_mm[0] + "mm - 2px)";
+      page.elt.style.height = "calc(" + props.page_format_mm[1] + "mm - 2px)";
+      page.elt.style.boxSizing = "border-box";
+      page.elt.style.overflow = "hidden";
+      const overlay_elt = state.pages_overlay_refs[page.uuid];
+      if (overlay_elt) {
+        overlay_elt.style.position = "absolute";
+        overlay_elt.style.left = "0";
+        overlay_elt.style.top = "0";
+        overlay_elt.style.transform = "none";
+        overlay_elt.style.padding = "0";
+        overlay_elt.style.overflow = "hidden";
+        page.elt.prepend(overlay_elt);
+      }
+      print_body.append(page.elt);
+    }
+    const return_overlay = document.createElement("div");
+    return_overlay.className = "hidden-print";
+    return_overlay.style.position = "fixed";
+    return_overlay.style.left = "0";
+    return_overlay.style.top = "0";
+    return_overlay.style.right = "0";
+    return_overlay.style.bottom = "0";
+    return_overlay.style.display = "flex";
+    return_overlay.style.alignItems = "center";
+    return_overlay.style.justifyContent = "center";
+    return_overlay.style.background = "rgba(255, 255, 255, 0.95)";
+    return_overlay.style.cursor = "pointer";
+    return_overlay.innerHTML = '<svg width="220" height="220"><path fill="rgba(0, 0, 0, 0.7)" d="M120.774,179.271v40c47.303,0,85.784-38.482,85.784-85.785c0-47.3-38.481-85.782-85.784-85.782H89.282L108.7,28.286L80.417,0L12.713,67.703l67.703,67.701l28.283-28.284L89.282,87.703h31.492c25.246,0,45.784,20.538,45.784,45.783C166.558,158.73,146.02,179.271,120.774,179.271z"/></svg>';
+    return_overlay.addEventListener("click", ctx.after_print);
+    print_body.append(return_overlay);
+    document.body = print_body;
+  };
+  ctx.after_print = function () {
+    state.printing_mode = false;
+    for (const [page_idx, page] of state.pages.entries()) {
+      page.elt.style = css_to_string(ctx.page_style(page_idx, page.template ? false : true));
+      refs.content.value.append(page.elt);
+      const overlay_elt = state.pages_overlay_refs[page.uuid];
+      if (overlay_elt) {
+        overlay_elt.style = css_to_string(ctx.page_style(page_idx, false));
+        refs.overlays.value.append(overlay_elt);
+      }
+    }
+    document.body = ctx._page_body;
+    ctx.update_editor_width();
+    if (state.virtualization_enabled) {
+      ctx.virtualize_pages();
+    }
+  };
+}
+;// ./src/DocumentEditor/core/header-footer.js
+// Header/Footer editing: inline contenteditable h/f zones
+
+function setupHeaderFooter(ctx) {
+  const {
+    state,
+    props,
+    emit,
+    refs
+  } = ctx;
+  ctx.start_editing_hf = async function (mode, page_idx) {
+    state.editing_hf = mode;
+    state.editing_hf_page = page_idx;
+    await (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.nextTick)();
+    const el = refs.overlays.value && refs.overlays.value.querySelector('.hf-active[contenteditable]');
+    if (el) {
+      const content = mode === 'header' ? props.header || '' : props.footer || '';
+      el.innerHTML = content || '<div><br></div>';
+      el.focus();
+      const sel = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      ctx._hf_editor_el = el;
+    }
+  };
+  ctx.stop_editing_hf = function () {
+    if (!state.editing_hf) return;
+    if (ctx._hf_measure_timer) {
+      clearTimeout(ctx._hf_measure_timer);
+      ctx._hf_measure_timer = null;
+    }
+    if (ctx._hf_editor_el) {
+      let html = ctx._hf_editor_el.innerHTML;
+      if (html === '<br>' || html === '<div><br></div>') html = '';
+      emit('update:' + state.editing_hf, html);
+      ctx._hf_editor_el = null;
+    }
+    state.editing_hf = null;
+    state.editing_hf_page = null;
+    (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.nextTick)(() => {
+      ctx._measure_hf_heights();
+    });
+  };
+  ctx.on_hf_input = function (mode) {
+    if (ctx._hf_editor_el) {
+      let html = ctx._hf_editor_el.innerHTML;
+      if (html === '<br>' || html === '<div><br></div>') html = '';
+      emit('update:' + mode, html);
+    }
+    if (ctx._hf_measure_timer) clearTimeout(ctx._hf_measure_timer);
+    ctx._hf_measure_timer = setTimeout(() => {
+      ctx._measure_hf_heights();
+    }, 300);
+  };
+  ctx._measure_hf_heights = function () {
+    const px_to_mm = 0.2645833333333;
+    const m = ctx.parsed_margins.value;
+    const origTop = parseFloat(m.top) || 10;
+    const origBottom = parseFloat(m.bottom) || 10;
+    let hMM = 0,
+      fMM = 0;
+    if (state.editing_hf && ctx._hf_editor_el) {
+      const elMM = ctx._hf_editor_el.scrollHeight * px_to_mm + 1;
+      if (state.editing_hf === 'header') {
+        hMM = elMM;
+      } else {
+        fMM = elMM;
+      }
+      if (refs.overlays.value) {
+        const other = refs.overlays.value.querySelector(state.editing_hf === 'header' ? '.hf-footer:not(.hf-active)' : '.hf-header:not(.hf-active)');
+        const otherMM = other ? other.scrollHeight * px_to_mm + 1 : 0;
+        if (state.editing_hf === 'header') {
+          fMM = otherMM;
+        } else {
+          hMM = otherMM;
+        }
+      }
+    } else if (refs.overlays.value) {
+      const hZone = refs.overlays.value.querySelector('.hf-header');
+      const fZone = refs.overlays.value.querySelector('.hf-footer');
+      if (hZone) hMM = hZone.scrollHeight * px_to_mm + 1;
+      if (fZone) fMM = fZone.scrollHeight * px_to_mm + 1;
+    }
+    const newTop = Math.ceil(hMM) > origTop ? Math.ceil(hMM) : 0;
+    const newBottom = Math.ceil(fMM) > origBottom ? Math.ceil(fMM) : 0;
+    if (newTop !== state.hf_top_height_mm || newBottom !== state.hf_bottom_height_mm) {
+      state.hf_top_height_mm = newTop;
+      state.hf_bottom_height_mm = newBottom;
+      (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.nextTick)(() => {
+        ctx.update_pages_elts();
+        ctx._cancel_deferred_reflow();
+        if (!state._paste_in_progress) {
+          state._paste_in_progress = true;
+          ctx._show_paste_overlay('Processando documento...');
+        }
+        ctx.fit_content_over_pages(2);
+        ctx._update_page_statuses();
+        if (ctx._dirty_from_page !== null) {
+          ctx._schedule_deferred_reflow();
+        } else {
+          ctx.emit_new_content();
+          if (state.virtualization_enabled) ctx.virtualize_pages();
+          state._paste_in_progress = false;
+          ctx._hide_paste_overlay();
+        }
+      });
+    }
+  };
+  ctx.on_content_click = function () {
+    if (state.editing_hf) {
+      ctx.stop_editing_hf();
+    }
+  };
+}
+;// ./src/DocumentEditor/core/use-editor.js
+
+
+
+
+
+
+
+
+
+
+function useEditor(props, emit, refs) {
+  // ─── Reactive State ───────────────────────────────────────────────
+  const state = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.reactive)({
+    pages: [],
+    pages_overlay_refs: {},
+    pages_height: 0,
+    editor_width: 0,
+    prevent_next_content_update_from_parent: false,
+    current_text_style: false,
+    printing_mode: false,
+    visible_range: {
+      start: 0,
+      end: 5
+    },
+    virtualization_enabled: false,
+    editing_hf: null,
+    editing_hf_page: null,
+    hf_top_height_mm: 0,
+    hf_bottom_height_mm: 0,
+    _paste_in_progress: false,
+    _import_page_count: 0
+  });
+
+  // ─── Computed ─────────────────────────────────────────────────────
+  const css_media_style = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.computed)(() => {
+    const style = document.createElement("style");
+    document.head.appendChild(style);
+    return style;
+  });
+  const parsed_margins = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.computed)(() => {
+    const m = typeof props.page_margins === 'string' ? props.page_margins : '10mm 15mm';
+    const parts = m.trim().split(/\s+/);
+    if (parts.length === 1) return {
+      top: parts[0],
+      right: parts[0],
+      bottom: parts[0],
+      left: parts[0]
+    };
+    if (parts.length === 2) return {
+      top: parts[0],
+      right: parts[1],
+      bottom: parts[0],
+      left: parts[1]
+    };
+    if (parts.length === 3) return {
+      top: parts[0],
+      right: parts[1],
+      bottom: parts[2],
+      left: parts[1]
+    };
+    return {
+      top: parts[0],
+      right: parts[1],
+      bottom: parts[2],
+      left: parts[3]
+    };
+  });
+  const hf_header_style = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.computed)(() => {
+    const m = parsed_margins.value;
+    return {
+      position: 'absolute',
+      top: '0',
+      left: '0',
+      right: '0',
+      minHeight: m.top,
+      padding: '2mm ' + m.right + ' 2mm ' + m.left,
+      boxSizing: 'border-box'
+    };
+  });
+  const hf_footer_style = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.computed)(() => {
+    const m = parsed_margins.value;
+    return {
+      position: 'absolute',
+      bottom: '0',
+      left: '0',
+      right: '0',
+      minHeight: m.bottom,
+      padding: '2mm ' + m.right + ' 2mm ' + m.left,
+      boxSizing: 'border-box'
+    };
+  });
+  const effective_page_margins = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.computed)(() => {
+    if (typeof props.page_margins === 'function') return props.page_margins;
+    if (!state.hf_top_height_mm && !state.hf_bottom_height_mm) return props.page_margins;
+    const m = parsed_margins.value;
+    const origTop = parseFloat(m.top) || 10;
+    const origBottom = parseFloat(m.bottom) || 10;
+    const effTop = state.hf_top_height_mm ? Math.max(origTop, state.hf_top_height_mm) : origTop;
+    const effBottom = state.hf_bottom_height_mm ? Math.max(origBottom, state.hf_bottom_height_mm) : origBottom;
+    return effTop + 'mm ' + m.right + ' ' + effBottom + 'mm ' + m.left;
+  });
+
+  // ─── Shared Context ───────────────────────────────────────────────
+  // All sub-modules receive this object and attach their methods to it.
+  // This avoids circular dependencies: each module calls ctx.otherMethod().
+  const ctx = {
+    state,
+    props,
+    emit,
+    refs,
+    // Computed refs (accessed as ctx.xxx.value)
+    css_media_style,
+    parsed_margins,
+    effective_page_margins,
+    // Non-reactive internal state
+    _dirty_from_page: null,
+    _deferred_raf_id: null,
+    _status_overlay_container: null,
+    _hf_editor_el: null,
+    _hf_measure_timer: null,
+    _input_timer: null,
+    _last_input_type: null,
+    _page_body: null,
+    _reset_in_progress: false,
+    _fit_in_progress: false
+  };
+
+  // ─── Setup Sub-modules ────────────────────────────────────────────
+  setupPageLayout(ctx);
+  setupVirtualScroll(ctx);
+  setupOverlays(ctx);
+  setupDeferredReflow(ctx);
+  setupReflowEngine(ctx);
+  setupInputHandler(ctx);
+  setupPrint(ctx);
+  setupHeaderFooter(ctx);
+
+  // ─── Watchers ─────────────────────────────────────────────────────
+  (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.watch)(() => props.content, () => {
+    if (state.prevent_next_content_update_from_parent) {
+      state.prevent_next_content_update_from_parent = false;
+    } else ctx.reset_content();
+  }, {
+    deep: true
+  });
+  (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.watch)(() => props.display, () => {
+    ctx.update_pages_elts();
+  });
+  (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.watch)(() => props.page_format_mm, () => {
+    ctx.update_css_media_style();
+    ctx.reset_content();
+  });
+  (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.watch)(() => props.page_margins, () => {
+    ctx.reset_content();
+  });
+  (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.watch)(() => props.zoom, () => {
+    ctx.update_pages_elts();
+  });
+  (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.watch)(() => props.header, () => {
+    if (!state.editing_hf) {
+      (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.nextTick)(() => {
+        ctx._measure_hf_heights();
+      });
+    }
+  });
+  (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.watch)(() => props.footer, () => {
+    if (!state.editing_hf) {
+      (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.nextTick)(() => {
+        ctx._measure_hf_heights();
+      });
+    }
+  });
+
+  // ─── Lifecycle ────────────────────────────────────────────────────
+  let _scroll_handler = null;
+  let _scroll_container = null;
+  (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.onMounted)(() => {
+    ctx.update_editor_width();
+    ctx.update_css_media_style();
+    ctx.reset_content();
+    (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.nextTick)(() => {
+      ctx._measure_hf_heights();
+    });
+    window.addEventListener("resize", ctx.update_editor_width);
+    window.addEventListener("click", ctx.process_current_text_style);
+    window.addEventListener("beforeprint", ctx.before_print);
+    window.addEventListener("afterprint", ctx.after_print);
+    _scroll_handler = debounce(() => ctx.on_scroll(), 100);
+    _scroll_container = ctx.get_scroll_container();
+    if (_scroll_container === window) {
+      window.addEventListener("scroll", _scroll_handler);
+    } else {
+      _scroll_container.addEventListener("scroll", _scroll_handler);
+    }
+  });
+  (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.onBeforeUpdate)(() => {
+    state.pages_overlay_refs = [];
+  });
+  (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.onBeforeUnmount)(() => {
+    window.removeEventListener("resize", ctx.update_editor_width);
+    window.removeEventListener("click", ctx.process_current_text_style);
+    window.removeEventListener("beforeprint", ctx.before_print);
+    window.removeEventListener("afterprint", ctx.after_print);
+    if (_scroll_handler) {
+      if (_scroll_container === window) {
+        window.removeEventListener("scroll", _scroll_handler);
+      } else if (_scroll_container) {
+        _scroll_container.removeEventListener("scroll", _scroll_handler);
+      }
+    }
+    if (ctx._input_timer) clearTimeout(ctx._input_timer);
+    ctx._cancel_deferred_reflow();
+  });
+
+  // ─── Return Public API ────────────────────────────────────────────
+  return {
+    state,
+    hf_header_style,
+    hf_footer_style,
+    page_style: ctx.page_style,
+    process_current_text_style: ctx.process_current_text_style,
+    start_editing_hf: ctx.start_editing_hf,
+    stop_editing_hf: ctx.stop_editing_hf,
+    on_hf_input: ctx.on_hf_input,
+    on_content_click: ctx.on_content_click,
+    onInput: ctx.onInput,
+    reset_content: ctx.reset_content,
+    _show_paste_overlay: ctx._show_paste_overlay,
+    _hide_paste_overlay: ctx._hide_paste_overlay
+  };
+}
+;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=script&setup=true&lang=js
+
+const _hoisted_1 = ["innerHTML", "onDblclick"];
+const _hoisted_2 = ["innerHTML", "onDblclick"];
+const _hoisted_3 = ["innerHTML"];
+const _hoisted_4 = ["contenteditable"];
+const _hoisted_5 = {
+  class: "vde-paste-box"
+};
+
+
+/* harmony default export */ var DocumentEditorvue_type_script_setup_true_lang_js = ({
+  __name: 'DocumentEditor',
   props: {
-    // This contains the initial content of the document that can be synced
-    // It must be an Array: each array item is a new set of pages containing the
-    // item (string or component). You can see that as predefined page breaks.
-    // See the Demo.vue file for a good usage example.
     content: {
       type: Array,
       required: true
     },
-    // Display mode of the pages
     display: {
       type: String,
-      default: "grid" // ["grid", "horizontal", "vertical"]
+      default: "grid"
     },
-    // Sets whether document text can be modified
     editable: {
       type: Boolean,
       default: true
     },
-    // Overlay function returning page headers and footers in HTML
     overlay: Function,
-    // Editable header HTML content (shared across all pages)
     header: {
       type: String,
       default: undefined
     },
-    // Editable footer HTML content (shared across all pages)
     footer: {
       type: String,
       default: undefined
     },
-    // Pages format in mm (should be an array containing [width, height])
     page_format_mm: {
       type: Array,
       default: () => [210, 297]
     },
-    // Page margins in CSS
     page_margins: {
       type: [String, Function],
       default: "10mm 15mm"
     },
-    // Display zoom. Only acts on the screen display
     zoom: {
       type: Number,
       default: 1
     },
-    // "Do not break" test function: should return true on elements you don't want to be split over multiple pages but rather be moved to the next page
     do_not_break: Function
   },
-  data() {
-    return {
-      pages: [],
-      // contains {uuid, content_idx, prev_html, template, props, elt, cached_html, nao_renderizada} for each pages of the document
-      pages_overlay_refs: {},
-      // contains page overlay ref elements indexed by uuid
-      pages_height: 0,
-      // real measured page height in px (corresponding to page_format_mm[1])
-      editor_width: 0,
-      // real measured with of an empty editor <div> in px
-      prevent_next_content_update_from_parent: false,
-      // workaround to avoid infinite update loop
-      current_text_style: false,
-      // contains the style at caret position
-      printing_mode: false,
-      // flag set when page is rendering in printing mode
-      visible_range: {
-        start: 0,
-        end: 5
-      },
-      // range of visible pages (viewport + buffer)
-      virtualization_enabled: false,
-      // enabled after first reset_content completes
-      editing_hf: null,
-      // null | 'header' | 'footer' - current header/footer editing mode
-      editing_hf_page: null,
-      // page index where header/footer is being edited
-      hf_top_height_mm: 0,
-      // measured header height in mm (0 = use default margin)
-      hf_bottom_height_mm: 0 // measured footer height in mm (0 = use default margin)
-    };
-  },
-  mounted() {
-    // Initialize non-reactive internal properties
-    this._dirty_from_page = null;
-    this._deferred_raf_id = null;
-    this._status_overlay_container = null;
-    this._paste_in_progress = false;
-    this._hf_editor_el = null; // ref to contenteditable header/footer editor element
-    this._hf_measure_timer = null; // debounce timer for h/f height measurement
+  emits: ['update:content', 'update:header', 'update:footer'],
+  setup(__props, {
+    expose: __expose,
+    emit: __emit
+  }) {
+    const props = __props;
+    const emit = __emit;
 
-    this.update_editor_width();
-    this.update_css_media_style();
-    this.reset_content();
-    // Measure header/footer heights after initial render (watchers don't fire on initial value)
-    this.$nextTick(() => {
-      this._measure_hf_heights();
+    // Template refs
+    const editor = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.ref)(null);
+    const content = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.ref)(null);
+    const overlays = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.ref)(null);
+    const progress_indicator = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.ref)(null);
+    const progress_text = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.ref)(null);
+    const paste_overlay = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.ref)(null);
+    const paste_text = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.ref)(null);
+
+    // Composable
+    const {
+      state,
+      hf_header_style,
+      hf_footer_style,
+      page_style,
+      process_current_text_style,
+      start_editing_hf,
+      stop_editing_hf,
+      on_hf_input,
+      on_content_click,
+      onInput,
+      reset_content,
+      _show_paste_overlay,
+      _hide_paste_overlay
+    } = useEditor(props, emit, {
+      editor,
+      content,
+      overlays,
+      progress_indicator,
+      progress_text,
+      paste_overlay,
+      paste_text
     });
-    window.addEventListener("resize", this.update_editor_width);
-    window.addEventListener("click", this.process_current_text_style);
-    window.addEventListener("beforeprint", this.before_print);
-    window.addEventListener("afterprint", this.after_print);
 
-    // Setup debounced scroll handler for virtual scrolling
-    this._scroll_handler = debounce(() => this.on_scroll(), 100);
-    this._scroll_container = this.get_scroll_container();
-    if (this._scroll_container === window) {
-      window.addEventListener("scroll", this._scroll_handler);
-    } else {
-      this._scroll_container.addEventListener("scroll", this._scroll_handler);
-    }
-  },
-  beforeUpdate() {
-    this.pages_overlay_refs = [];
-  },
-  beforeUnmount() {
-    window.removeEventListener("resize", this.update_editor_width);
-    window.removeEventListener("click", this.process_current_text_style);
-    window.removeEventListener("beforeprint", this.before_print);
-    window.removeEventListener("afterprint", this.after_print);
-
-    // Remove scroll listener
-    if (this._scroll_handler) {
-      if (this._scroll_container === window) {
-        window.removeEventListener("scroll", this._scroll_handler);
-      } else if (this._scroll_container) {
-        this._scroll_container.removeEventListener("scroll", this._scroll_handler);
-      }
-    }
-    // Clear pending input timer and deferred reflow
-    if (this._input_timer) clearTimeout(this._input_timer);
-    this._cancel_deferred_reflow();
-  },
-  computed: {
-    css_media_style() {
-      // creates a CSS <style> and returns it
-      const style = document.createElement("style");
-      document.head.appendChild(style);
-      return style;
-    },
-    // Parse page_margins string into top/right/bottom/left values
-    parsed_margins() {
-      const m = typeof this.page_margins === 'string' ? this.page_margins : '10mm 15mm';
-      const parts = m.trim().split(/\s+/);
-      if (parts.length === 1) return {
-        top: parts[0],
-        right: parts[0],
-        bottom: parts[0],
-        left: parts[0]
-      };
-      if (parts.length === 2) return {
-        top: parts[0],
-        right: parts[1],
-        bottom: parts[0],
-        left: parts[1]
-      };
-      if (parts.length === 3) return {
-        top: parts[0],
-        right: parts[1],
-        bottom: parts[2],
-        left: parts[1]
-      };
-      return {
-        top: parts[0],
-        right: parts[1],
-        bottom: parts[2],
-        left: parts[3]
-      };
-    },
-    // Style for header zone (positioned in top margin area, grows with content)
-    hf_header_style() {
-      const m = this.parsed_margins;
-      return {
-        position: 'absolute',
-        top: '0',
-        left: '0',
-        right: '0',
-        minHeight: m.top,
-        padding: '2mm ' + m.right + ' 2mm ' + m.left,
-        boxSizing: 'border-box'
-      };
-    },
-    // Style for footer zone (positioned in bottom margin area, grows with content)
-    hf_footer_style() {
-      const m = this.parsed_margins;
-      return {
-        position: 'absolute',
-        bottom: '0',
-        left: '0',
-        right: '0',
-        minHeight: m.bottom,
-        padding: '2mm ' + m.right + ' 2mm ' + m.left,
-        boxSizing: 'border-box'
-      };
-    },
-    // Effective page margins accounting for h/f content height
-    effective_page_margins() {
-      if (typeof this.page_margins === 'function') return this.page_margins;
-      if (!this.hf_top_height_mm && !this.hf_bottom_height_mm) return this.page_margins;
-      const m = this.parsed_margins;
-      const origTop = parseFloat(m.top) || 10;
-      const origBottom = parseFloat(m.bottom) || 10;
-      const effTop = this.hf_top_height_mm ? Math.max(origTop, this.hf_top_height_mm) : origTop;
-      const effBottom = this.hf_bottom_height_mm ? Math.max(origBottom, this.hf_bottom_height_mm) : origBottom;
-      return effTop + 'mm ' + m.right + ' ' + effBottom + 'mm ' + m.left;
-    }
-  },
-  methods: {
-    // Computes a random 5-char UUID
-    new_uuid: () => Math.random().toString(36).slice(-5),
-    // Gets the scrollable parent element of the editor
-    get_scroll_container() {
-      let el = this.$refs.editor;
-      while (el) {
-        const style = window.getComputedStyle(el);
-        if (style.overflow === 'auto' || style.overflow === 'scroll' || style.overflowY === 'auto' || style.overflowY === 'scroll') {
-          return el;
-        }
-        el = el.parentElement;
-      }
-      return window;
-    },
-    // Calculates which pages are visible in the viewport + buffer
-    calculate_visible_range() {
-      const px_in_mm = 0.2645833333333;
-      const page_height_px = (this.page_format_mm[1] + 10) * this.zoom / px_in_mm; // page height + spacing in px
-      const container = this.get_scroll_container();
-      let scroll_top, viewport_height;
-      if (container === window) {
-        scroll_top = window.scrollY || document.documentElement.scrollTop;
-        viewport_height = window.innerHeight;
-      } else {
-        scroll_top = container.scrollTop;
-        viewport_height = container.clientHeight;
-      }
-
-      // Calculate pages per row (for grid mode)
-      const view_padding = 20;
-      const inner_width = this.editor_width - 2 * view_padding;
-      const page_with_plus_spacing = (10 + this.page_format_mm[0]) * this.zoom / px_in_mm;
-      let nb_pages_x = 1;
-      if (this.display === "horizontal") {
-        nb_pages_x = this.pages.length;
-      } else {
-        nb_pages_x = Math.floor(inner_width / page_with_plus_spacing);
-        if (nb_pages_x < 1 || this.display === "vertical") nb_pages_x = 1;
-      }
-
-      // For horizontal mode, all pages are visible if in viewport horizontally
-      if (this.display === "horizontal") {
-        return {
-          start: 0,
-          end: this.pages.length - 1
-        };
-      }
-
-      // Calculate first and last visible row
-      const first_visible_row = Math.max(0, Math.floor((scroll_top - view_padding) / page_height_px));
-      const last_visible_row = Math.floor((scroll_top + viewport_height) / page_height_px);
-
-      // Convert rows to page indices
-      const buffer = 2; // buffer pages in rows
-      const start = Math.max(0, (first_visible_row - buffer) * nb_pages_x);
-      const end = Math.min(this.pages.length - 1, (last_visible_row + buffer + 1) * nb_pages_x - 1);
-      return {
-        start,
-        end
-      };
-    },
-    // Virtualizes pages outside the visible range and restores pages inside it
-    virtualize_pages() {
-      if (!this.virtualization_enabled || this.printing_mode) return;
-      const range = this.calculate_visible_range();
-      this.visible_range = range;
-      for (let i = 0; i < this.pages.length; i++) {
-        const page = this.pages[i];
-        if (!page.elt) continue;
-        const is_in_range = i >= range.start && i <= range.end;
-        if (!is_in_range && !page.nao_renderizada && !page.template) {
-          // Virtualize: save content and empty DOM
-          page.cached_html = page.elt.innerHTML;
-          page.elt.innerHTML = '';
-          page.nao_renderizada = true;
-          page.elt.classList.add('nao-renderizada');
-        } else if (is_in_range && page.nao_renderizada) {
-          // Restore: put content back in DOM
-          if (page.cached_html != null) {
-            page.elt.innerHTML = page.cached_html;
-            page.cached_html = null;
+    // Expose for parent (Demo.vue) access via $refs.editor
+    __expose({
+      current_text_style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.toRef)(state, 'current_text_style'),
+      pages: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.toRef)(state, 'pages'),
+      _paste_in_progress: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.toRef)(state, '_paste_in_progress'),
+      _import_page_count: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.toRef)(state, '_import_page_count'),
+      _show_paste_overlay,
+      _hide_paste_overlay,
+      reset_content,
+      contentEl: content,
+      overlaysEl: overlays
+    });
+    return (_ctx, _cache) => {
+      return (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
+        class: "editor",
+        ref_key: "editor",
+        ref: editor
+      }, [__props.overlay || __props.header != null || __props.footer != null ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
+        key: 0,
+        class: "overlays",
+        ref_key: "overlays",
+        ref: overlays
+      }, [((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(true), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)(external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.Fragment, null, (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.renderList)((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(state).pages, (page, page_idx) => {
+        return (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
+          class: "overlay",
+          key: page.uuid + '-overlay',
+          ref_for: true,
+          ref: elt => (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(state).pages_overlay_refs[page.uuid] = elt,
+          style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(page_style)(page_idx, false))
+        }, [__props.header != null ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)(external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.Fragment, {
+          key: 0
+        }, [(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(state).editing_hf === 'header' && (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(state).editing_hf_page === page_idx ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
+          key: 0,
+          class: "hf-zone hf-header hf-active",
+          style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(hf_header_style)),
+          contenteditable: "true",
+          onInput: _cache[0] || (_cache[0] = $event => (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(on_hf_input)('header')),
+          onKeyup: _cache[1] || (_cache[1] = (...args) => (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(process_current_text_style) && (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(process_current_text_style)(...args)),
+          onKeydown: _cache[2] || (_cache[2] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withKeys)((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withModifiers)((...args) => (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(stop_editing_hf) && (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(stop_editing_hf)(...args), ["prevent"]), ["esc"])),
+          "data-hf-label": "Cabeçalho"
+        }, null, 36)) : ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
+          key: 1,
+          class: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeClass)(["hf-zone hf-header", {
+            'hf-dim': (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(state).editing_hf === 'footer'
+          }]),
+          style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(hf_header_style)),
+          innerHTML: __props.header,
+          onDblclick: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withModifiers)($event => (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(start_editing_hf)('header', page_idx), ["stop"])
+        }, null, 46, _hoisted_1))], 64)) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createCommentVNode)("", true), __props.footer != null ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)(external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.Fragment, {
+          key: 1
+        }, [(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(state).editing_hf === 'footer' && (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(state).editing_hf_page === page_idx ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
+          key: 0,
+          class: "hf-zone hf-footer hf-active",
+          style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(hf_footer_style)),
+          contenteditable: "true",
+          onInput: _cache[3] || (_cache[3] = $event => (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(on_hf_input)('footer')),
+          onKeyup: _cache[4] || (_cache[4] = (...args) => (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(process_current_text_style) && (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(process_current_text_style)(...args)),
+          onKeydown: _cache[5] || (_cache[5] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withKeys)((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withModifiers)((...args) => (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(stop_editing_hf) && (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(stop_editing_hf)(...args), ["prevent"]), ["esc"])),
+          "data-hf-label": "Rodapé"
+        }, null, 36)) : ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
+          key: 1,
+          class: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeClass)(["hf-zone hf-footer", {
+            'hf-dim': (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(state).editing_hf === 'header'
+          }]),
+          style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(hf_footer_style)),
+          innerHTML: __props.footer,
+          onDblclick: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.withModifiers)($event => (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(start_editing_hf)('footer', page_idx), ["stop"])
+        }, null, 46, _hoisted_2))], 64)) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createCommentVNode)("", true), __props.overlay ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", {
+          key: 2,
+          innerHTML: __props.overlay(page_idx + 1, (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(state).pages.length),
+          style: {
+            "pointer-events": "none"
           }
-          page.nao_renderizada = false;
-          page.elt.classList.remove('nao-renderizada');
-        }
-      }
-    },
-    // Scroll event handler - recalculates visible range and virtualizes/restores pages
-    on_scroll() {
-      if (!this.virtualization_enabled || this.printing_mode) return;
-      this.virtualize_pages();
-      this._update_page_statuses();
-    },
-    // Resets all content from the content property
-    reset_content() {
-      // Prevent launching this function multiple times
-      if (this.reset_in_progress) return;
-      this.reset_in_progress = true;
-      console.log(`%c[VDE] reset_content called, content.length=${this.content.length}, paste_in_progress=${this._paste_in_progress}`, 'color: cyan; font-weight: bold');
-
-      // Cancel any pending deferred reflow
-      this._cancel_deferred_reflow();
-
-      // If provided content is empty, initialize it first and exit
-      if (!this.content.length) {
-        this.reset_in_progress = false;
-        this.$emit("update:content", [""]);
-        return;
-      }
-
-      // Delete all pages and set one new page per content item
-      this.pages = this.content.map((content, content_idx) => ({
-        uuid: this.new_uuid(),
-        content_idx,
-        template: content.template,
-        props: content.props
-      }));
-      this.update_pages_elts();
-
-      // Get page height from first empty page
-      const first_page_elt = this.pages[0].elt;
-      if (!this.$refs.content.contains(first_page_elt)) this.$refs.content.appendChild(first_page_elt); // restore page in DOM in case it was removed
-      this.pages_height = first_page_elt.clientHeight + 1; // allow one pixel precision
-
-      // Initialize text pages
-      for (const page of this.pages) {
-        // set raw HTML content
-        if (!this.content[page.content_idx]) page.elt.innerHTML = "<div><br></div>"; // ensure empty pages are filled with at least <div><br></div>, otherwise editing fails on Chrome
-        else if (typeof this.content[page.content_idx] == "string") page.elt.innerHTML = "<div>" + this.content[page.content_idx] + "</div>";else if (page.template) {
-          const componentElement = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.defineCustomElement)(page.template);
-          customElements.define('component-' + page.uuid, componentElement);
-          page.elt.appendChild(new componentElement({
-            modelValue: page.props
-          }));
-        }
-
-        // restore page in DOM in case it was removed
-        if (!this.$refs.content.contains(page.elt)) this.$refs.content.appendChild(page.elt);
-      }
-
-      // Pre-split pages with massive content into roughly page-sized chunks
-      // (avoids 79+ second forward-propagation when entire document is in one page)
-      this._pre_split_large_pages();
-
-      // Mark all pages as dirty and defer processing to keep UI responsive
-      this._paste_in_progress = true;
-      this._show_paste_overlay('Processando documento...');
-      this._dirty_from_page = 0;
-
-      // Remove the text cursor from the content, if any (its position is lost anyway)
-      this.$refs.content.blur();
-
-      // Enable virtualization and virtualize non-visible pages
-      this.virtualization_enabled = true;
-      this.virtualize_pages();
-
-      // Clear "reset in progress" flag
-      this.reset_in_progress = false;
-
-      // Update statuses and schedule deferred processing for remaining pages
-      this._update_page_statuses();
-      console.log(`%c[VDE] reset_content done: pages=${this.pages.length}, dirty_from=${this._dirty_from_page}, paste=${this._paste_in_progress}`, 'color: cyan');
-      if (this._dirty_from_page !== null) {
-        this._schedule_deferred_reflow();
-      } else {
-        // Small document, all done immediately
-        console.log(`%c[VDE] reset_content: no dirty pages, hiding overlay`, 'color: cyan');
-        this._paste_in_progress = false;
-        this._hide_paste_overlay();
-      }
-    },
-    // Spreads the HTML content over several pages until it fits
-    // max_pages: max number of pages to cascade through (default Infinity = no limit)
-    // start_from: page index to start the loop from (default 0), used for deferred reflow continuation
-    fit_content_over_pages(max_pages, start_from) {
-      if (max_pages === undefined) max_pages = Infinity;
-      if (start_from === undefined) start_from = 0;
-
-      // Data variable this.pages_height must have been set before calling this function
-      if (!this.pages_height) return;
-
-      // Prevent launching this function multiple times
-      if (this.fit_in_progress) return;
-      this.fit_in_progress = true;
-
-      // Check pages that were deleted from the DOM (start from the end)
-      for (let page_idx = this.pages.length - 1; page_idx >= 0; page_idx--) {
-        const page = this.pages[page_idx];
-
-        // if user deleted the page from the DOM, then remove it from this.pages array
-        if (!page.elt || !document.body.contains(page.elt)) this.pages.splice(page_idx, 1);
-      }
-
-      // If all the document was wiped out, start a new empty document
-      if (!this.pages.length) {
-        this.fit_in_progress = false; // clear "fit in progress" flag
-        this.$emit("update:content", [""]);
-        return;
-      }
-
-      // Save current selection (or cursor position) by inserting empty HTML elements at the start and the end of it
-      const selection = window.getSelection();
-      const start_marker = document.createElement("null");
-      const end_marker = document.createElement("null");
-      // don't insert markers in case selection fails (if we are editing in components in the shadow-root it selects the page <div> as anchorNode)
-      if (selection && selection.rangeCount && selection.anchorNode && !(selection.anchorNode.dataset && selection.anchorNode.dataset.isVDEPage != null)) {
-        const range = selection.getRangeAt(0);
-        range.insertNode(start_marker);
-        range.collapse(false);
-        range.insertNode(end_marker);
-      }
-
-      // Track which pages were touched during reflow (for normalize + prev_innerHTML update)
-      const touched_pages = new Set();
-      let pages_added_or_removed = false;
-      let cascade_truncated = false;
-      const _perf = {
-        t_start: performance.now(),
-        pages_processed: 0,
-        pages_restored: 0,
-        pages_skipped: 0,
-        backward: 0,
-        forward: 0
-      };
-      console.log(`%c[VDE fit] START: max_pages=${max_pages}, start_from=${start_from}, total_pages=${this.pages.length}`, 'color: purple; font-weight: bold');
-
-      // Browse every remaining page (starting from start_from for deferred continuation)
-      let prev_page_modified_flag = start_from > 0; // force cascade when continuing from a previous stop
-      let cascade_count = 0;
-      for (let page_idx = start_from; page_idx < this.pages.length; page_idx++) {
-        // page length can grow inside this loop
-        const page = this.pages[page_idx];
-
-        // Skip virtualized pages unless previous page pushed content forward
-        if (page.nao_renderizada && !prev_page_modified_flag) {
-          _perf.pages_skipped++;
-          continue;
-        }
-
-        // Check cascade limit BEFORE processing this page
-        if (max_pages !== Infinity && cascade_count >= max_pages && prev_page_modified_flag) {
-          // We've hit the cascade limit and there's still more to cascade
-          this._dirty_from_page = page_idx;
-          cascade_truncated = true;
-          console.log(`%c[VDE fit] TRUNCATED at page ${page_idx} (cascade_count=${cascade_count}, max_pages=${max_pages})`, 'color: red; font-weight: bold');
-          break;
-        }
-
-        // Lazily restore this page if virtualized and cascade reached it
-        if (page.nao_renderizada) {
-          if (page.cached_html != null) {
-            page.elt.innerHTML = page.cached_html;
-            page.cached_html = null;
-          }
-          page.nao_renderizada = false;
-          page.elt.classList.remove('nao-renderizada');
-          _perf.pages_restored++;
-        }
-        _perf.pages_processed++;
-        let next_page = this.pages[page_idx + 1];
-        let next_page_elt = next_page ? next_page.elt : null;
-
-        // Lazily restore next page if we might need it for backward/forward propagation
-        if (next_page && next_page.nao_renderizada && (prev_page_modified_flag || page.elt.innerHTML != page.prev_innerHTML)) {
-          if (next_page.cached_html != null) {
-            next_page.elt.innerHTML = next_page.cached_html;
-            next_page.cached_html = null;
-          }
-          next_page.nao_renderizada = false;
-          next_page.elt.classList.remove('nao-renderizada');
-          next_page_elt = next_page.elt;
-          _perf.pages_restored++;
-        }
-
-        // check if this page, the next page, or any previous page content has been modified by the user (don't apply to template pages)
-        if (!page.template && (prev_page_modified_flag || page.elt.innerHTML != page.prev_innerHTML || next_page_elt && !next_page.template && !next_page.nao_renderizada && next_page_elt.innerHTML != next_page.prev_innerHTML)) {
-          // Count this as a cascading page
-          cascade_count++;
-          console.log(`[VDE fit] processing page ${page_idx} (cascade #${cascade_count}/${max_pages}) prev_modified=${prev_page_modified_flag}`);
-
-          // Snapshot next page content before reflow to detect if content actually shifted
-          const next_page_html_before = next_page_elt && !next_page.nao_renderizada ? next_page_elt.innerHTML : null;
-          touched_pages.add(page_idx);
-
-          // BACKWARD-PROPAGATION
-          // check if content doesn't overflow, and that next page exists and has the same content_idx
-          if (page.elt.clientHeight <= this.pages_height && next_page && next_page.content_idx == page.content_idx) {
-            const _tb = performance.now();
-            // try to append every node from the next page until it doesn't fit
-            move_children_backwards_with_merging(page.elt, next_page_elt, () => !next_page_elt.childNodes.length || page.elt.clientHeight > this.pages_height);
-            _perf.backward += performance.now() - _tb;
-          }
-
-          // FORWARD-PROPAGATION
-          // check if content overflows
-          if (page.elt.clientHeight > this.pages_height) {
-            // if there is no next page for the same content, create it
-            if (!next_page || next_page.content_idx != page.content_idx) {
-              next_page = {
-                uuid: this.new_uuid(),
-                content_idx: page.content_idx
-              };
-              this.pages.splice(page_idx + 1, 0, next_page);
-              this.update_pages_elts();
-              next_page_elt = next_page.elt;
-              pages_added_or_removed = true;
-            }
-            const _tf = performance.now();
-            // move the content step by step to the next page, until it fits
-            move_children_forward_recursively(page.elt, next_page_elt, () => page.elt.clientHeight <= this.pages_height, this.do_not_break);
-            _perf.forward += performance.now() - _tf;
-          }
-
-          // CLEANING
-          // remove next page if it is empty
-          if (next_page_elt && next_page.content_idx == page.content_idx && !next_page_elt.childNodes.length) {
-            this.pages.splice(page_idx + 1, 1);
-            pages_added_or_removed = true;
-          }
-
-          // Early termination: if next page content didn't change, stop cascading
-          const current_next_page = this.pages[page_idx + 1];
-          const current_next_elt = current_next_page ? current_next_page.elt : null;
-          if (current_next_elt && next_page_html_before !== null && !current_next_page.nao_renderizada && current_next_elt.innerHTML === next_page_html_before) {
-            // Content didn't shift to/from next page - no need to continue cascade
-            prev_page_modified_flag = false;
-          } else {
-            prev_page_modified_flag = true;
-            if (current_next_page) touched_pages.add(page_idx + 1);
-          }
-        } else {
-          // Page not modified, track it if it was restored from cache
-          touched_pages.add(page_idx);
-        }
-      }
-
-      // If cascade ended naturally (not truncated), mark all pages as clean
-      if (!cascade_truncated) {
-        this._dirty_from_page = null;
-        console.log(`%c[VDE fit] END natural: cascade_count=${cascade_count}, pages_processed=${_perf.pages_processed}`, 'color: green');
-      } else {
-        console.log(`%c[VDE fit] END truncated: cascade_count=${cascade_count}, dirty_from=${this._dirty_from_page}`, 'color: red');
-      }
-      const _t_loop_end = performance.now();
-
-      // Update pages in the DOM once (not inside the loop)
-      if (pages_added_or_removed) {
-        this.update_pages_elts();
-      }
-
-      // Normalize only pages that were touched during reflow
-      for (const page_idx of touched_pages) {
-        const page = this.pages[page_idx];
-        if (page && !page.template && !page.nao_renderizada) page.elt.normalize();
-      }
-      const _t_normalize_end = performance.now();
-
-      // Restore selection and remove empty elements
-      if (document.body.contains(start_marker)) {
-        const range = document.createRange();
-        range.setStart(start_marker, 0);
-        if (document.body.contains(end_marker)) range.setEnd(end_marker, 0);
-        selection.removeAllRanges();
-        selection.addRange(range);
-      }
-      if (start_marker.parentElement) start_marker.parentElement.removeChild(start_marker);
-      if (end_marker.parentElement) end_marker.parentElement.removeChild(end_marker);
-
-      // Store pages HTML content (only for touched, non-virtualized pages)
-      for (const page_idx of touched_pages) {
-        const page = this.pages[page_idx];
-        if (page && !page.nao_renderizada) {
-          page.prev_innerHTML = page.elt.innerHTML;
-        }
-      }
-      const _t_store_end = performance.now();
-
-      // Re-virtualize pages after reflow
-      if (this.virtualization_enabled) {
-        this.virtualize_pages();
-      }
-      const _t_virtualize_end = performance.now();
-      const _total = _t_virtualize_end - _perf.t_start;
-      if (_total > 30) {
-        console.warn(`[VDE fit] total: ${_total.toFixed(1)}ms | ` + `loop: ${(_t_loop_end - _perf.t_start).toFixed(1)}ms (processed:${_perf.pages_processed} restored:${_perf.pages_restored} skipped:${_perf.pages_skipped}) | ` + `backward: ${_perf.backward.toFixed(1)}ms | forward: ${_perf.forward.toFixed(1)}ms | ` + `normalize: ${(_t_normalize_end - _t_loop_end).toFixed(1)}ms | ` + `store: ${(_t_store_end - _t_normalize_end).toFixed(1)}ms | ` + `virtualize: ${(_t_virtualize_end - _t_store_end).toFixed(1)}ms | ` + `pages total: ${this.pages.length} | truncated: ${cascade_truncated} | dirty_from: ${this._dirty_from_page}`);
-      }
-
-      // Clear "fit in progress" flag
-      this.fit_in_progress = false;
-    },
-    // Find which page the user is currently editing (cursor position)
-    _get_editing_page_idx() {
-      const sel = document.getSelection();
-      if (!sel || !sel.anchorNode) return 0;
-      let node = sel.anchorNode;
-      while (node && node.parentElement) {
-        if (node.dataset && node.dataset.isVDEPage !== undefined) {
-          const idx = this.pages.findIndex(p => p.elt === node);
-          return idx >= 0 ? idx : 0;
-        }
-        node = node.parentElement;
-      }
-      return 0;
-    },
-    // Cancel any pending deferred reflow
-    _cancel_deferred_reflow() {
-      if (this._deferred_raf_id) {
-        cancelAnimationFrame(this._deferred_raf_id);
-        this._deferred_raf_id = null;
-      }
-    },
-    // Pre-splits pages whose content is much larger than page height into roughly page-sized chunks.
-    // This avoids the extremely slow forward-propagation that occurs when one page holds an entire
-    // large document (e.g., 100 pages worth of content in a single DOM element).
-    _pre_split_large_pages() {
-      if (!this.pages_height) return;
-      let did_split = false;
-      for (let pi = 0; pi < this.pages.length; pi++) {
-        const page = this.pages[pi];
-        if (page.template) continue;
-        const scroll_h = page.elt.scrollHeight;
-        const ratio = scroll_h / this.pages_height;
-        if (ratio <= 3) continue; // small overflow - normal reflow handles it fine
-
-        // Get the wrapper div (created as "<div>" + content + "</div>" in reset_content)
-        const wrapper = page.elt.firstChild;
-        if (!wrapper || !wrapper.children || wrapper.children.length < 2) continue;
-        const children = [...wrapper.children];
-        // Use actual page count from export if available, otherwise estimate from scrollHeight ratio
-        const est_pages = this._import_page_count && this._import_page_count > ratio ? this._import_page_count : Math.ceil(ratio);
-        const per_page = Math.max(1, Math.ceil(children.length / est_pages));
-        const num_new_pages = Math.ceil(children.length / per_page) - 1;
-        if (num_new_pages < 1) continue;
-        console.log(`%c[VDE pre-split] page ${pi}: ${children.length} children, ratio ${ratio.toFixed(1)}x -> ${num_new_pages + 1} pages (${per_page} children/page)`, 'color: #ff6600; font-weight: bold');
-
-        // Create new page objects
-        const new_pages = [];
-        for (let i = 0; i < num_new_pages; i++) {
-          new_pages.push({
-            uuid: this.new_uuid(),
-            content_idx: page.content_idx
-          });
-        }
-        this.pages.splice(pi + 1, 0, ...new_pages);
-        this.update_pages_elts();
-
-        // Distribute children to new pages
-        for (let g = 0; g < num_new_pages; g++) {
-          const target = this.pages[pi + 1 + g];
-          const new_wrapper = document.createElement('div');
-          const start = (g + 1) * per_page;
-          const end = Math.min((g + 2) * per_page, children.length);
-          for (let ci = start; ci < end; ci++) {
-            new_wrapper.appendChild(children[ci]); // moves DOM node from original page
-          }
-          target.elt.appendChild(new_wrapper);
-        }
-        pi += num_new_pages; // skip past new pages in the loop
-        did_split = true;
-      }
-      if (did_split) {
-        // Ensure DOM order matches pages array order
-        for (const page of this.pages) {
-          this.$refs.content.appendChild(page.elt);
-        }
-      }
-    },
-    // Schedule background processing for dirty pages (after limited cascade)
-    _schedule_deferred_reflow() {
-      this._cancel_deferred_reflow();
-      this._deferred_raf_id = requestAnimationFrame(() => {
-        setTimeout(() => {
-          this._deferred_raf_id = null;
-          this._deferred_reflow_step();
-        }, 0);
-      });
-    },
-    // Process one page per frame in the background to keep UI responsive
-    _deferred_reflow_step() {
-      if (this._dirty_from_page === null || this._dirty_from_page >= this.pages.length) {
-        this._dirty_from_page = null;
-        console.log(`%c[VDE deferred] all done, no more dirty pages`, 'color: green; font-weight: bold');
-        this._update_page_statuses();
-        this._hide_progress();
-        if (this._paste_in_progress) {
-          this._paste_in_progress = false;
-          this._hide_paste_overlay();
-        }
-        // Clear import page count and emit final content
-        this._import_page_count = 0;
-        this.emit_new_content();
-        return;
-      }
-
-      // Use known page count from export for accurate progress, fall back to current count
-      const total_pages = this._import_page_count && this._import_page_count > this.pages.length ? this._import_page_count : this.pages.length;
-
-      // Update progress indicator
-      const pct = Math.round(this._dirty_from_page / total_pages * 100);
-      if (this._paste_in_progress) {
-        this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${total_pages} (${pct}%)`);
-      } else {
-        this._show_progress(this._dirty_from_page, total_pages);
-      }
-      console.log(`%c[VDE deferred] processing from page ${this._dirty_from_page} of ${this.pages.length} (expected ${total_pages})`, 'color: orange');
-      // During paste/import, process more pages per frame (no per-page overlay overhead)
-      // During normal editing, process 1 page to keep UI responsive
-      const batch_size = this._paste_in_progress ? 5 : 1;
-      this.fit_content_over_pages(batch_size, this._dirty_from_page);
-
-      // Update status overlays
-      this._update_page_statuses();
-
-      // If there are more dirty pages, schedule next batch
-      if (this._dirty_from_page !== null) {
-        const pct2 = Math.round(this._dirty_from_page / total_pages * 100);
-        if (this._paste_in_progress) {
-          this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${total_pages} (${pct2}%)`);
-        } else {
-          this._show_progress(this._dirty_from_page, total_pages);
-        }
-        this._schedule_deferred_reflow();
-      } else {
-        this._hide_progress();
-        if (this._paste_in_progress) {
-          this._paste_in_progress = false;
-          this._hide_paste_overlay();
-        }
-        // Clear import page count
-        this._import_page_count = 0;
-        // All done - emit updated content
-        this.emit_new_content();
-      }
-    },
-    // Show progress indicator in bottom-left corner
-    _show_progress(current_page, total_pages) {
-      const el = this.$refs.progress_indicator;
-      const txt = this.$refs.progress_text;
-      if (el) el.style.display = 'flex';
-      if (txt) txt.textContent = `Atualizando página ${current_page + 1}/${total_pages}`;
-    },
-    // Hide progress indicator
-    _hide_progress() {
-      const el = this.$refs.progress_indicator;
-      if (el) el.style.display = 'none';
-    },
-    // Show full-screen blocking overlay for paste operations
-    _show_paste_overlay(text) {
-      const el = this.$refs.paste_overlay;
-      const txt = this.$refs.paste_text;
-      console.log(`%c[VDE overlay] SHOW: "${text}" (el=${!!el})`, 'color: magenta; font-weight: bold');
-      if (el) el.style.display = 'flex';
-      if (txt) txt.textContent = text;
-    },
-    // Hide paste overlay
-    _hide_paste_overlay() {
-      const el = this.$refs.paste_overlay;
-      console.log(`%c[VDE overlay] HIDE (el=${!!el})`, 'color: magenta');
-      if (el) el.style.display = 'none';
-    },
-    // Calculate and apply page statuses, then render overlays
-    _update_page_statuses() {
-      const editing_idx = this._get_editing_page_idx();
-      const visible = this.calculate_visible_range();
-      for (let i = 0; i < this.pages.length; i++) {
-        const page = this.pages[i];
-        let status;
-        if (this._dirty_from_page === null || i < this._dirty_from_page) {
-          // Page already processed
-          if (i === editing_idx || i === editing_idx + 1) {
-            status = 'editing';
-          } else {
-            status = 'ready';
-          }
-        } else {
-          // Page is dirty (needs reprocessing)
-          if (i >= visible.start && i <= visible.end) {
-            status = 'loading';
-          } else {
-            status = 'await';
-          }
-        }
-        page.pg_status = status;
-      }
-
-      // Render visual overlays
-      this._render_page_status_overlays();
-    },
-    // Manage status overlay DOM elements positioned over pages
-    _render_page_status_overlays() {
-      // Create container if it doesn't exist
-      if (!this._status_overlay_container) {
-        this._status_overlay_container = document.createElement('div');
-        this._status_overlay_container.className = 'page-status-overlays';
-        this.$refs.editor.appendChild(this._status_overlay_container);
-      }
-
-      // During paste/import operations, skip per-page overlays (paste overlay already shows progress)
-      // This avoids O(n²) DOM operations: 91 steps × 90 overlay updates each = ~8000 DOM ops
-      if (this._paste_in_progress) {
-        this._status_overlay_container.innerHTML = '';
-        return;
-      }
-
-      // Build a set of pages that need overlays
-      const overlay_pages = this.pages.filter(p => p.pg_status === 'loading' || p.pg_status === 'await');
-      const overlay_uuids = new Set(overlay_pages.map(p => p.uuid));
-
-      // Remove overlays for pages that no longer need them
-      const existing_overlays = [...this._status_overlay_container.children];
-      for (const el of existing_overlays) {
-        if (!overlay_uuids.has(el.dataset.pageUuid)) {
-          el.remove();
-        }
-      }
-
-      // Create/update overlays for pages that need them
-      for (const [page_idx, page] of this.pages.entries()) {
-        if (page.pg_status !== 'loading' && page.pg_status !== 'await') continue;
-        let overlay_el = this._status_overlay_container.querySelector(`[data-page-uuid="${page.uuid}"]`);
-        if (!overlay_el) {
-          overlay_el = document.createElement('div');
-          overlay_el.className = 'page-status-overlay';
-          overlay_el.dataset.pageUuid = page.uuid;
-          this._status_overlay_container.appendChild(overlay_el);
-        }
-
-        // Update class for loading vs await
-        overlay_el.classList.toggle('pg-loading', page.pg_status === 'loading');
-        overlay_el.classList.toggle('pg-await', page.pg_status === 'await');
-
-        // Update inner content
-        if (page.pg_status === 'loading' && !overlay_el.querySelector('.status-spinner')) {
-          overlay_el.innerHTML = '<div class="status-spinner"></div>';
-        } else if (page.pg_status === 'await' && !overlay_el.querySelector('.status-await-icon')) {
-          overlay_el.innerHTML = '<div class="status-await-icon"></div>';
-        }
-
-        // Position overlay to match the page using page_style
-        const style = this.page_style(page_idx, false);
-        overlay_el.style = this.css_to_string(style);
-        overlay_el.style.overflow = 'hidden';
-      }
-    },
-    // Clear all page status overlays (e.g., before print)
-    _clear_page_statuses() {
-      if (this._status_overlay_container) {
-        this._status_overlay_container.innerHTML = '';
-      }
-      for (const page of this.pages) {
-        page.pg_status = 'ready';
-      }
-    },
-    // Run the reflow + emit work after input (limited to 2 pages for instant response)
-    _do_input_work() {
-      const t0 = performance.now();
-      // Cancel any pending deferred reflow before starting new one
-      this._cancel_deferred_reflow();
-      console.log(`%c[VDE] _do_input_work: calling fit_content_over_pages(max_pages=2, start_from=0)`, 'color: blue; font-weight: bold');
-      this.fit_content_over_pages(2); // only process 2 pages immediately!
-      const t1 = performance.now();
-      console.log(`%c[VDE] _do_input_work: fit done in ${(t1 - t0).toFixed(1)}ms | dirty_from_page=${this._dirty_from_page} | total_pages=${this.pages.length}`, 'color: blue');
-      this.emit_new_content();
-      const t2 = performance.now();
-      if (this._last_input_type != "insertText") this.process_current_text_style();
-      const t3 = performance.now();
-      const total = t3 - t0;
-      if (total > 50) {
-        console.warn(`[VDE perf] input total: ${total.toFixed(1)}ms | fit: ${(t1 - t0).toFixed(1)}ms | emit: ${(t2 - t1).toFixed(1)}ms | style: ${(t3 - t2).toFixed(1)}ms`);
-      }
-
-      // Update page status overlays
-      this._update_page_statuses();
-
-      // Schedule background processing for remaining dirty pages
-      if (this._dirty_from_page !== null) {
-        console.log(`%c[VDE] _do_input_work: scheduling deferred reflow from page ${this._dirty_from_page}`, 'color: orange');
-        this._schedule_deferred_reflow();
-      } else {
-        console.log(`%c[VDE] _do_input_work: all pages clean, no deferred needed`, 'color: green');
-        if (this._paste_in_progress) {
-          this._paste_in_progress = false;
-          this._hide_paste_overlay();
-        }
-      }
-    },
-    // Input event - debounced to prevent cascading reflows on rapid typing
-    input(e) {
-      if (!e) return; // check that event is set
-
-      // Store the input type for deferred processing
-      this._last_input_type = e.inputType;
-
-      // Cancel any pending input timer
-      if (this._input_timer) clearTimeout(this._input_timer);
-
-      // Detect paste operation
-      const is_paste = e.inputType === 'insertFromPaste' || e.inputType === 'insertFromDrop';
-      if (is_paste) {
-        // Show blocking overlay immediately, then yield to browser to paint it
-        this._paste_in_progress = true;
-        this._show_paste_overlay('Colando texto...');
-        this._input_timer = setTimeout(() => {
-          this._input_timer = null;
-          requestAnimationFrame(() => {
-            setTimeout(() => {
-              this._do_input_work();
-            }, 0);
-          });
-        }, 10);
-      } else {
-        // Normal typing: debounce, no blocking overlay
-        this._input_timer = setTimeout(() => {
-          this._input_timer = null;
-          this._do_input_work();
-        }, 10);
-      }
-    },
-    // Emit content change to parent
-    emit_new_content() {
-      const _t0 = performance.now();
-      let removed_pages_flag = false; // flag to call reset_content if some pages were removed by the user
-
-      // process the new content
-      const new_content = this.content.map((item, content_idx) => {
-        // select pages that correspond to this content item (represented by its index in the array)
-        const pages = this.pages.filter(page => page.content_idx == content_idx);
-
-        // if there are no pages representing this content (because deleted by the user), mark item as false to remove it
-        if (!pages.length) {
-          removed_pages_flag = true;
-          return false;
-        }
-        // if item is a string, concatenate each page content and set that
-        else if (typeof item == "string") {
-          return pages.map(page => {
-            // For virtualized pages, use cached HTML
-            if (page.nao_renderizada && page.cached_html != null) {
-              // Parse cached_html to strip wrapper divs, same logic as below
-              const temp = document.createElement('div');
-              temp.innerHTML = page.cached_html;
-              let elt = temp;
-              while (elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
-                elt = elt.firstChild;
-              }
-              return elt.innerHTML == "<br>" || elt.innerHTML == "<!---->" ? "" : elt.innerHTML;
-            }
-            // remove any useless <div> surrounding the content
-            let elt = page.elt;
-            while (elt.children.length == 1 && elt.firstChild.tagName && elt.firstChild.tagName.toLowerCase() == "div" && !elt.firstChild.getAttribute("style")) {
-              elt = elt.firstChild;
-            }
-            return elt.innerHTML == "<br>" || elt.innerHTML == "<!---->" ? "" : elt.innerHTML; // treat a page containing a single <br> or an empty comment as an empty content
-          }).join('');
-        }
-        // if item is a component, just clone the item
-        else return {
-          template: item.template,
-          props: {
-            ...item.props
-          }
-        };
-      }).filter(item => item !== false); // remove empty items
-
-      // avoid calling reset_content after the parent content is updated (infinite loop)
-      if (!removed_pages_flag) this.prevent_next_content_update_from_parent = true;
-
-      // send event to parent to update the synced content
-      this.$emit("update:content", new_content);
-      const _t1 = performance.now();
-      if (_t1 - _t0 > 30) {
-        console.warn(`[VDE emit] emit_new_content: ${(_t1 - _t0).toFixed(1)}ms | pages: ${this.pages.length} virtualized: ${this.pages.filter(p => p.nao_renderizada).length}`);
-      }
-    },
-    // Sets current_text_style with CSS style at caret position
-    process_current_text_style() {
-      let style = false;
-      const sel = window.getSelection();
-      if (sel.focusNode) {
-        const element = sel.focusNode.tagName ? sel.focusNode : sel.focusNode.parentElement;
-        if (element && element.isContentEditable) {
-          style = window.getComputedStyle(element);
-
-          // compute additional properties
-          style.textDecorationStack = []; // array of text-decoration strings from parent elements
-          style.headerLevel = 0;
-          style.isList = false;
-          let parent = element;
-          while (parent) {
-            const parent_style = window.getComputedStyle(parent);
-            // stack CSS text-decoration as it is not overridden by children
-            style.textDecorationStack.push(parent_style.textDecoration);
-            // check if one parent is a list-item
-            if (parent_style.display == "list-item") style.isList = true;
-            // get first header level, if any
-            if (!style.headerLevel) {
-              for (let i = 1; i <= 6; i++) {
-                if (parent.tagName.toUpperCase() == "H" + i) {
-                  style.headerLevel = i;
-                  break;
-                }
-              }
-            }
-            parent = parent.parentElement;
-          }
-        }
-      }
-      this.current_text_style = style;
-    },
-    // Process the specific style (position and size) of each page <div> and content <div>
-    page_style(page_idx, allow_overflow) {
-      const px_in_mm = 0.2645833333333;
-      const page_width = this.page_format_mm[0] / px_in_mm;
-      const page_spacing_mm = 10;
-      const page_with_plus_spacing = (page_spacing_mm + this.page_format_mm[0]) * this.zoom / px_in_mm;
-      const view_padding = 20;
-      const inner_width = this.editor_width - 2 * view_padding;
-      let nb_pages_x = 1,
-        page_column,
-        x_pos,
-        x_ofx,
-        left_px,
-        top_mm,
-        bkg_width_mm,
-        bkg_height_mm;
-      if (this.display == "horizontal") {
-        if (inner_width > this.pages.length * page_with_plus_spacing) {
-          nb_pages_x = Math.floor(inner_width / page_with_plus_spacing);
-          left_px = inner_width / (nb_pages_x * 2) * (1 + page_idx * 2) - page_width / 2;
-        } else {
-          nb_pages_x = this.pages.length;
-          left_px = page_with_plus_spacing * page_idx + page_width / 2 * (this.zoom - 1);
-        }
-        top_mm = 0;
-        bkg_width_mm = this.zoom * (this.page_format_mm[0] * nb_pages_x + (nb_pages_x - 1) * page_spacing_mm);
-        bkg_height_mm = this.page_format_mm[1] * this.zoom;
-      } else {
-        // "grid", vertical
-        nb_pages_x = Math.floor(inner_width / page_with_plus_spacing);
-        if (nb_pages_x < 1 || this.display == "vertical") nb_pages_x = 1;
-        page_column = page_idx % nb_pages_x;
-        x_pos = inner_width / (nb_pages_x * 2) * (1 + page_column * 2) - page_width / 2;
-        x_ofx = Math.max(0, (page_width * this.zoom - inner_width) / 2);
-        left_px = x_pos + x_ofx;
-        top_mm = (this.page_format_mm[1] + page_spacing_mm) * this.zoom * Math.floor(page_idx / nb_pages_x);
-        const nb_pages_y = Math.ceil(this.pages.length / nb_pages_x);
-        bkg_width_mm = this.zoom * (this.page_format_mm[0] * nb_pages_x + (nb_pages_x - 1) * page_spacing_mm);
-        bkg_height_mm = this.zoom * (this.page_format_mm[1] * nb_pages_y + (nb_pages_y - 1) * page_spacing_mm);
-      }
-      if (page_idx >= 0) {
-        const style = {
-          position: "absolute",
-          left: "calc(" + left_px + "px + " + view_padding + "px)",
-          top: "calc(" + top_mm + "mm + " + view_padding + "px)",
-          width: this.page_format_mm[0] + "mm",
-          // "height" is set below
-          padding: typeof this.effective_page_margins == "function" ? this.effective_page_margins(page_idx + 1, this.pages.length) : this.effective_page_margins,
-          transform: "scale(" + this.zoom + ")"
-        };
-        style[allow_overflow ? "minHeight" : "height"] = this.page_format_mm[1] + "mm";
-        return style;
-      } else {
-        // Content/background <div> is sized so it lets a margin around pages when scrolling at the end
-        return {
-          width: "calc(" + bkg_width_mm + "mm + " + 2 * view_padding + "px)",
-          height: "calc(" + bkg_height_mm + "mm + " + 2 * view_padding + "px)"
-        };
-      }
-    },
-    // Utility to convert page_style to CSS string
-    css_to_string: css => Object.entries(css).map(([k, v]) => k.replace(/[A-Z]/g, match => "-" + match.toLowerCase()) + ":" + v).join(';'),
-    // Update pages <div> from this.pages data
-    update_pages_elts() {
-      // Removing deleted pages
-      const deleted_pages = [...this.$refs.content.children].filter(page_elt => !this.pages.find(page => page.elt == page_elt));
-      for (const page_elt of deleted_pages) {
-        page_elt.remove();
-      }
-
-      // Adding / updating pages
-      for (const [page_idx, page] of this.pages.entries()) {
-        // Get either existing page_elt or create it
-        if (!page.elt) {
-          page.elt = document.createElement("div");
-          page.elt.className = "page";
-          page.elt.dataset.isVDEPage = "";
-          const next_page = this.pages[page_idx + 1];
-          this.$refs.content.insertBefore(page.elt, next_page ? next_page.elt : null);
-        }
-        // Update page properties
-        page.elt.dataset.contentIdx = page.content_idx;
-        if (!this.printing_mode) page.elt.style = Object.entries(this.page_style(page_idx, page.template ? false : true)).map(([k, v]) => k.replace(/[A-Z]/g, match => "-" + match.toLowerCase()) + ":" + v).join(';'); // (convert page_style to CSS string)
-        page.elt.contentEditable = this.editable && !page.template ? true : false;
-      }
-    },
-    // Get and store empty editor <div> width
-    update_editor_width() {
-      this.$refs.editor.classList.add("hide_children");
-      this.editor_width = this.$refs.editor.clientWidth;
-      this.update_pages_elts();
-      this.$refs.editor.classList.remove("hide_children");
-    },
-    update_css_media_style() {
-      this.css_media_style.innerHTML = "@media print { @page { size: " + this.page_format_mm[0] + "mm " + this.page_format_mm[1] + "mm; margin: 0 !important; } .hidden-print { display: none !important; } }";
-    },
-    // Prepare content before opening the native print box
-    before_print() {
-      // Exit header/footer editing mode if active
-      if (this.editing_hf) this.stop_editing_hf();
-
-      // set the printing mode flag
-      this.printing_mode = true;
-
-      // Cancel deferred reflow and process all remaining dirty pages
-      this._cancel_deferred_reflow();
-      if (this._dirty_from_page !== null) {
-        this.fit_content_over_pages(Infinity, this._dirty_from_page);
-        this._dirty_from_page = null;
-      }
-
-      // Clear status overlays for printing
-      this._clear_page_statuses();
-
-      // Restore all virtualized pages before printing
-      for (const page of this.pages) {
-        if (page.nao_renderizada && page.cached_html != null) {
-          page.elt.innerHTML = page.cached_html;
-          page.cached_html = null;
-          page.nao_renderizada = false;
-          page.elt.classList.remove('nao-renderizada');
-        }
-      }
-
-      // store the current body aside
-      this._page_body = document.body;
-
-      // create a new body for the print and overwrite CSS
-      const print_body = document.createElement("body");
-      print_body.style.margin = "0";
-      print_body.style.padding = "0";
-      print_body.style.background = "white";
-      print_body.style.font = window.getComputedStyle(this.$refs.editor).font;
-      print_body.className = this.$refs.editor.className;
-
-      // move each page to the print body
-      for (const [page_idx, page] of this.pages.entries()) {
-        //const page_clone = page_elt.cloneNode(true);
-        page.elt.style = ""; // reset page style for the clone
-        page.elt.style.position = "relative";
-        page.elt.style.padding = typeof this.effective_page_margins == "function" ? this.effective_page_margins(page_idx + 1, this.pages.length) : this.effective_page_margins;
-        page.elt.style.breakBefore = page_idx ? "page" : "auto";
-        page.elt.style.width = "calc(" + this.page_format_mm[0] + "mm - 2px)";
-        page.elt.style.height = "calc(" + this.page_format_mm[1] + "mm - 2px)";
-        page.elt.style.boxSizing = "border-box";
-        page.elt.style.overflow = "hidden";
-
-        // add overlays if any
-        const overlay_elt = this.pages_overlay_refs[page.uuid];
-        if (overlay_elt) {
-          overlay_elt.style.position = "absolute";
-          overlay_elt.style.left = "0";
-          overlay_elt.style.top = "0";
-          overlay_elt.style.transform = "none";
-          overlay_elt.style.padding = "0";
-          overlay_elt.style.overflow = "hidden";
-          page.elt.prepend(overlay_elt);
-        }
-        print_body.append(page.elt);
-      }
-
-      // display a return arrow to let the user restore the original body in case the navigator doesn't call after_print() (it happens sometimes in Chrome)
-      const return_overlay = document.createElement("div");
-      return_overlay.className = "hidden-print"; // css managed in update_css_media_style method
-      return_overlay.style.position = "fixed";
-      return_overlay.style.left = "0";
-      return_overlay.style.top = "0";
-      return_overlay.style.right = "0";
-      return_overlay.style.bottom = "0";
-      return_overlay.style.display = "flex";
-      return_overlay.style.alignItems = "center";
-      return_overlay.style.justifyContent = "center";
-      return_overlay.style.background = "rgba(255, 255, 255, 0.95)";
-      return_overlay.style.cursor = "pointer";
-      return_overlay.innerHTML = '<svg width="220" height="220"><path fill="rgba(0, 0, 0, 0.7)" d="M120.774,179.271v40c47.303,0,85.784-38.482,85.784-85.785c0-47.3-38.481-85.782-85.784-85.782H89.282L108.7,28.286L80.417,0L12.713,67.703l67.703,67.701l28.283-28.284L89.282,87.703h31.492c25.246,0,45.784,20.538,45.784,45.783C166.558,158.73,146.02,179.271,120.774,179.271z"/></svg>';
-      return_overlay.addEventListener("click", this.after_print);
-      print_body.append(return_overlay);
-
-      // replace current body by the print body
-      document.body = print_body;
-    },
-    // Restore content after closing the native print box
-    after_print() {
-      // clear the printing mode flag
-      this.printing_mode = false;
-
-      // restore pages and overlays
-      for (const [page_idx, page] of this.pages.entries()) {
-        page.elt.style = this.css_to_string(this.page_style(page_idx, page.template ? false : true));
-        this.$refs.content.append(page.elt);
-        const overlay_elt = this.pages_overlay_refs[page.uuid];
-        if (overlay_elt) {
-          overlay_elt.style = this.css_to_string(this.page_style(page_idx, false));
-          this.$refs.overlays.append(overlay_elt);
-        }
-      }
-      document.body = this._page_body;
-
-      // recompute editor with and reposition elements
-      this.update_editor_width();
-
-      // Re-virtualize pages after print
-      if (this.virtualization_enabled) {
-        this.virtualize_pages();
-      }
-    },
-    // Generate PDF from document pages
-    // options: { filename: string, returnBlob: boolean }
-    async generate_pdf(options = {}) {
-      // Exit header/footer editing mode if active
-      if (this.editing_hf) this.stop_editing_hf();
-      const html2canvas = (await __webpack_require__.e(/* import() */ 354).then(__webpack_require__.t.bind(__webpack_require__, 354, 23))).default;
-      const {
-        jsPDF
-      } = await __webpack_require__.e(/* import() */ 739).then(__webpack_require__.bind(__webpack_require__, 739));
-
-      // Show blocking overlay
-      this._paste_in_progress = true;
-      this._show_paste_overlay('Gerando PDF...');
-
-      // 1. Cancel deferred reflow and process all pending pages
-      this._cancel_deferred_reflow();
-      if (this._dirty_from_page !== null) {
-        this.fit_content_over_pages(Infinity, this._dirty_from_page);
-        this._dirty_from_page = null;
-      }
-
-      // 2. Clear page status overlays so they don't appear in capture
-      this._clear_page_statuses();
-
-      // 3. Restore all virtualized pages
-      for (const page of this.pages) {
-        if (page.nao_renderizada && page.cached_html != null) {
-          page.elt.innerHTML = page.cached_html;
-        }
-      }
-
-      // Yield to browser to render restored pages
-      await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 100)));
-      try {
-        const page_w_mm = this.page_format_mm[0];
-        const page_h_mm = this.page_format_mm[1];
-        const pdf = new jsPDF({
-          unit: 'mm',
-          format: [page_w_mm, page_h_mm],
-          orientation: 'portrait'
-        });
-        for (const [page_idx, page] of this.pages.entries()) {
-          this._show_paste_overlay(`Gerando PDF... página ${page_idx + 1}/${this.pages.length}`);
-
-          // Temporarily reparent overlay (headers/footers) into page element for capture
-          const overlay_elt = this.pages_overlay_refs ? this.pages_overlay_refs[page.uuid] : null;
-          let overlay_original_parent = null;
-          let overlay_original_style = null;
-          if (overlay_elt && overlay_elt.parentNode) {
-            overlay_original_parent = overlay_elt.parentNode;
-            overlay_original_style = overlay_elt.getAttribute('style');
-            // Clear all inline styles (removes stale padding/transform from page_style)
-            // and set clean styles for capture. box-sizing: border-box is needed because
-            // the CSS rule .editor > .overlays > .overlay no longer applies after reparenting.
-            overlay_elt.setAttribute('style', '');
-            overlay_elt.style.position = 'absolute';
-            overlay_elt.style.left = '0';
-            overlay_elt.style.top = '0';
-            overlay_elt.style.width = '100%';
-            overlay_elt.style.height = '100%';
-            overlay_elt.style.boxSizing = 'border-box';
-            overlay_elt.style.pointerEvents = 'none';
-            page.elt.appendChild(overlay_elt);
-          }
-
-          // Capture the actual page element directly (retains all scoped CSS styles)
-          const canvas = await html2canvas(page.elt, {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            backgroundColor: '#ffffff'
-          });
-
-          // Restore overlay to its original parent
-          if (overlay_elt && overlay_original_parent) {
-            if (overlay_original_style) {
-              overlay_elt.setAttribute('style', overlay_original_style);
-            } else {
-              overlay_elt.removeAttribute('style');
-            }
-            overlay_original_parent.appendChild(overlay_elt);
-          }
-
-          // Add page to PDF
-          if (page_idx > 0) pdf.addPage([page_w_mm, page_h_mm], 'portrait');
-          const img_data = canvas.toDataURL('image/jpeg', 0.98);
-          pdf.addImage(img_data, 'JPEG', 0, 0, page_w_mm, page_h_mm);
-
-          // Yield to browser between pages
-          await new Promise(resolve => setTimeout(resolve, 0));
-        }
-
-        // Re-virtualize pages
-        if (this.virtualization_enabled) {
-          this.virtualize_pages();
-        }
-        this._paste_in_progress = false;
-        this._hide_paste_overlay();
-        if (options.returnBlob) {
-          return pdf.output('blob');
-        } else {
-          pdf.save(options.filename || 'documento.pdf');
-        }
-      } catch (err) {
-        if (this.virtualization_enabled) {
-          this.virtualize_pages();
-        }
-        this._paste_in_progress = false;
-        this._hide_paste_overlay();
-        console.error('[VDE] PDF generation failed:', err);
-        throw err;
-      }
-    },
-    // Start editing header or footer on a specific page
-    async start_editing_hf(mode, page_idx) {
-      this.editing_hf = mode;
-      this.editing_hf_page = page_idx;
-      await this.$nextTick();
-      const el = this.$refs.overlays && this.$refs.overlays.querySelector('.hf-active[contenteditable]');
-      if (el) {
-        const content = mode === 'header' ? this.header || '' : this.footer || '';
-        el.innerHTML = content || '<div><br></div>';
-        el.focus();
-        const sel = window.getSelection();
-        const range = document.createRange();
-        range.selectNodeContents(el);
-        range.collapse(false);
-        sel.removeAllRanges();
-        sel.addRange(range);
-        this._hf_editor_el = el;
-      }
-    },
-    // Stop editing header/footer and save content
-    stop_editing_hf() {
-      if (!this.editing_hf) return;
-      if (this._hf_measure_timer) {
-        clearTimeout(this._hf_measure_timer);
-        this._hf_measure_timer = null;
-      }
-      if (this._hf_editor_el) {
-        let html = this._hf_editor_el.innerHTML;
-        if (html === '<br>' || html === '<div><br></div>') html = '';
-        this.$emit('update:' + this.editing_hf, html);
-        this._hf_editor_el = null;
-      }
-      this.editing_hf = null;
-      this.editing_hf_page = null;
-      // Measure h/f heights and adjust margins after preview renders
-      this.$nextTick(() => {
-        this._measure_hf_heights();
-      });
-    },
-    // Handle input in header/footer editor (live sync to other pages)
-    on_hf_input(mode) {
-      if (this._hf_editor_el) {
-        let html = this._hf_editor_el.innerHTML;
-        if (html === '<br>' || html === '<div><br></div>') html = '';
-        this.$emit('update:' + mode, html);
-      }
-      // Debounced margin measurement during editing
-      if (this._hf_measure_timer) clearTimeout(this._hf_measure_timer);
-      this._hf_measure_timer = setTimeout(() => {
-        this._measure_hf_heights();
-      }, 300);
-    },
-    // Measure header/footer rendered heights and adjust effective margins if needed
-    _measure_hf_heights() {
-      const px_to_mm = 0.2645833333333;
-      const m = this.parsed_margins;
-      const origTop = parseFloat(m.top) || 10;
-      const origBottom = parseFloat(m.bottom) || 10;
-      let hMM = 0,
-        fMM = 0;
-
-      // Measure from the active editor or preview zones
-      if (this.editing_hf && this._hf_editor_el) {
-        const elMM = this._hf_editor_el.scrollHeight * px_to_mm + 1;
-        if (this.editing_hf === 'header') {
-          hMM = elMM;
-        } else {
-          fMM = elMM;
-        }
-        // Measure the other zone from preview
-        if (this.$refs.overlays) {
-          const other = this.$refs.overlays.querySelector(this.editing_hf === 'header' ? '.hf-footer:not(.hf-active)' : '.hf-header:not(.hf-active)');
-          const otherMM = other ? other.scrollHeight * px_to_mm + 1 : 0;
-          if (this.editing_hf === 'header') {
-            fMM = otherMM;
-          } else {
-            hMM = otherMM;
-          }
-        }
-      } else if (this.$refs.overlays) {
-        const hZone = this.$refs.overlays.querySelector('.hf-header');
-        const fZone = this.$refs.overlays.querySelector('.hf-footer');
-        if (hZone) hMM = hZone.scrollHeight * px_to_mm + 1;
-        if (fZone) fMM = fZone.scrollHeight * px_to_mm + 1;
-      }
-      const newTop = Math.ceil(hMM) > origTop ? Math.ceil(hMM) : 0;
-      const newBottom = Math.ceil(fMM) > origBottom ? Math.ceil(fMM) : 0;
-      if (newTop !== this.hf_top_height_mm || newBottom !== this.hf_bottom_height_mm) {
-        this.hf_top_height_mm = newTop;
-        this.hf_bottom_height_mm = newBottom;
-        // Reflow pages with new effective margins (incremental to keep UI responsive)
-        this.$nextTick(() => {
-          this.update_pages_elts();
-          this._cancel_deferred_reflow();
-          // Show progress overlay and process incrementally
-          if (!this._paste_in_progress) {
-            this._paste_in_progress = true;
-            this._show_paste_overlay('Processando documento...');
-          }
-          this.fit_content_over_pages(2);
-          this._update_page_statuses();
-          if (this._dirty_from_page !== null) {
-            this._schedule_deferred_reflow();
-          } else {
-            this.emit_new_content();
-            if (this.virtualization_enabled) this.virtualize_pages();
-            this._paste_in_progress = false;
-            this._hide_paste_overlay();
-          }
-        });
-      }
-    },
-    // Click on body content exits header/footer editing mode
-    on_content_click() {
-      if (this.editing_hf) {
-        this.stop_editing_hf();
-      }
-    }
-  },
-  // Watch for changes and adapt content accordingly
-  watch: {
-    content: {
-      handler() {
-        // prevent infinite loop as reset_content triggers a content update and it's async
-        if (this.prevent_next_content_update_from_parent) {
-          this.prevent_next_content_update_from_parent = false;
-        } else this.reset_content();
-      },
-      deep: true
-    },
-    display: {
-      handler() {
-        this.update_pages_elts();
-      }
-    },
-    page_format_mm: {
-      handler() {
-        this.update_css_media_style();
-        this.reset_content();
-      }
-    },
-    page_margins: {
-      handler() {
-        this.reset_content();
-      }
-    },
-    zoom: {
-      handler() {
-        this.update_pages_elts();
-      }
-    },
-    header: {
-      handler() {
-        // When header content changes externally (e.g. JSON import), re-measure heights
-        if (!this.editing_hf) {
-          this.$nextTick(() => {
-            this._measure_hf_heights();
-          });
-        }
-      }
-    },
-    footer: {
-      handler() {
-        // When footer content changes externally (e.g. JSON import), re-measure heights
-        if (!this.editing_hf) {
-          this.$nextTick(() => {
-            this._measure_hf_heights();
-          });
-        }
-      }
-    }
+        }, null, 8, _hoisted_3)) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createCommentVNode)("", true)], 4);
+      }), 128))], 512)) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createCommentVNode)("", true), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", {
+        class: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeClass)(["content", {
+          'hf-body-dim': !!(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(state).editing_hf
+        }]),
+        ref_key: "content",
+        ref: content,
+        contenteditable: __props.editable && !(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(state).editing_hf,
+        style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(page_style)(-1)),
+        onInput: _cache[6] || (_cache[6] = (...args) => (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(onInput) && (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(onInput)(...args)),
+        onKeyup: _cache[7] || (_cache[7] = (...args) => (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(process_current_text_style) && (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(process_current_text_style)(...args)),
+        onClick: _cache[8] || (_cache[8] = (...args) => (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(on_content_click) && (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.unref)(on_content_click)(...args))
+      }, null, 46, _hoisted_4), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", {
+        class: "vde-progress-indicator",
+        ref_key: "progress_indicator",
+        ref: progress_indicator
+      }, [_cache[9] || (_cache[9] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", {
+        class: "vde-progress-spinner"
+      }, null, -1)), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("span", {
+        class: "vde-progress-text",
+        ref_key: "progress_text",
+        ref: progress_text
+      }, null, 512)], 512), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", {
+        class: "vde-paste-overlay",
+        ref_key: "paste_overlay",
+        ref: paste_overlay
+      }, [(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", _hoisted_5, [_cache[10] || (_cache[10] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", {
+        class: "vde-paste-spinner"
+      }, null, -1)), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("span", {
+        class: "vde-paste-text",
+        ref_key: "paste_text",
+        ref: paste_text
+      }, "Colando texto...", 512)])], 512)], 512);
+    };
   }
 });
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&setup=true&lang=js
  
-;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=24e4f0ab&lang=css
+;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=72b617c0&lang=css
 // extracted by mini-css-extract-plugin
 
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=24e4f0ab&lang=css
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=72b617c0&lang=css
 
-;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=24e4f0ab&scoped=true&lang=css
+;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=72b617c0&scoped=true&lang=css
 // extracted by mini-css-extract-plugin
 
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=24e4f0ab&scoped=true&lang=css
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=72b617c0&scoped=true&lang=css
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/dist/exportHelper.js
 var exportHelper = __webpack_require__(6262);
@@ -5349,12 +4875,11 @@ var exportHelper = __webpack_require__(6262);
 
 
 
-
 ;
 
 
 
-const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-24e4f0ab"]])
+const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(DocumentEditorvue_type_script_setup_true_lang_js, [['__scopeId',"data-v-72b617c0"]])
 
 /* harmony default export */ var DocumentEditor = (__exports__);
 ;// ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
