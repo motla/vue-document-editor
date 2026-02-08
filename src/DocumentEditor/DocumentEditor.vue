@@ -2,14 +2,52 @@
   <div class="editor" ref="editor">
 
     <!-- Page overlays (headers, footers, page numbers, ...) -->
-    <div v-if="overlay" class="overlays" ref="overlays">
+    <div v-if="overlay || header != null || footer != null" class="overlays" ref="overlays">
       <div v-for="(page, page_idx) in pages" class="overlay" :key="page.uuid+'-overlay'" :ref="(elt) => (pages_overlay_refs[page.uuid] = elt)"
-        v-html="overlay(page_idx+1, pages.length)" :style="page_style(page_idx, false)">
+        :style="page_style(page_idx, false)">
+        <!-- Editable header zone -->
+        <template v-if="header != null">
+          <div v-if="editing_hf === 'header' && editing_hf_page === page_idx"
+            class="hf-zone hf-header hf-active"
+            :style="hf_header_style"
+            contenteditable="true"
+            @input="on_hf_input('header')"
+            @keyup="process_current_text_style"
+            @keydown.esc.prevent="stop_editing_hf"
+            data-hf-label="Cabeçalho">
+          </div>
+          <div v-else class="hf-zone hf-header"
+            :class="{ 'hf-dim': editing_hf === 'footer' }"
+            :style="hf_header_style"
+            v-html="header"
+            @dblclick.stop="start_editing_hf('header', page_idx)">
+          </div>
+        </template>
+        <!-- Editable footer zone -->
+        <template v-if="footer != null">
+          <div v-if="editing_hf === 'footer' && editing_hf_page === page_idx"
+            class="hf-zone hf-footer hf-active"
+            :style="hf_footer_style"
+            contenteditable="true"
+            @input="on_hf_input('footer')"
+            @keyup="process_current_text_style"
+            @keydown.esc.prevent="stop_editing_hf"
+            data-hf-label="Rodapé">
+          </div>
+          <div v-else class="hf-zone hf-footer"
+            :class="{ 'hf-dim': editing_hf === 'header' }"
+            :style="hf_footer_style"
+            v-html="footer"
+            @dblclick.stop="start_editing_hf('footer', page_idx)">
+          </div>
+        </template>
+        <!-- Legacy overlay content (page numbers, etc.) -->
+        <div v-if="overlay" v-html="overlay(page_idx+1, pages.length)" style="pointer-events: none;"></div>
       </div>
     </div>
 
     <!-- Document editor -->
-    <div class="content" ref="content" :contenteditable="editable" :style="page_style(-1)" @input="input" @keyup="process_current_text_style">
+    <div class="content" ref="content" :contenteditable="editable && !editing_hf" :class="{ 'hf-body-dim': !!editing_hf }" :style="page_style(-1)" @input="input" @keyup="process_current_text_style" @click="on_content_click">
       <!-- This is a Vue "hoisted" static <div> which contains every page of the document and can be modified by the DOM -->
     </div>
 
@@ -72,6 +110,18 @@ export default {
     // Overlay function returning page headers and footers in HTML
     overlay: Function,
 
+    // Editable header HTML content (shared across all pages)
+    header: {
+      type: String,
+      default: undefined
+    },
+
+    // Editable footer HTML content (shared across all pages)
+    footer: {
+      type: String,
+      default: undefined
+    },
+
     // Pages format in mm (should be an array containing [width, height])
     page_format_mm: {
       type: Array,
@@ -105,6 +155,10 @@ export default {
       printing_mode: false, // flag set when page is rendering in printing mode
       visible_range: { start: 0, end: 5 }, // range of visible pages (viewport + buffer)
       virtualization_enabled: false, // enabled after first reset_content completes
+      editing_hf: null, // null | 'header' | 'footer' - current header/footer editing mode
+      editing_hf_page: null, // page index where header/footer is being edited
+      hf_top_height_mm: 0, // measured header height in mm (0 = use default margin)
+      hf_bottom_height_mm: 0, // measured footer height in mm (0 = use default margin)
     }
   },
 
@@ -114,6 +168,8 @@ export default {
     this._deferred_raf_id = null;
     this._status_overlay_container = null;
     this._paste_in_progress = false;
+    this._hf_editor_el = null; // ref to contenteditable header/footer editor element
+    this._hf_measure_timer = null; // debounce timer for h/f height measurement
 
     this.update_editor_width();
     this.update_css_media_style();
@@ -161,6 +217,44 @@ export default {
       const style = document.createElement("style");
       document.head.appendChild(style);
       return style;
+    },
+    // Parse page_margins string into top/right/bottom/left values
+    parsed_margins () {
+      const m = typeof this.page_margins === 'string' ? this.page_margins : '10mm 15mm';
+      const parts = m.trim().split(/\s+/);
+      if (parts.length === 1) return { top: parts[0], right: parts[0], bottom: parts[0], left: parts[0] };
+      if (parts.length === 2) return { top: parts[0], right: parts[1], bottom: parts[0], left: parts[1] };
+      if (parts.length === 3) return { top: parts[0], right: parts[1], bottom: parts[2], left: parts[1] };
+      return { top: parts[0], right: parts[1], bottom: parts[2], left: parts[3] };
+    },
+    // Style for header zone (positioned in top margin area, grows with content)
+    hf_header_style () {
+      const m = this.parsed_margins;
+      return {
+        position: 'absolute', top: '0', left: '0', right: '0',
+        minHeight: m.top, padding: '2mm ' + m.right + ' 2mm ' + m.left,
+        boxSizing: 'border-box'
+      };
+    },
+    // Style for footer zone (positioned in bottom margin area, grows with content)
+    hf_footer_style () {
+      const m = this.parsed_margins;
+      return {
+        position: 'absolute', bottom: '0', left: '0', right: '0',
+        minHeight: m.bottom, padding: '2mm ' + m.right + ' 2mm ' + m.left,
+        boxSizing: 'border-box'
+      };
+    },
+    // Effective page margins accounting for h/f content height
+    effective_page_margins () {
+      if (typeof this.page_margins === 'function') return this.page_margins;
+      if (!this.hf_top_height_mm && !this.hf_bottom_height_mm) return this.page_margins;
+      const m = this.parsed_margins;
+      const origTop = parseFloat(m.top) || 10;
+      const origBottom = parseFloat(m.bottom) || 10;
+      const effTop = this.hf_top_height_mm ? Math.max(origTop, this.hf_top_height_mm) : origTop;
+      const effBottom = this.hf_bottom_height_mm ? Math.max(origBottom, this.hf_bottom_height_mm) : origBottom;
+      return effTop + 'mm ' + m.right + ' ' + effBottom + 'mm ' + m.left;
     }
   },
 
@@ -270,6 +364,7 @@ export default {
       // Prevent launching this function multiple times
       if(this.reset_in_progress) return;
       this.reset_in_progress = true;
+      console.log(`%c[VDE] reset_content called, content.length=${this.content.length}, paste_in_progress=${this._paste_in_progress}`, 'color: cyan; font-weight: bold');
 
       // Cancel any pending deferred reflow
       this._cancel_deferred_reflow();
@@ -311,10 +406,10 @@ export default {
         if(!this.$refs.content.contains(page.elt)) this.$refs.content.appendChild(page.elt);
       }
 
-      // Spread content over pages - only process first 2 pages immediately, defer the rest
+      // Mark all pages as dirty and defer processing to keep UI responsive
       this._paste_in_progress = true;
       this._show_paste_overlay('Processando documento...');
-      this.fit_content_over_pages(2);
+      this._dirty_from_page = 0;
 
       // Remove the text cursor from the content, if any (its position is lost anyway)
       this.$refs.content.blur();
@@ -328,10 +423,12 @@ export default {
 
       // Update statuses and schedule deferred processing for remaining pages
       this._update_page_statuses();
+      console.log(`%c[VDE] reset_content done: pages=${this.pages.length}, dirty_from=${this._dirty_from_page}, paste=${this._paste_in_progress}`, 'color: cyan');
       if (this._dirty_from_page !== null) {
         this._schedule_deferred_reflow();
       } else {
         // Small document, all done immediately
+        console.log(`%c[VDE] reset_content: no dirty pages, hiding overlay`, 'color: cyan');
         this._paste_in_progress = false;
         this._hide_paste_overlay();
       }
@@ -618,8 +715,9 @@ export default {
       }
 
       // Update progress indicator
+      const pct = Math.round((this._dirty_from_page / this.pages.length) * 100);
       if (this._paste_in_progress) {
-        this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${this.pages.length}`);
+        this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${this.pages.length} (${pct}%)`);
       } else {
         this._show_progress(this._dirty_from_page, this.pages.length);
       }
@@ -633,8 +731,9 @@ export default {
 
       // If there are more dirty pages, schedule next batch
       if (this._dirty_from_page !== null) {
+        const pct2 = Math.round((this._dirty_from_page / this.pages.length) * 100);
         if (this._paste_in_progress) {
-          this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${this.pages.length}`);
+          this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${this.pages.length} (${pct2}%)`);
         } else {
           this._show_progress(this._dirty_from_page, this.pages.length);
         }
@@ -668,6 +767,7 @@ export default {
     _show_paste_overlay (text) {
       const el = this.$refs.paste_overlay;
       const txt = this.$refs.paste_text;
+      console.log(`%c[VDE overlay] SHOW: "${text}" (el=${!!el})`, 'color: magenta; font-weight: bold');
       if (el) el.style.display = 'flex';
       if (txt) txt.textContent = text;
     },
@@ -675,6 +775,7 @@ export default {
     // Hide paste overlay
     _hide_paste_overlay () {
       const el = this.$refs.paste_overlay;
+      console.log(`%c[VDE overlay] HIDE (el=${!!el})`, 'color: magenta');
       if (el) el.style.display = 'none';
     },
 
@@ -800,6 +901,10 @@ export default {
         this._schedule_deferred_reflow();
       } else {
         console.log(`%c[VDE] _do_input_work: all pages clean, no deferred needed`, 'color: green');
+        if (this._paste_in_progress) {
+          this._paste_in_progress = false;
+          this._hide_paste_overlay();
+        }
       }
     },
 
@@ -965,7 +1070,7 @@ export default {
           top: "calc("+ top_mm +"mm + "+ view_padding +"px)",
           width: this.page_format_mm[0]+"mm",
           // "height" is set below
-          padding: (typeof this.page_margins == "function") ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins,
+          padding: (typeof this.effective_page_margins == "function") ? this.effective_page_margins(page_idx + 1, this.pages.length) : this.effective_page_margins,
           transform: "scale("+ this.zoom +")"
         };
         style[allow_overflow ? "minHeight" : "height"] = this.page_format_mm[1]+"mm";
@@ -1015,6 +1120,9 @@ export default {
 
     // Prepare content before opening the native print box
     before_print () {
+      // Exit header/footer editing mode if active
+      if (this.editing_hf) this.stop_editing_hf();
+
       // set the printing mode flag
       this.printing_mode = true;
 
@@ -1054,7 +1162,7 @@ export default {
         //const page_clone = page_elt.cloneNode(true);
         page.elt.style = ""; // reset page style for the clone
         page.elt.style.position = "relative";
-        page.elt.style.padding = (typeof this.page_margins == "function") ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins;
+        page.elt.style.padding = (typeof this.effective_page_margins == "function") ? this.effective_page_margins(page_idx + 1, this.pages.length) : this.effective_page_margins;
         page.elt.style.breakBefore = page_idx ? "page" : "auto";
         page.elt.style.width = "calc("+this.page_format_mm[0]+"mm - 2px)";
         page.elt.style.height = "calc("+this.page_format_mm[1]+"mm - 2px)";
@@ -1126,6 +1234,9 @@ export default {
     // Generate PDF from document pages
     // options: { filename: string, returnBlob: boolean }
     async generate_pdf (options = {}) {
+      // Exit header/footer editing mode if active
+      if (this.editing_hf) this.stop_editing_hf();
+
       const html2canvas = (await import('html2canvas')).default;
       const { jsPDF } = await import('jspdf');
 
@@ -1168,11 +1279,16 @@ export default {
           if (overlay_elt && overlay_elt.parentNode) {
             overlay_original_parent = overlay_elt.parentNode;
             overlay_original_style = overlay_elt.getAttribute('style');
+            // Clear all inline styles (removes stale padding/transform from page_style)
+            // and set clean styles for capture. box-sizing: border-box is needed because
+            // the CSS rule .editor > .overlays > .overlay no longer applies after reparenting.
+            overlay_elt.setAttribute('style', '');
             overlay_elt.style.position = 'absolute';
             overlay_elt.style.left = '0';
             overlay_elt.style.top = '0';
             overlay_elt.style.width = '100%';
             overlay_elt.style.height = '100%';
+            overlay_elt.style.boxSizing = 'border-box';
             overlay_elt.style.pointerEvents = 'none';
             page.elt.appendChild(overlay_elt);
           }
@@ -1226,6 +1342,115 @@ export default {
         console.error('[VDE] PDF generation failed:', err);
         throw err;
       }
+    },
+
+    // Start editing header or footer on a specific page
+    async start_editing_hf (mode, page_idx) {
+      this.editing_hf = mode;
+      this.editing_hf_page = page_idx;
+      await this.$nextTick();
+      const el = this.$refs.overlays && this.$refs.overlays.querySelector('.hf-active[contenteditable]');
+      if (el) {
+        const content = (mode === 'header') ? (this.header || '') : (this.footer || '');
+        el.innerHTML = content || '<div><br></div>';
+        el.focus();
+        const sel = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        this._hf_editor_el = el;
+      }
+    },
+
+    // Stop editing header/footer and save content
+    stop_editing_hf () {
+      if (!this.editing_hf) return;
+      if (this._hf_measure_timer) { clearTimeout(this._hf_measure_timer); this._hf_measure_timer = null; }
+      if (this._hf_editor_el) {
+        let html = this._hf_editor_el.innerHTML;
+        if (html === '<br>' || html === '<div><br></div>') html = '';
+        this.$emit('update:' + this.editing_hf, html);
+        this._hf_editor_el = null;
+      }
+      this.editing_hf = null;
+      this.editing_hf_page = null;
+      // Measure h/f heights and adjust margins after preview renders
+      this.$nextTick(() => { this._measure_hf_heights(); });
+    },
+
+    // Handle input in header/footer editor (live sync to other pages)
+    on_hf_input (mode) {
+      if (this._hf_editor_el) {
+        let html = this._hf_editor_el.innerHTML;
+        if (html === '<br>' || html === '<div><br></div>') html = '';
+        this.$emit('update:' + mode, html);
+      }
+      // Debounced margin measurement during editing
+      if (this._hf_measure_timer) clearTimeout(this._hf_measure_timer);
+      this._hf_measure_timer = setTimeout(() => { this._measure_hf_heights(); }, 300);
+    },
+
+    // Measure header/footer rendered heights and adjust effective margins if needed
+    _measure_hf_heights () {
+      const px_to_mm = 0.2645833333333;
+      const m = this.parsed_margins;
+      const origTop = parseFloat(m.top) || 10;
+      const origBottom = parseFloat(m.bottom) || 10;
+      let hMM = 0, fMM = 0;
+
+      // Measure from the active editor or preview zones
+      if (this.editing_hf && this._hf_editor_el) {
+        const elMM = this._hf_editor_el.scrollHeight * px_to_mm + 1;
+        if (this.editing_hf === 'header') { hMM = elMM; } else { fMM = elMM; }
+        // Measure the other zone from preview
+        if (this.$refs.overlays) {
+          const other = this.$refs.overlays.querySelector(this.editing_hf === 'header' ? '.hf-footer:not(.hf-active)' : '.hf-header:not(.hf-active)');
+          const otherMM = other ? other.scrollHeight * px_to_mm + 1 : 0;
+          if (this.editing_hf === 'header') { fMM = otherMM; } else { hMM = otherMM; }
+        }
+      } else if (this.$refs.overlays) {
+        const hZone = this.$refs.overlays.querySelector('.hf-header');
+        const fZone = this.$refs.overlays.querySelector('.hf-footer');
+        if (hZone) hMM = hZone.scrollHeight * px_to_mm + 1;
+        if (fZone) fMM = fZone.scrollHeight * px_to_mm + 1;
+      }
+
+      const newTop = Math.ceil(hMM) > origTop ? Math.ceil(hMM) : 0;
+      const newBottom = Math.ceil(fMM) > origBottom ? Math.ceil(fMM) : 0;
+
+      if (newTop !== this.hf_top_height_mm || newBottom !== this.hf_bottom_height_mm) {
+        this.hf_top_height_mm = newTop;
+        this.hf_bottom_height_mm = newBottom;
+        // Reflow pages with new effective margins (incremental to keep UI responsive)
+        this.$nextTick(() => {
+          this.update_pages_elts();
+          this._cancel_deferred_reflow();
+          // Show progress overlay and process incrementally
+          if (!this._paste_in_progress) {
+            this._paste_in_progress = true;
+            this._show_paste_overlay('Processando documento...');
+          }
+          this.fit_content_over_pages(2);
+          this._update_page_statuses();
+          if (this._dirty_from_page !== null) {
+            this._schedule_deferred_reflow();
+          } else {
+            this.emit_new_content();
+            if (this.virtualization_enabled) this.virtualize_pages();
+            this._paste_in_progress = false;
+            this._hide_paste_overlay();
+          }
+        });
+      }
+    },
+
+    // Click on body content exits header/footer editing mode
+    on_content_click () {
+      if (this.editing_hf) {
+        this.stop_editing_hf();
+      }
     }
   },
 
@@ -1256,6 +1481,22 @@ export default {
     },
     zoom: {
       handler () { this.update_pages_elts(); }
+    },
+    header: {
+      handler () {
+        // When header content changes externally (e.g. JSON import), re-measure heights
+        if (!this.editing_hf) {
+          this.$nextTick(() => { this._measure_hf_heights(); });
+        }
+      }
+    },
+    footer: {
+      handler () {
+        // When footer content changes externally (e.g. JSON import), re-measure heights
+        if (!this.editing_hf) {
+          this.$nextTick(() => { this._measure_hf_heights(); });
+        }
+      }
     }
   }
 
@@ -1495,5 +1736,59 @@ body {
   border-top-color: white;
   border-radius: 50%;
   animation: vde-spin 0.7s linear infinite;
+}
+/* Header/Footer editable zones */
+.editor > .overlays > .overlay > .hf-zone {
+  pointer-events: auto;
+  cursor: default;
+  font-size: 10pt;
+  color: #888;
+  outline: none;
+  width: 100%;
+  overflow: visible;
+}
+.editor > .overlays > .overlay > .hf-zone:not(.hf-active) {
+  opacity: 0.5;
+}
+.editor > .overlays > .overlay > .hf-zone:not(.hf-active):empty::before {
+  content: 'Clique duas vezes para editar';
+  color: #ccc;
+  font-style: italic;
+  font-size: 9pt;
+}
+.editor > .overlays > .overlay > .hf-active {
+  opacity: 1;
+  color: #333;
+  cursor: text;
+  background: rgba(26, 115, 232, 0.03);
+  position: absolute;
+  overflow: visible;
+}
+.editor > .overlays > .overlay > .hf-header.hf-active {
+  border-bottom: 1px dashed #1a73e8;
+}
+.editor > .overlays > .overlay > .hf-footer.hf-active {
+  border-top: 1px dashed #1a73e8;
+}
+.editor > .overlays > .overlay > .hf-dim {
+  opacity: 0.3;
+}
+.editor > .overlays > .overlay > .hf-active::after {
+  content: attr(data-hf-label);
+  position: absolute;
+  font-size: 8px;
+  color: #1a73e8;
+  pointer-events: none;
+}
+.editor > .overlays > .overlay > .hf-header.hf-active::after {
+  right: 4px;
+  bottom: 2px;
+}
+.editor > .overlays > .overlay > .hf-footer.hf-active::after {
+  right: 4px;
+  top: 2px;
+}
+.editor > .content.hf-body-dim > :deep(.page) {
+  opacity: 0.4;
 }
 </style>

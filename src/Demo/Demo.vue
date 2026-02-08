@@ -7,6 +7,7 @@
         <button :class="{ active: current_tab === 'editar' }" @click="current_tab = 'editar'">Editar</button>
         <button :class="{ active: current_tab === 'inserir' }" @click="current_tab = 'inserir'">Inserir</button>
         <button :class="{ active: current_tab === 'configurar' }" @click="current_tab = 'configurar'">Configurar</button>
+        <button :class="{ active: current_tab === 'exportar' }" @click="current_tab = 'exportar'">Exportar</button>
       </div>
       <vue-file-toolbar-menu :content="menu" class="bar" />
     </div>
@@ -14,6 +15,8 @@
     <!-- Document editor -->
     <vue-document-editor class="editor" ref="editor"
       v-model:content="content"
+      v-model:header="header_content"
+      v-model:footer="footer_content"
       :overlay="overlay"
       :zoom="zoom"
       :page_format_mm="page_format_mm"
@@ -43,6 +46,8 @@ export default {
       zoom_max: 5.0,
       page_format_mm: [210, 297],
       page_margins: "10mm 15mm",
+      header_content: '<strong>MYCOMPANY</strong> example.com',
+      footer_content: 'MY COMPANY - example.com',
       current_tab: "editar",
       display: "grid", // ["grid", "vertical", "horizontal"]
       mounted: false, // will be true after this component is mounted
@@ -128,6 +133,7 @@ export default {
     menu () {
       if (this.current_tab === 'inserir') return this.menu_inserir;
       if (this.current_tab === 'configurar') return this.menu_configurar;
+      if (this.current_tab === 'exportar') return this.menu_exportar;
       return this.menu_editar;
     },
 
@@ -203,6 +209,23 @@ export default {
           ], menu_width: 160 },
         { icon: "format_indent_decrease", title: "Diminuir recuo", disabled: !this.current_text_style, click: () => document.execCommand("outdent") },
         { icon: "format_indent_increase", title: "Aumentar recuo", disabled: !this.current_text_style, click: () => document.execCommand("indent") },
+        { icon: "format_line_spacing", title: "Espaçamento", disabled: !this.current_text_style, chevron: true,
+          menu: (() => {
+            const blockEl = this.mounted ? this._getBlockElement() : null;
+            const spaceBefore = blockEl ? parseFloat(window.getComputedStyle(blockEl).marginTop) || 0 : 0;
+            const spaceAfter = blockEl ? parseFloat(window.getComputedStyle(blockEl).marginBottom) || 0 : 0;
+            return [
+              { text: "1,0", active: Math.abs(this.curLineHeight - 1) < 0.08, click: () => this.applyLineSpacing('1') },
+              { text: "1,15", active: Math.abs(this.curLineHeight - 1.15) < 0.08, click: () => this.applyLineSpacing('1.15') },
+              { text: "1,5", active: Math.abs(this.curLineHeight - 1.5) < 0.08, click: () => this.applyLineSpacing('1.5') },
+              { text: "2,0", active: Math.abs(this.curLineHeight - 2) < 0.08, click: () => this.applyLineSpacing('2') },
+              { text: "2,5", active: Math.abs(this.curLineHeight - 2.5) < 0.08, click: () => this.applyLineSpacing('2.5') },
+              { text: "3,0", active: Math.abs(this.curLineHeight - 3) < 0.08, click: () => this.applyLineSpacing('3') },
+              { is: "separator" },
+              { text: spaceBefore > 0 ? "Remover espaço antes do parágrafo" : "Adicionar espaço antes do parágrafo", click: () => this.toggleSpaceBefore() },
+              { text: spaceAfter > 0 ? "Remover espaço depois do parágrafo" : "Adicionar espaço depois do parágrafo", click: () => this.toggleSpaceAfter() },
+            ];
+          })(), menu_width: 280 },
         { html: "<b style='font-size:13px'>A</b><b style='font-size:9px'>↓</b><b style='font-size:13px'>Z</b>", title: "Classificar A-Z", disabled: !this.current_text_style, click: () => this.sortSelectedLines() },
         { is: "separator" },
         { html: "<b>H1</b>", title: "Header 1", active: this.isH1, disabled: !this.current_text_style, click: () => document.execCommand('formatBlock', false, '<h1>') },
@@ -212,14 +235,22 @@ export default {
       ]
     },
 
-    // Tab "Inserir" - document actions and insert operations
+    // Tab "Inserir" - insert operations
     menu_inserir () {
       return [
         { text: "Novo", title: "Novo documento", icon: "description", click: () => { if(confirm("Criar um documento em branco?")){ this.content = [""]; this.resetContentHistory(); } } },
         { icon: "splitscreen", title: "Quebra de página", disabled: !this.current_text_style, click: () => this.insertPageBreak() },
-        { is: "separator" },
+      ]
+    },
+
+    // Tab "Exportar" - print, PDF, import/export
+    menu_exportar () {
+      return [
         { text: "Imprimir", title: "Imprimir", icon: "print", click: () => window.print() },
         { text: "PDF", title: "Baixar PDF", icon: "picture_as_pdf", click: () => this.$refs.editor.generate_pdf({ filename: 'documento.pdf' }) },
+        { is: "separator" },
+        { text: "Exportar JSON", title: "Exportar documento como JSON", icon: "file_download", click: () => this.exportJSON() },
+        { text: "Importar JSON", title: "Importar documento de JSON", icon: "file_upload", click: () => this.importJSON() },
       ]
     },
 
@@ -367,6 +398,15 @@ export default {
       return Math.round(parseFloat(this.current_text_style.fontSize) * 72 / 96);
     },
     font_sizes: () => [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72],
+    curLineHeight () {
+      if (!this.current_text_style) return 1;
+      // Read margin-top from block element (paragraph), not inline element
+      const blockEl = this.mounted ? this._getBlockElement() : null;
+      if (!blockEl) return 1;
+      const mt = parseFloat(window.getComputedStyle(blockEl).marginTop) || 0;
+      const fs = parseFloat(this.current_text_style.fontSize) || 16;
+      return Math.round((mt / fs + 1) * 100) / 100;
+    },
 
     // Platform management
     isMacLike: () => /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform),
@@ -377,17 +417,9 @@ export default {
   },
 
   methods: {
-    // Page overlays (headers, footers, page numbers)
+    // Page overlays (page numbers only - headers/footers are now editable via h/f zones)
     overlay (page, total) {
-      // Add page numbers on each page
-      let html = '<div style="position: absolute; bottom: 8mm; ' + ((page % 2) ? 'right' : 'left') + ': 10mm">Page ' + page + ' of ' + total + '</div>';
-
-      // Add custom headers and footers from page 3
-      if(page >= 3) {
-        html += '<div style="position: absolute; left: 0; top: 0; right: 0; padding: 3mm 5mm; background: rgba(200, 220, 240, 0.5)"><strong>MYCOMPANY</strong> example.com /// This is a custom header overlay</div>';
-        html += '<div style="position: absolute; left: 10mm; right: 10mm; bottom: 5mm; text-align:center; font-size:10pt">MY COMPANY - example.com /// This is a custom footer overlay</div>';
-      }
-      return html;
+      return '<div style="position: absolute; bottom: 1mm; ' + ((page % 2) ? 'right' : 'left') + ': 10mm; font-size: 8pt; color: #aaa;">Página ' + page + ' de ' + total + '</div>';
     },
 
     // Undo / redo functions examples
@@ -397,10 +429,14 @@ export default {
 
     applyFontSize (sizePt) {
       document.execCommand('fontSize', false, '7');
-      const fontElts = this.$refs.editor.$refs.content.querySelectorAll('font[size="7"]');
-      fontElts.forEach(el => {
-        el.removeAttribute('size');
-        el.style.fontSize = sizePt + 'pt';
+      // Search for the temporary font[size="7"] elements in both body content and h/f editor
+      const containers = [this.$refs.editor.$refs.content];
+      if (this.$refs.editor.$refs.overlays) containers.push(this.$refs.editor.$refs.overlays);
+      containers.forEach(container => {
+        container.querySelectorAll('font[size="7"]').forEach(el => {
+          el.removeAttribute('size');
+          el.style.fontSize = sizePt + 'pt';
+        });
       });
     },
     increaseFontSize () {
@@ -434,6 +470,76 @@ export default {
       if (this.isNumberedList) document.execCommand('insertOrderedList');
       else if (this.isBulletedList) document.execCommand('insertUnorderedList');
     },
+    // Find the nearest block-level element at the caret position
+    _getBlockElement () {
+      const sel = window.getSelection();
+      if (!sel.focusNode) return null;
+      let el = sel.focusNode.tagName ? sel.focusNode : sel.focusNode.parentElement;
+      while (el) {
+        if (el.contentEditable === 'true') return null;
+        const d = window.getComputedStyle(el).display;
+        if (d === 'block' || d === 'list-item') return el;
+        el = el.parentElement;
+      }
+      return null;
+    },
+    // Find ALL leaf block-level elements (paragraphs) within the current selection
+    _getSelectedBlockElements () {
+      const sel = window.getSelection();
+      if (!sel.rangeCount) return [];
+      const range = sel.getRangeAt(0);
+      if (range.collapsed) {
+        const el = this._getBlockElement();
+        return el ? [el] : [];
+      }
+      let root = range.commonAncestorContainer;
+      if (root.nodeType !== 1) root = root.parentElement;
+      // Recursively collect leaf blocks (blocks with no nested block children in range)
+      const blocks = [];
+      const collect = (parent) => {
+        for (const child of parent.children) {
+          if (!range.intersectsNode(child)) continue;
+          const d = window.getComputedStyle(child).display;
+          if (d !== 'block' && d !== 'list-item') continue;
+          // Check if child has nested blocks in range (container vs leaf)
+          let hasNestedBlock = false;
+          for (const gc of child.children) {
+            if (!range.intersectsNode(gc)) continue;
+            const gd = window.getComputedStyle(gc).display;
+            if (gd === 'block' || gd === 'list-item') { hasNestedBlock = true; break; }
+          }
+          if (hasNestedBlock) collect(child);
+          else blocks.push(child);
+        }
+      };
+      collect(root);
+      // Fallback: root itself is a leaf block (single paragraph partially selected)
+      if (!blocks.length && root.contentEditable !== 'true') {
+        const d = window.getComputedStyle(root).display;
+        if (d === 'block' || d === 'list-item') return [root];
+      }
+      return blocks;
+    },
+    applyLineSpacing (value) {
+      const blocks = this._getSelectedBlockElements();
+      const margin = parseFloat(value) - 1;
+      blocks.forEach(el => { el.style.marginTop = margin > 0 ? margin + 'em' : '0'; });
+    },
+    toggleSpaceBefore () {
+      const blocks = this._getSelectedBlockElements();
+      if (!blocks.length) return;
+      // Toggle based on first element's state
+      const current = parseFloat(window.getComputedStyle(blocks[0]).marginTop) || 0;
+      const newVal = current > 0 ? '0' : '12pt';
+      blocks.forEach(el => { el.style.marginTop = newVal; });
+    },
+    toggleSpaceAfter () {
+      const blocks = this._getSelectedBlockElements();
+      if (!blocks.length) return;
+      const current = parseFloat(window.getComputedStyle(blocks[0]).marginBottom) || 0;
+      const newVal = current > 0 ? '0' : '12pt';
+      blocks.forEach(el => { el.style.marginBottom = newVal; });
+    },
     sortSelectedLines () {
       const sel = window.getSelection();
       if (!sel.rangeCount) return;
@@ -445,6 +551,60 @@ export default {
       if (lines.length < 2) return;
       lines.sort((a, b) => a.replace(/<[^>]+>/g, '').localeCompare(b.replace(/<[^>]+>/g, ''), 'pt'));
       container.innerHTML = lines.join('<br>');
+    },
+
+    // Export document as JSON file
+    exportJSON () {
+      const doc = {
+        content: this.content,
+        header_content: this.header_content,
+        footer_content: this.footer_content,
+        page_format_mm: this.page_format_mm,
+        page_margins: this.page_margins
+      };
+      const json = JSON.stringify(doc, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'documento.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    },
+
+    // Import document from JSON file
+    importJSON () {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          try {
+            const doc = JSON.parse(ev.target.result);
+            // Show overlay immediately before heavy processing
+            const editor = this.$refs.editor;
+            editor._paste_in_progress = true;
+            editor._show_paste_overlay('Importando documento...');
+            // rAF queues before next paint, setTimeout(0) runs after paint completes
+            requestAnimationFrame(() => { setTimeout(() => {
+              console.log('%c[Import] starting content update', 'color: blue; font-weight: bold');
+              if (doc.content) this.content = doc.content;
+              if (doc.header_content !== undefined) this.header_content = doc.header_content;
+              if (doc.footer_content !== undefined) this.footer_content = doc.footer_content;
+              if (doc.page_format_mm) this.page_format_mm = doc.page_format_mm;
+              if (doc.page_margins) this.page_margins = doc.page_margins;
+              this.resetContentHistory();
+            }, 0); });
+          } catch (err) {
+            alert('Erro ao importar arquivo: ' + err.message);
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
     },
 
     // Insert page break function example
