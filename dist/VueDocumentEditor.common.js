@@ -3268,7 +3268,40 @@ $({ target: 'Set', proto: true, real: true, forced: FORCED }, {
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = __webpack_modules__;
+/******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/create fake namespace object */
+/******/ 	!function() {
+/******/ 		var getProto = Object.getPrototypeOf ? function(obj) { return Object.getPrototypeOf(obj); } : function(obj) { return obj.__proto__; };
+/******/ 		var leafPrototypes;
+/******/ 		// create a fake namespace object
+/******/ 		// mode & 1: value is a module id, require it
+/******/ 		// mode & 2: merge all properties of value into the ns
+/******/ 		// mode & 4: return value when already ns object
+/******/ 		// mode & 16: return value when it's Promise-like
+/******/ 		// mode & 8|1: behave like require
+/******/ 		__webpack_require__.t = function(value, mode) {
+/******/ 			if(mode & 1) value = this(value);
+/******/ 			if(mode & 8) return value;
+/******/ 			if(typeof value === 'object' && value) {
+/******/ 				if((mode & 4) && value.__esModule) return value;
+/******/ 				if((mode & 16) && typeof value.then === 'function') return value;
+/******/ 			}
+/******/ 			var ns = Object.create(null);
+/******/ 			__webpack_require__.r(ns);
+/******/ 			var def = {};
+/******/ 			leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
+/******/ 			for(var current = mode & 2 && value; (typeof current == 'object' || typeof current == 'function') && !~leafPrototypes.indexOf(current); current = getProto(current)) {
+/******/ 				Object.getOwnPropertyNames(current).forEach(function(key) { def[key] = function() { return value[key]; }; });
+/******/ 			}
+/******/ 			def['default'] = function() { return value; };
+/******/ 			__webpack_require__.d(ns, def);
+/******/ 			return ns;
+/******/ 		};
+/******/ 	}();
+/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	!function() {
 /******/ 		// define getter functions for harmony exports
@@ -3278,6 +3311,37 @@ $({ target: 'Set', proto: true, real: true, forced: FORCED }, {
 /******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
 /******/ 				}
 /******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/ensure chunk */
+/******/ 	!function() {
+/******/ 		__webpack_require__.f = {};
+/******/ 		// This file contains only the entry chunk.
+/******/ 		// The chunk loading function for additional chunks
+/******/ 		__webpack_require__.e = function(chunkId) {
+/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce(function(promises, key) {
+/******/ 				__webpack_require__.f[key](chunkId, promises);
+/******/ 				return promises;
+/******/ 			}, []));
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/get javascript chunk filename */
+/******/ 	!function() {
+/******/ 		// This function allow to reference async chunks
+/******/ 		__webpack_require__.u = function(chunkId) {
+/******/ 			// return url for filenames based on template
+/******/ 			return "VueDocumentEditor.common." + chunkId + ".js";
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/get mini-css chunk filename */
+/******/ 	!function() {
+/******/ 		// This function allow to reference async chunks
+/******/ 		__webpack_require__.miniCssF = function(chunkId) {
+/******/ 			// return url for filenames based on template
+/******/ 			return undefined;
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -3298,9 +3362,157 @@ $({ target: 'Set', proto: true, real: true, forced: FORCED }, {
 /******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
 /******/ 	}();
 /******/ 	
+/******/ 	/* webpack/runtime/load script */
+/******/ 	!function() {
+/******/ 		var inProgress = {};
+/******/ 		var dataWebpackPrefix = "vue-document-editor:";
+/******/ 		// loadScript function to load a script via script tag
+/******/ 		__webpack_require__.l = function(url, done, key, chunkId) {
+/******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
+/******/ 			var script, needAttach;
+/******/ 			if(key !== undefined) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				for(var i = 0; i < scripts.length; i++) {
+/******/ 					var s = scripts[i];
+/******/ 					if(s.getAttribute("src") == url || s.getAttribute("data-webpack") == dataWebpackPrefix + key) { script = s; break; }
+/******/ 				}
+/******/ 			}
+/******/ 			if(!script) {
+/******/ 				needAttach = true;
+/******/ 				script = document.createElement('script');
+/******/ 		
+/******/ 				script.charset = 'utf-8';
+/******/ 				if (__webpack_require__.nc) {
+/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
+/******/ 				}
+/******/ 				script.setAttribute("data-webpack", dataWebpackPrefix + key);
+/******/ 		
+/******/ 				script.src = url;
+/******/ 			}
+/******/ 			inProgress[url] = [done];
+/******/ 			var onScriptComplete = function(prev, event) {
+/******/ 				// avoid mem leaks in IE.
+/******/ 				script.onerror = script.onload = null;
+/******/ 				clearTimeout(timeout);
+/******/ 				var doneFns = inProgress[url];
+/******/ 				delete inProgress[url];
+/******/ 				script.parentNode && script.parentNode.removeChild(script);
+/******/ 				doneFns && doneFns.forEach(function(fn) { return fn(event); });
+/******/ 				if(prev) return prev(event);
+/******/ 			}
+/******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
+/******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
+/******/ 			script.onload = onScriptComplete.bind(null, script.onload);
+/******/ 			needAttach && document.head.appendChild(script);
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
 /******/ 	/* webpack/runtime/publicPath */
 /******/ 	!function() {
 /******/ 		__webpack_require__.p = "";
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/jsonp chunk loading */
+/******/ 	!function() {
+/******/ 		// no baseURI
+/******/ 		
+/******/ 		// object to store loaded and loading chunks
+/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
+/******/ 		var installedChunks = {
+/******/ 			654: 0
+/******/ 		};
+/******/ 		
+/******/ 		__webpack_require__.f.j = function(chunkId, promises) {
+/******/ 				// JSONP chunk loading for javascript
+/******/ 				var installedChunkData = __webpack_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
+/******/ 				if(installedChunkData !== 0) { // 0 means "already installed".
+/******/ 		
+/******/ 					// a Promise means "currently loading".
+/******/ 					if(installedChunkData) {
+/******/ 						promises.push(installedChunkData[2]);
+/******/ 					} else {
+/******/ 						if(true) { // all chunks have JS
+/******/ 							// setup Promise in chunk cache
+/******/ 							var promise = new Promise(function(resolve, reject) { installedChunkData = installedChunks[chunkId] = [resolve, reject]; });
+/******/ 							promises.push(installedChunkData[2] = promise);
+/******/ 		
+/******/ 							// start chunk loading
+/******/ 							var url = __webpack_require__.p + __webpack_require__.u(chunkId);
+/******/ 							// create error before stack unwound to get useful stacktrace later
+/******/ 							var error = new Error();
+/******/ 							var loadingEnded = function(event) {
+/******/ 								if(__webpack_require__.o(installedChunks, chunkId)) {
+/******/ 									installedChunkData = installedChunks[chunkId];
+/******/ 									if(installedChunkData !== 0) installedChunks[chunkId] = undefined;
+/******/ 									if(installedChunkData) {
+/******/ 										var errorType = event && (event.type === 'load' ? 'missing' : event.type);
+/******/ 										var realSrc = event && event.target && event.target.src;
+/******/ 										error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
+/******/ 										error.name = 'ChunkLoadError';
+/******/ 										error.type = errorType;
+/******/ 										error.request = realSrc;
+/******/ 										installedChunkData[1](error);
+/******/ 									}
+/******/ 								}
+/******/ 							};
+/******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId, chunkId);
+/******/ 						}
+/******/ 					}
+/******/ 				}
+/******/ 		};
+/******/ 		
+/******/ 		// no prefetching
+/******/ 		
+/******/ 		// no preloaded
+/******/ 		
+/******/ 		// no HMR
+/******/ 		
+/******/ 		// no HMR manifest
+/******/ 		
+/******/ 		// no on chunks loaded
+/******/ 		
+/******/ 		// install a JSONP callback for chunk loading
+/******/ 		var webpackJsonpCallback = function(parentChunkLoadingFunction, data) {
+/******/ 			var chunkIds = data[0];
+/******/ 			var moreModules = data[1];
+/******/ 			var runtime = data[2];
+/******/ 			// add "moreModules" to the modules object,
+/******/ 			// then flag all "chunkIds" as loaded and fire callback
+/******/ 			var moduleId, chunkId, i = 0;
+/******/ 			if(chunkIds.some(function(id) { return installedChunks[id] !== 0; })) {
+/******/ 				for(moduleId in moreModules) {
+/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 					}
+/******/ 				}
+/******/ 				if(runtime) var result = runtime(__webpack_require__);
+/******/ 			}
+/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
+/******/ 			for(;i < chunkIds.length; i++) {
+/******/ 				chunkId = chunkIds[i];
+/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 					installedChunks[chunkId][0]();
+/******/ 				}
+/******/ 				installedChunks[chunkId] = 0;
+/******/ 			}
+/******/ 		
+/******/ 		}
+/******/ 		
+/******/ 		var chunkLoadingGlobal = (typeof self !== 'undefined' ? self : this)["webpackChunkvue_document_editor"] = (typeof self !== 'undefined' ? self : this)["webpackChunkvue_document_editor"] || [];
+/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
+/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
 /******/ 	}();
 /******/ 	
 /************************************************************************/
@@ -3331,7 +3543,7 @@ if (typeof window !== 'undefined') {
 
 ;// external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
 var external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject = require("vue");
-;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=4158c438&scoped=true
+;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=2c07556c&scoped=true
 
 const _hoisted_1 = {
   class: "editor",
@@ -3345,8 +3557,23 @@ const _hoisted_2 = {
 const _hoisted_3 = ["innerHTML"];
 const _hoisted_4 = ["contenteditable"];
 const _hoisted_5 = {
-  class: "vde-loading-overlay",
-  ref: "loading_overlay"
+  class: "vde-progress-indicator",
+  ref: "progress_indicator"
+};
+const _hoisted_6 = {
+  class: "vde-progress-text",
+  ref: "progress_text"
+};
+const _hoisted_7 = {
+  class: "vde-paste-overlay",
+  ref: "paste_overlay"
+};
+const _hoisted_8 = {
+  class: "vde-paste-box"
+};
+const _hoisted_9 = {
+  class: "vde-paste-text",
+  ref: "paste_text"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", _hoisted_1, [$props.overlay ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)("div", _hoisted_2, [((0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.openBlock)(true), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementBlock)(external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.Fragment, null, (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.renderList)($data.pages, (page, page_idx) => {
@@ -3365,11 +3592,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.normalizeStyle)($options.page_style(-1)),
     onInput: _cache[0] || (_cache[0] = (...args) => $options.input && $options.input(...args)),
     onKeyup: _cache[1] || (_cache[1] = (...args) => $options.process_current_text_style && $options.process_current_text_style(...args))
-  }, null, 44, _hoisted_4), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", _hoisted_5, [...(_cache[2] || (_cache[2] = [(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", {
-    class: "vde-loading-spinner"
-  }, null, -1)]))], 512)], 512);
+  }, null, 44, _hoisted_4), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", _hoisted_5, [_cache[2] || (_cache[2] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", {
+    class: "vde-progress-spinner"
+  }, null, -1)), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("span", _hoisted_6, null, 512)], 512), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", _hoisted_7, [(0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", _hoisted_8, [_cache[3] || (_cache[3] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("div", {
+    class: "vde-paste-spinner"
+  }, null, -1)), (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.createElementVNode)("span", _hoisted_9, "Colando texto...", 512)])], 512)], 512);
 }
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=4158c438&scoped=true
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=2c07556c&scoped=true
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
 var es_array_push = __webpack_require__(4114);
@@ -3580,7 +3809,7 @@ function debounce(fn, delay) {
     // Display zoom. Only acts on the screen display
     zoom: {
       type: Number,
-      default: 1.0
+      default: 1
     },
     // "Do not break" test function: should return true on elements you don't want to be split over multiple pages but rather be moved to the next page
     do_not_break: Function
@@ -3610,6 +3839,11 @@ function debounce(fn, delay) {
     };
   },
   mounted() {
+    // Initialize non-reactive internal properties
+    this._dirty_from_page = null;
+    this._deferred_raf_id = null;
+    this._status_overlay_container = null;
+    this._paste_in_progress = false;
     this.update_editor_width();
     this.update_css_media_style();
     this.reset_content();
@@ -3644,8 +3878,9 @@ function debounce(fn, delay) {
         this._scroll_container.removeEventListener("scroll", this._scroll_handler);
       }
     }
-    // Clear pending input timer
+    // Clear pending input timer and deferred reflow
     if (this._input_timer) clearTimeout(this._input_timer);
+    this._cancel_deferred_reflow();
   },
   computed: {
     css_media_style() {
@@ -3747,12 +3982,16 @@ function debounce(fn, delay) {
     on_scroll() {
       if (!this.virtualization_enabled || this.printing_mode) return;
       this.virtualize_pages();
+      this._update_page_statuses();
     },
     // Resets all content from the content property
     reset_content() {
       // Prevent launching this function multiple times
       if (this.reset_in_progress) return;
       this.reset_in_progress = true;
+
+      // Cancel any pending deferred reflow
+      this._cancel_deferred_reflow();
 
       // If provided content is empty, initialize it first and exit
       if (!this.content.length) {
@@ -3791,8 +4030,10 @@ function debounce(fn, delay) {
         if (!this.$refs.content.contains(page.elt)) this.$refs.content.appendChild(page.elt);
       }
 
-      // Spread content over several pages if it overflows
-      this.fit_content_over_pages();
+      // Spread content over pages - only process first 2 pages immediately, defer the rest
+      this._paste_in_progress = true;
+      this._show_paste_overlay('Processando documento...');
+      this.fit_content_over_pages(2);
 
       // Remove the text cursor from the content, if any (its position is lost anyway)
       this.$refs.content.blur();
@@ -3803,9 +4044,24 @@ function debounce(fn, delay) {
 
       // Clear "reset in progress" flag
       this.reset_in_progress = false;
+
+      // Update statuses and schedule deferred processing for remaining pages
+      this._update_page_statuses();
+      if (this._dirty_from_page !== null) {
+        this._schedule_deferred_reflow();
+      } else {
+        // Small document, all done immediately
+        this._paste_in_progress = false;
+        this._hide_paste_overlay();
+      }
     },
     // Spreads the HTML content over several pages until it fits
-    fit_content_over_pages() {
+    // max_pages: max number of pages to cascade through (default Infinity = no limit)
+    // start_from: page index to start the loop from (default 0), used for deferred reflow continuation
+    fit_content_over_pages(max_pages, start_from) {
+      if (max_pages === undefined) max_pages = Infinity;
+      if (start_from === undefined) start_from = 0;
+
       // Data variable this.pages_height must have been set before calling this function
       if (!this.pages_height) return;
 
@@ -3843,6 +4099,7 @@ function debounce(fn, delay) {
       // Track which pages were touched during reflow (for normalize + prev_innerHTML update)
       const touched_pages = new Set();
       let pages_added_or_removed = false;
+      let cascade_truncated = false;
       const _perf = {
         t_start: performance.now(),
         pages_processed: 0,
@@ -3851,10 +4108,12 @@ function debounce(fn, delay) {
         backward: 0,
         forward: 0
       };
+      console.log(`%c[VDE fit] START: max_pages=${max_pages}, start_from=${start_from}, total_pages=${this.pages.length}`, 'color: purple; font-weight: bold');
 
-      // Browse every remaining page
-      let prev_page_modified_flag = false;
-      for (let page_idx = 0; page_idx < this.pages.length; page_idx++) {
+      // Browse every remaining page (starting from start_from for deferred continuation)
+      let prev_page_modified_flag = start_from > 0; // force cascade when continuing from a previous stop
+      let cascade_count = 0;
+      for (let page_idx = start_from; page_idx < this.pages.length; page_idx++) {
         // page length can grow inside this loop
         const page = this.pages[page_idx];
 
@@ -3862,6 +4121,15 @@ function debounce(fn, delay) {
         if (page.nao_renderizada && !prev_page_modified_flag) {
           _perf.pages_skipped++;
           continue;
+        }
+
+        // Check cascade limit BEFORE processing this page
+        if (max_pages !== Infinity && cascade_count >= max_pages && prev_page_modified_flag) {
+          // We've hit the cascade limit and there's still more to cascade
+          this._dirty_from_page = page_idx;
+          cascade_truncated = true;
+          console.log(`%c[VDE fit] TRUNCATED at page ${page_idx} (cascade_count=${cascade_count}, max_pages=${max_pages})`, 'color: red; font-weight: bold');
+          break;
         }
 
         // Lazily restore this page if virtualized and cascade reached it
@@ -3892,6 +4160,10 @@ function debounce(fn, delay) {
 
         // check if this page, the next page, or any previous page content has been modified by the user (don't apply to template pages)
         if (!page.template && (prev_page_modified_flag || page.elt.innerHTML != page.prev_innerHTML || next_page_elt && !next_page.template && !next_page.nao_renderizada && next_page_elt.innerHTML != next_page.prev_innerHTML)) {
+          // Count this as a cascading page
+          cascade_count++;
+          console.log(`[VDE fit] processing page ${page_idx} (cascade #${cascade_count}/${max_pages}) prev_modified=${prev_page_modified_flag}`);
+
           // Snapshot next page content before reflow to detect if content actually shifted
           const next_page_html_before = next_page_elt && !next_page.nao_renderizada ? next_page_elt.innerHTML : null;
           touched_pages.add(page_idx);
@@ -3947,6 +4219,14 @@ function debounce(fn, delay) {
           touched_pages.add(page_idx);
         }
       }
+
+      // If cascade ended naturally (not truncated), mark all pages as clean
+      if (!cascade_truncated) {
+        this._dirty_from_page = null;
+        console.log(`%c[VDE fit] END natural: cascade_count=${cascade_count}, pages_processed=${_perf.pages_processed}`, 'color: green');
+      } else {
+        console.log(`%c[VDE fit] END truncated: cascade_count=${cascade_count}, dirty_from=${this._dirty_from_page}`, 'color: red');
+      }
       const _t_loop_end = performance.now();
 
       // Update pages in the DOM once (not inside the loop)
@@ -3988,40 +4268,227 @@ function debounce(fn, delay) {
       const _t_virtualize_end = performance.now();
       const _total = _t_virtualize_end - _perf.t_start;
       if (_total > 30) {
-        console.warn(`[VDE fit] total: ${_total.toFixed(1)}ms | ` + `loop: ${(_t_loop_end - _perf.t_start).toFixed(1)}ms (processed:${_perf.pages_processed} restored:${_perf.pages_restored} skipped:${_perf.pages_skipped}) | ` + `backward: ${_perf.backward.toFixed(1)}ms | forward: ${_perf.forward.toFixed(1)}ms | ` + `normalize: ${(_t_normalize_end - _t_loop_end).toFixed(1)}ms | ` + `store: ${(_t_store_end - _t_normalize_end).toFixed(1)}ms | ` + `virtualize: ${(_t_virtualize_end - _t_store_end).toFixed(1)}ms | ` + `pages total: ${this.pages.length}`);
+        console.warn(`[VDE fit] total: ${_total.toFixed(1)}ms | ` + `loop: ${(_t_loop_end - _perf.t_start).toFixed(1)}ms (processed:${_perf.pages_processed} restored:${_perf.pages_restored} skipped:${_perf.pages_skipped}) | ` + `backward: ${_perf.backward.toFixed(1)}ms | forward: ${_perf.forward.toFixed(1)}ms | ` + `normalize: ${(_t_normalize_end - _t_loop_end).toFixed(1)}ms | ` + `store: ${(_t_store_end - _t_normalize_end).toFixed(1)}ms | ` + `virtualize: ${(_t_virtualize_end - _t_store_end).toFixed(1)}ms | ` + `pages total: ${this.pages.length} | truncated: ${cascade_truncated} | dirty_from: ${this._dirty_from_page}`);
       }
 
       // Clear "fit in progress" flag
       this.fit_in_progress = false;
     },
-    // Show/hide loading overlay (direct DOM manipulation for instant display)
-    _show_loading() {
-      const el = this.$refs.loading_overlay;
-      if (el) el.style.display = 'flex';
+    // Find which page the user is currently editing (cursor position)
+    _get_editing_page_idx() {
+      const sel = document.getSelection();
+      if (!sel || !sel.anchorNode) return 0;
+      let node = sel.anchorNode;
+      while (node && node.parentElement) {
+        if (node.dataset && node.dataset.isVDEPage !== undefined) {
+          const idx = this.pages.findIndex(p => p.elt === node);
+          return idx >= 0 ? idx : 0;
+        }
+        node = node.parentElement;
+      }
+      return 0;
     },
-    _hide_loading() {
-      const el = this.$refs.loading_overlay;
+    // Cancel any pending deferred reflow
+    _cancel_deferred_reflow() {
+      if (this._deferred_raf_id) {
+        cancelAnimationFrame(this._deferred_raf_id);
+        this._deferred_raf_id = null;
+      }
+    },
+    // Schedule background processing for dirty pages (after limited cascade)
+    _schedule_deferred_reflow() {
+      this._cancel_deferred_reflow();
+      this._deferred_raf_id = requestAnimationFrame(() => {
+        setTimeout(() => {
+          this._deferred_raf_id = null;
+          this._deferred_reflow_step();
+        }, 0);
+      });
+    },
+    // Process one page per frame in the background to keep UI responsive
+    _deferred_reflow_step() {
+      if (this._dirty_from_page === null || this._dirty_from_page >= this.pages.length) {
+        this._dirty_from_page = null;
+        console.log(`%c[VDE deferred] all done, no more dirty pages`, 'color: green; font-weight: bold');
+        this._update_page_statuses();
+        this._hide_progress();
+        if (this._paste_in_progress) {
+          this._paste_in_progress = false;
+          this._hide_paste_overlay();
+        }
+        // Emit final content once all pages are processed
+        this.emit_new_content();
+        return;
+      }
+
+      // Update progress indicator
+      if (this._paste_in_progress) {
+        this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${this.pages.length}`);
+      } else {
+        this._show_progress(this._dirty_from_page, this.pages.length);
+      }
+      console.log(`%c[VDE deferred] processing page ${this._dirty_from_page} of ${this.pages.length}`, 'color: orange');
+      // Process 1 page per frame to keep UI responsive
+      this.fit_content_over_pages(1, this._dirty_from_page);
+
+      // Update status overlays
+      this._update_page_statuses();
+
+      // If there are more dirty pages, schedule next batch
+      if (this._dirty_from_page !== null) {
+        if (this._paste_in_progress) {
+          this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${this.pages.length}`);
+        } else {
+          this._show_progress(this._dirty_from_page, this.pages.length);
+        }
+        this._schedule_deferred_reflow();
+      } else {
+        this._hide_progress();
+        if (this._paste_in_progress) {
+          this._paste_in_progress = false;
+          this._hide_paste_overlay();
+        }
+        // All done - emit updated content
+        this.emit_new_content();
+      }
+    },
+    // Show progress indicator in bottom-left corner
+    _show_progress(current_page, total_pages) {
+      const el = this.$refs.progress_indicator;
+      const txt = this.$refs.progress_text;
+      if (el) el.style.display = 'flex';
+      if (txt) txt.textContent = `Atualizando página ${current_page + 1}/${total_pages}`;
+    },
+    // Hide progress indicator
+    _hide_progress() {
+      const el = this.$refs.progress_indicator;
       if (el) el.style.display = 'none';
     },
-    // Run the heavy reflow + emit work after input
+    // Show full-screen blocking overlay for paste operations
+    _show_paste_overlay(text) {
+      const el = this.$refs.paste_overlay;
+      const txt = this.$refs.paste_text;
+      if (el) el.style.display = 'flex';
+      if (txt) txt.textContent = text;
+    },
+    // Hide paste overlay
+    _hide_paste_overlay() {
+      const el = this.$refs.paste_overlay;
+      if (el) el.style.display = 'none';
+    },
+    // Calculate and apply page statuses, then render overlays
+    _update_page_statuses() {
+      const editing_idx = this._get_editing_page_idx();
+      const visible = this.calculate_visible_range();
+      for (let i = 0; i < this.pages.length; i++) {
+        const page = this.pages[i];
+        let status;
+        if (this._dirty_from_page === null || i < this._dirty_from_page) {
+          // Page already processed
+          if (i === editing_idx || i === editing_idx + 1) {
+            status = 'editing';
+          } else {
+            status = 'ready';
+          }
+        } else {
+          // Page is dirty (needs reprocessing)
+          if (i >= visible.start && i <= visible.end) {
+            status = 'loading';
+          } else {
+            status = 'await';
+          }
+        }
+        page.pg_status = status;
+      }
+
+      // Render visual overlays
+      this._render_page_status_overlays();
+    },
+    // Manage status overlay DOM elements positioned over pages
+    _render_page_status_overlays() {
+      // Create container if it doesn't exist
+      if (!this._status_overlay_container) {
+        this._status_overlay_container = document.createElement('div');
+        this._status_overlay_container.className = 'page-status-overlays';
+        this.$refs.editor.appendChild(this._status_overlay_container);
+      }
+
+      // Build a set of pages that need overlays
+      const overlay_pages = this.pages.filter(p => p.pg_status === 'loading' || p.pg_status === 'await');
+      const overlay_uuids = new Set(overlay_pages.map(p => p.uuid));
+
+      // Remove overlays for pages that no longer need them
+      const existing_overlays = [...this._status_overlay_container.children];
+      for (const el of existing_overlays) {
+        if (!overlay_uuids.has(el.dataset.pageUuid)) {
+          el.remove();
+        }
+      }
+
+      // Create/update overlays for pages that need them
+      for (const [page_idx, page] of this.pages.entries()) {
+        if (page.pg_status !== 'loading' && page.pg_status !== 'await') continue;
+        let overlay_el = this._status_overlay_container.querySelector(`[data-page-uuid="${page.uuid}"]`);
+        if (!overlay_el) {
+          overlay_el = document.createElement('div');
+          overlay_el.className = 'page-status-overlay';
+          overlay_el.dataset.pageUuid = page.uuid;
+          this._status_overlay_container.appendChild(overlay_el);
+        }
+
+        // Update class for loading vs await
+        overlay_el.classList.toggle('pg-loading', page.pg_status === 'loading');
+        overlay_el.classList.toggle('pg-await', page.pg_status === 'await');
+
+        // Update inner content
+        if (page.pg_status === 'loading' && !overlay_el.querySelector('.status-spinner')) {
+          overlay_el.innerHTML = '<div class="status-spinner"></div>';
+        } else if (page.pg_status === 'await' && !overlay_el.querySelector('.status-await-icon')) {
+          overlay_el.innerHTML = '<div class="status-await-icon"></div>';
+        }
+
+        // Position overlay to match the page using page_style
+        const style = this.page_style(page_idx, false);
+        overlay_el.style = this.css_to_string(style);
+        overlay_el.style.overflow = 'hidden';
+      }
+    },
+    // Clear all page status overlays (e.g., before print)
+    _clear_page_statuses() {
+      if (this._status_overlay_container) {
+        this._status_overlay_container.innerHTML = '';
+      }
+      for (const page of this.pages) {
+        page.pg_status = 'ready';
+      }
+    },
+    // Run the reflow + emit work after input (limited to 2 pages for instant response)
     _do_input_work() {
       const t0 = performance.now();
-      this.fit_content_over_pages();
+      // Cancel any pending deferred reflow before starting new one
+      this._cancel_deferred_reflow();
+      console.log(`%c[VDE] _do_input_work: calling fit_content_over_pages(max_pages=2, start_from=0)`, 'color: blue; font-weight: bold');
+      this.fit_content_over_pages(2); // only process 2 pages immediately!
       const t1 = performance.now();
+      console.log(`%c[VDE] _do_input_work: fit done in ${(t1 - t0).toFixed(1)}ms | dirty_from_page=${this._dirty_from_page} | total_pages=${this.pages.length}`, 'color: blue');
       this.emit_new_content();
       const t2 = performance.now();
       if (this._last_input_type != "insertText") this.process_current_text_style();
       const t3 = performance.now();
       const total = t3 - t0;
-
-      // If this operation was slow, show loading proactively for the next input
-      if (total > 1000) {
-        this._next_input_needs_loading = true;
-      } else {
-        this._next_input_needs_loading = false;
-      }
       if (total > 50) {
         console.warn(`[VDE perf] input total: ${total.toFixed(1)}ms | fit: ${(t1 - t0).toFixed(1)}ms | emit: ${(t2 - t1).toFixed(1)}ms | style: ${(t3 - t2).toFixed(1)}ms`);
+      }
+
+      // Update page status overlays
+      this._update_page_statuses();
+
+      // Schedule background processing for remaining dirty pages
+      if (this._dirty_from_page !== null) {
+        console.log(`%c[VDE] _do_input_work: scheduling deferred reflow from page ${this._dirty_from_page}`, 'color: orange');
+        this._schedule_deferred_reflow();
+      } else {
+        console.log(`%c[VDE] _do_input_work: all pages clean, no deferred needed`, 'color: green');
       }
     },
     // Input event - debounced to prevent cascading reflows on rapid typing
@@ -4031,26 +4498,25 @@ function debounce(fn, delay) {
       // Store the input type for deferred processing
       this._last_input_type = e.inputType;
 
-      // Cancel any pending deferred reflow
+      // Cancel any pending input timer
       if (this._input_timer) clearTimeout(this._input_timer);
 
-      // Detect heavy operations: paste, drop, or previous input was slow
-      const is_heavy = e.inputType !== "insertText" || this._next_input_needs_loading;
-      if (is_heavy) {
-        // Show loading immediately, then yield to the browser so it paints
-        // the overlay before the synchronous heavy work blocks the thread
-        this._show_loading();
+      // Detect paste operation
+      const is_paste = e.inputType === 'insertFromPaste' || e.inputType === 'insertFromDrop';
+      if (is_paste) {
+        // Show blocking overlay immediately, then yield to browser to paint it
+        this._paste_in_progress = true;
+        this._show_paste_overlay('Colando texto...');
         this._input_timer = setTimeout(() => {
           this._input_timer = null;
           requestAnimationFrame(() => {
             setTimeout(() => {
               this._do_input_work();
-              this._hide_loading();
             }, 0);
           });
         }, 10);
       } else {
-        // Fast path for regular typing: no loading overhead
+        // Normal typing: debounce, no blocking overlay
         this._input_timer = setTimeout(() => {
           this._input_timer = null;
           this._do_input_work();
@@ -4249,6 +4715,16 @@ function debounce(fn, delay) {
       // set the printing mode flag
       this.printing_mode = true;
 
+      // Cancel deferred reflow and process all remaining dirty pages
+      this._cancel_deferred_reflow();
+      if (this._dirty_from_page !== null) {
+        this.fit_content_over_pages(Infinity, this._dirty_from_page);
+        this._dirty_from_page = null;
+      }
+
+      // Clear status overlays for printing
+      this._clear_page_statuses();
+
       // Restore all virtualized pages before printing
       for (const page of this.pages) {
         if (page.nao_renderizada && page.cached_html != null) {
@@ -4340,6 +4816,114 @@ function debounce(fn, delay) {
       if (this.virtualization_enabled) {
         this.virtualize_pages();
       }
+    },
+    // Generate PDF from document pages
+    // options: { filename: string, returnBlob: boolean }
+    async generate_pdf(options = {}) {
+      const html2pdf = (await __webpack_require__.e(/* import() */ 833).then(__webpack_require__.t.bind(__webpack_require__, 3833, 23))).default;
+
+      // Show blocking overlay
+      this._paste_in_progress = true;
+      this._show_paste_overlay('Gerando PDF...');
+
+      // 1. Cancel deferred reflow and process all pending pages
+      this._cancel_deferred_reflow();
+      if (this._dirty_from_page !== null) {
+        this.fit_content_over_pages(Infinity, this._dirty_from_page);
+        this._dirty_from_page = null;
+      }
+
+      // 2. Restore all virtualized pages
+      for (const page of this.pages) {
+        if (page.nao_renderizada && page.cached_html != null) {
+          page.elt.innerHTML = page.cached_html;
+        }
+      }
+
+      // 3. Build temporary container with cloned pages
+      const container = document.createElement('div');
+      container.style.font = window.getComputedStyle(this.$refs.editor).font;
+      for (const [page_idx, page] of this.pages.entries()) {
+        const clone = page.elt.cloneNode(true);
+        clone.style.position = 'relative';
+        clone.style.width = this.page_format_mm[0] + 'mm';
+        clone.style.height = this.page_format_mm[1] + 'mm';
+        clone.style.padding = typeof this.page_margins == 'function' ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins;
+        clone.style.boxSizing = 'border-box';
+        clone.style.overflow = 'hidden';
+        clone.style.background = 'white';
+        if (page_idx) clone.style.pageBreakBefore = 'always';
+
+        // Add overlays (headers/footers) if any
+        const overlay_elt = this.pages_overlay_refs[page.uuid];
+        if (overlay_elt) {
+          const overlay_clone = overlay_elt.cloneNode(true);
+          overlay_clone.style.position = 'absolute';
+          overlay_clone.style.left = '0';
+          overlay_clone.style.top = '0';
+          overlay_clone.style.overflow = 'hidden';
+          clone.prepend(overlay_clone);
+        }
+        container.appendChild(clone);
+        this._show_paste_overlay(`Gerando PDF... página ${page_idx + 1}/${this.pages.length}`);
+      }
+
+      // 4. Temporarily add container to DOM (required by html2canvas)
+      container.style.position = 'absolute';
+      container.style.left = '-9999px';
+      container.style.top = '0';
+      document.body.appendChild(container);
+
+      // 5. Configure and generate PDF
+      const pdf_options = {
+        margin: 0,
+        filename: options.filename || 'documento.pdf',
+        image: {
+          type: 'jpeg',
+          quality: 0.98
+        },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          logging: false
+        },
+        jsPDF: {
+          unit: 'mm',
+          format: [this.page_format_mm[0], this.page_format_mm[1]],
+          orientation: 'portrait'
+        },
+        pagebreak: {
+          mode: 'css'
+        }
+      };
+      try {
+        let result;
+        if (options.returnBlob) {
+          result = await html2pdf().set(pdf_options).from(container).outputPdf('blob');
+        } else {
+          await html2pdf().set(pdf_options).from(container).save();
+        }
+
+        // 6. Cleanup
+        container.remove();
+
+        // 7. Re-virtualize pages
+        if (this.virtualization_enabled) {
+          this.virtualize_pages();
+        }
+        this._paste_in_progress = false;
+        this._hide_paste_overlay();
+        return result;
+      } catch (err) {
+        container.remove();
+        if (this.virtualization_enabled) {
+          this.virtualize_pages();
+        }
+        this._paste_in_progress = false;
+        this._hide_paste_overlay();
+        console.error('[VDE] PDF generation failed:', err);
+        throw err;
+      }
     }
   },
   // Watch for changes and adapt content accordingly
@@ -4378,15 +4962,15 @@ function debounce(fn, delay) {
 });
 ;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js
  
-;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=4158c438&lang=css
+;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=2c07556c&lang=css
 // extracted by mini-css-extract-plugin
 
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=4158c438&lang=css
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=2c07556c&lang=css
 
-;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=4158c438&scoped=true&lang=css
+;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=2c07556c&scoped=true&lang=css
 // extracted by mini-css-extract-plugin
 
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=4158c438&scoped=true&lang=css
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=2c07556c&scoped=true&lang=css
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/dist/exportHelper.js
 var exportHelper = __webpack_require__(6262);
@@ -4399,7 +4983,7 @@ var exportHelper = __webpack_require__(6262);
 
 
 
-const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-4158c438"]])
+const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-2c07556c"]])
 
 /* harmony default export */ var DocumentEditor = (__exports__);
 ;// ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js

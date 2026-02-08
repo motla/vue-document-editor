@@ -2,7 +2,14 @@
   <div class="main">
 
     <!-- Top bar -->
-    <vue-file-toolbar-menu :content="menu" class="bar" />
+    <div class="toolbar-container">
+      <div class="tab-bar">
+        <button :class="{ active: current_tab === 'editar' }" @click="current_tab = 'editar'">Editar</button>
+        <button :class="{ active: current_tab === 'inserir' }" @click="current_tab = 'inserir'">Inserir</button>
+        <button :class="{ active: current_tab === 'configurar' }" @click="current_tab = 'configurar'">Configurar</button>
+      </div>
+      <vue-file-toolbar-menu :content="menu" class="bar" />
+    </div>
 
     <!-- Document editor -->
     <vue-document-editor class="editor" ref="editor"
@@ -36,6 +43,7 @@ export default {
       zoom_max: 5.0,
       page_format_mm: [210, 297],
       page_margins: "10mm 15mm",
+      current_tab: "editar",
       display: "grid", // ["grid", "vertical", "horizontal"]
       mounted: false, // will be true after this component is mounted
       undo_count: -1, // contains the number of times user can undo (= current position in content_history)
@@ -116,22 +124,54 @@ export default {
 
   computed: {
 
-    // This is the menu content
+    // Menu content based on active tab
     menu () {
+      if (this.current_tab === 'inserir') return this.menu_inserir;
+      if (this.current_tab === 'configurar') return this.menu_configurar;
+      return this.menu_editar;
+    },
+
+    // Tab "Editar" - text formatting tools
+    menu_editar () {
       return [
-        // Main commands
-        { text: "New", title: "New", icon: "description", click: () => { if(confirm("This will create an empty document. Are you sure?")){ this.content = [""]; this.resetContentHistory(); } } },
-        { text: "Print", title: "Print", icon: "print", click: () => window.print() },
-
-        { is: "spacer" },
-
-        // Undo / redo commands
         { title: "Undo", icon: "undo", disabled: !this.can_undo, hotkey: this.isMacLike ? "command+z" : "ctrl+z", click: () => this.undo() },
         { title: "Redo", icon: "redo", disabled: !this.can_redo, hotkey: this.isMacLike ? "shift+command+z" : "ctrl+y", click: () => this.redo() },
-
-        { is: "spacer" },
-
-        // Rich text menus
+        { is: "separator" },
+        {
+          text: this.curFontFamily,
+          title: "Fonte",
+          disabled: !this.current_text_style,
+          chevron: true,
+          menu: [
+            'Arial', 'Arial Black', 'Calibri', 'Cambria', 'Candara', 'Century Gothic',
+            'Comic Sans MS', 'Consolas', 'Constantia', 'Corbel', 'Courier New',
+            'Georgia', 'Impact', 'Lucida Console', 'Palatino Linotype', 'Segoe UI',
+            'Tahoma', 'Times New Roman', 'Trebuchet MS', 'Verdana'
+          ].map(font => ({
+            text: font,
+            style: { fontFamily: font },
+            active: this.curFontFamily === font,
+            click: () => document.execCommand('fontName', false, font)
+          })),
+          menu_width: 200,
+          menu_height: 300
+        },
+        {
+          text: this.curFontSize + '',
+          title: "Tamanho da fonte",
+          disabled: !this.current_text_style,
+          chevron: true,
+          menu: this.font_sizes.map(size => ({
+            text: size + '',
+            active: this.curFontSize === size,
+            click: () => this.applyFontSize(size)
+          })),
+          menu_width: 60,
+          menu_height: 280
+        },
+        { html: "<b style='font-size:14px'>A</b><b style='font-size:8px;vertical-align:super'>▲</b>", title: "Aumentar fonte", disabled: !this.current_text_style, click: () => this.increaseFontSize() },
+        { html: "<b style='font-size:14px'>A</b><b style='font-size:8px;vertical-align:sub'>▼</b>", title: "Diminuir fonte", disabled: !this.current_text_style, click: () => this.decreaseFontSize() },
+        { is: "separator" },
         { icon: "format_align_left", title: "Align left", active: this.isLeftAligned, disabled: !this.current_text_style, hotkey: this.isMacLike ? "shift+command+l" : "ctrl+shift+l", click: () => document.execCommand("justifyLeft") },
         { icon: "format_align_center", title: "Align center", active: this.isCentered, disabled: !this.current_text_style, hotkey: this.isMacLike ? "shift+command+e" : "ctrl+shift+e", click: () => document.execCommand("justifyCenter") },
         { icon: "format_align_right", title: "Align right", active: this.isRightAligned, disabled: !this.current_text_style, hotkey: this.isMacLike ? "shift+command+r" : "ctrl+shift+r", click: () => document.execCommand("justifyRight") },
@@ -143,47 +183,77 @@ export default {
         { icon: "format_strikethrough", title: "Strike through", active: this.isStrikeThrough, disabled: !this.current_text_style, click: () => document.execCommand("strikethrough") },
         { is: "button-color", type: "compact", menu_class: "align-center", disabled: !this.current_text_style, color: this.curColor, update_color: (new_color) => document.execCommand('foreColor', false, new_color.hex8) },
         { is: "separator" },
-        { icon: "format_list_numbered", title: "Numbered list", active: this.isNumberedList, disabled: !this.current_text_style, click: () => document.execCommand("insertOrderedList") },
-        { icon: "format_list_bulleted", title: "Bulleted list", active: this.isBulletedList, disabled: !this.current_text_style, click: () => document.execCommand("insertUnorderedList") },
+        { icon: "format_list_numbered", title: "Lista numerada", active: this.isNumberedList, disabled: !this.current_text_style, chevron: true,
+          menu: [
+            { text: "Nenhum", click: () => this.removeList() },
+            { is: "separator" },
+            { html: "1. &nbsp;2. &nbsp;3.", active: this.curListStyleType === 'decimal', click: () => this.applyNumberedList('decimal') },
+            { html: "I. &nbsp;II. &nbsp;III.", active: this.curListStyleType === 'upper-roman', click: () => this.applyNumberedList('upper-roman') },
+            { html: "A. &nbsp;B. &nbsp;C.", active: this.curListStyleType === 'upper-alpha', click: () => this.applyNumberedList('upper-alpha') },
+            { html: "a. &nbsp;b. &nbsp;c.", active: this.curListStyleType === 'lower-alpha', click: () => this.applyNumberedList('lower-alpha') },
+            { html: "i. &nbsp;ii. &nbsp;iii.", active: this.curListStyleType === 'lower-roman', click: () => this.applyNumberedList('lower-roman') },
+          ], menu_width: 150 },
+        { icon: "format_list_bulleted", title: "Lista com marcadores", active: this.isBulletedList, disabled: !this.current_text_style, chevron: true,
+          menu: [
+            { text: "Nenhum", click: () => this.removeList() },
+            { is: "separator" },
+            { html: "● &nbsp;&nbsp;Disco", active: this.curListStyleType === 'disc', click: () => this.applyBulletedList('disc') },
+            { html: "○ &nbsp;&nbsp;Círculo", active: this.curListStyleType === 'circle', click: () => this.applyBulletedList('circle') },
+            { html: "■ &nbsp;&nbsp;Quadrado", active: this.curListStyleType === 'square', click: () => this.applyBulletedList('square') },
+          ], menu_width: 160 },
+        { icon: "format_indent_decrease", title: "Diminuir recuo", disabled: !this.current_text_style, click: () => document.execCommand("outdent") },
+        { icon: "format_indent_increase", title: "Aumentar recuo", disabled: !this.current_text_style, click: () => document.execCommand("indent") },
+        { html: "<b style='font-size:13px'>A</b><b style='font-size:9px'>↓</b><b style='font-size:13px'>Z</b>", title: "Classificar A-Z", disabled: !this.current_text_style, click: () => this.sortSelectedLines() },
+        { is: "separator" },
         { html: "<b>H1</b>", title: "Header 1", active: this.isH1, disabled: !this.current_text_style, click: () => document.execCommand('formatBlock', false, '<h1>') },
         { html: "<b>H2</b>", title: "Header 2", active: this.isH2, disabled: !this.current_text_style, click: () => document.execCommand('formatBlock', false, '<h2>') },
         { html: "<b>H3</b>", title: "Header 3", active: this.isH3, disabled: !this.current_text_style, click: () => document.execCommand('formatBlock', false, '<h3>') },
         { icon: "format_clear", title: "Clear format", disabled: !this.current_text_style, click () { document.execCommand('removeFormat'); document.execCommand('formatBlock', false, '<div>'); } },
-        { icon: "splitscreen", title: "Page break", disabled: !this.current_text_style, click: () => this.insertPageBreak() },
-        
-        { is: "spacer" },
+      ]
+    },
 
-        { // Format menu
+    // Tab "Inserir" - document actions and insert operations
+    menu_inserir () {
+      return [
+        { text: "Novo", title: "Novo documento", icon: "description", click: () => { if(confirm("Criar um documento em branco?")){ this.content = [""]; this.resetContentHistory(); } } },
+        { icon: "splitscreen", title: "Quebra de página", disabled: !this.current_text_style, click: () => this.insertPageBreak() },
+        { is: "separator" },
+        { text: "Imprimir", title: "Imprimir", icon: "print", click: () => window.print() },
+        { text: "PDF", title: "Baixar PDF", icon: "picture_as_pdf", click: () => this.$refs.editor.generate_pdf({ filename: 'documento.pdf' }) },
+      ]
+    },
+
+    // Tab "Configurar" - page and display settings
+    menu_configurar () {
+      return [
+        {
           text: this.current_format_name,
-          title: "Format",
+          title: "Formato",
           icon: "crop_free",
           chevron: true,
-          menu: this.formats.map(([text, w, h]) => {
-            return {
-              text,
-              active: (this.page_format_mm[0] == w && this.page_format_mm[1] == h),
-              click: () => { this.page_format_mm = [w, h]; }
-            }
-          }),
+          menu: this.formats.map(([text, w, h]) => ({
+            text,
+            active: (this.page_format_mm[0] == w && this.page_format_mm[1] == h),
+            click: () => { this.page_format_mm = [w, h]; }
+          })),
           menu_width: 80,
           menu_height: 280
         },
-        { // Margins menu
+        {
           text: this.current_margins_name,
-          title: "Margins",
+          title: "Margens",
           icon: "select_all",
           chevron: true,
-          menu: this.margins.map(([text, value]) => {
-            return {
-              text: text+" ("+value+")",
-              active: (this.page_margins == value),
-              click: () => { this.page_margins = value; }
-            }
-          }),
+          menu: this.margins.map(([text, value]) => ({
+            text: text+" ("+value+")",
+            active: (this.page_margins == value),
+            click: () => { this.page_margins = value; }
+          })),
           menu_width: 200,
           menu_class: "align-center"
         },
-        { // Zoom menu
+        { is: "separator" },
+        {
           text: Math.floor(this.zoom * 100) + "%",
           title: "Zoom",
           icon: "zoom_in",
@@ -196,19 +266,17 @@ export default {
             ["75%", 0.75],
             ["50%", 0.5],
             ["25%", 0.25]
-          ].map(([text, zoom]) => {
-            return {
-              text,
-              active: this.zoom == zoom,
-              click: () => { this.zoom = zoom; }
-            }
-          }),
+          ].map(([text, zoom]) => ({
+            text,
+            active: this.zoom == zoom,
+            click: () => { this.zoom = zoom; }
+          })),
           menu_width: 80,
           menu_height: 280,
           menu_class: "align-center"
         },
-        { // Display mode menu
-          title: "Display",
+        {
+          title: "Exibição",
           icon: this.display == "horizontal" ? "view_column" : (this.display == "vertical" ? "view_stream" : "view_module"),
           chevron: true,
           menu: [{
@@ -283,12 +351,22 @@ export default {
       const stack = this.current_text_style.textDecorationStack;
       return stack && stack.some(d => (d.indexOf("line-through") == 0));
     },
-    isNumberedList () { return this.current_text_style.isList && this.current_text_style.listStyleType == "decimal"; },
-    isBulletedList () { return this.current_text_style.isList && ["disc", "circle"].includes(this.current_text_style.listStyleType); },
+    isNumberedList () { return this.current_text_style.isList && ['decimal', 'upper-roman', 'lower-roman', 'upper-alpha', 'lower-alpha'].includes(this.current_text_style.listStyleType); },
+    isBulletedList () { return this.current_text_style.isList && ['disc', 'circle', 'square'].includes(this.current_text_style.listStyleType); },
+    curListStyleType () { return (this.current_text_style && this.current_text_style.isList) ? this.current_text_style.listStyleType : ''; },
     isH1 () { return this.current_text_style.headerLevel == 1; },
     isH2 () { return this.current_text_style.headerLevel == 2; },
     isH3 () { return this.current_text_style.headerLevel == 3; },
     curColor () { return this.current_text_style.color || "transparent"; },
+    curFontFamily () {
+      if (!this.current_text_style || !this.current_text_style.fontFamily) return 'Arial';
+      return this.current_text_style.fontFamily.split(',')[0].replace(/['"]/g, '').trim();
+    },
+    curFontSize () {
+      if (!this.current_text_style || !this.current_text_style.fontSize) return 11;
+      return Math.round(parseFloat(this.current_text_style.fontSize) * 72 / 96);
+    },
+    font_sizes: () => [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72],
 
     // Platform management
     isMacLike: () => /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform),
@@ -316,6 +394,58 @@ export default {
     undo () { if(this.can_undo){ this._mute_next_content_watcher = true; this.content = this.content_history[--this.undo_count]; } },
     redo () { if(this.can_redo){ this._mute_next_content_watcher = true; this.content = this.content_history[++this.undo_count]; } },
     resetContentHistory () { this.content_history = []; this.undo_count = -1; },
+
+    applyFontSize (sizePt) {
+      document.execCommand('fontSize', false, '7');
+      const fontElts = this.$refs.editor.$refs.content.querySelectorAll('font[size="7"]');
+      fontElts.forEach(el => {
+        el.removeAttribute('size');
+        el.style.fontSize = sizePt + 'pt';
+      });
+    },
+    increaseFontSize () {
+      const next = this.font_sizes.find(s => s > this.curFontSize);
+      this.applyFontSize(next || this.curFontSize + 2);
+    },
+    decreaseFontSize () {
+      const prev = [...this.font_sizes].reverse().find(s => s < this.curFontSize);
+      this.applyFontSize(prev || Math.max(1, this.curFontSize - 2));
+    },
+
+    applyNumberedList (styleType) {
+      if (this.isBulletedList) document.execCommand('insertUnorderedList');
+      if (!this.isNumberedList) document.execCommand('insertOrderedList');
+      const sel = window.getSelection();
+      if (!sel.focusNode) return;
+      let el = sel.focusNode.tagName ? sel.focusNode : sel.focusNode.parentElement;
+      while (el && el.tagName !== 'OL') el = el.parentElement;
+      if (el) el.style.listStyleType = styleType;
+    },
+    applyBulletedList (styleType) {
+      if (this.isNumberedList) document.execCommand('insertOrderedList');
+      if (!this.isBulletedList) document.execCommand('insertUnorderedList');
+      const sel = window.getSelection();
+      if (!sel.focusNode) return;
+      let el = sel.focusNode.tagName ? sel.focusNode : sel.focusNode.parentElement;
+      while (el && el.tagName !== 'UL') el = el.parentElement;
+      if (el) el.style.listStyleType = styleType;
+    },
+    removeList () {
+      if (this.isNumberedList) document.execCommand('insertOrderedList');
+      else if (this.isBulletedList) document.execCommand('insertUnorderedList');
+    },
+    sortSelectedLines () {
+      const sel = window.getSelection();
+      if (!sel.rangeCount) return;
+      const range = sel.getRangeAt(0);
+      const container = range.commonAncestorContainer.nodeType === 1
+        ? range.commonAncestorContainer
+        : range.commonAncestorContainer.parentElement;
+      const lines = container.innerHTML.split(/<br\s*\/?>/i).filter(l => l.trim());
+      if (lines.length < 2) return;
+      lines.sort((a, b) => a.replace(/<[^>]+>/g, '').localeCompare(b.replace(/<[^>]+>/g, ''), 'pt'));
+      container.innerHTML = lines.join('<br>');
+    },
 
     // Insert page break function example
     async insertPageBreak () {
@@ -408,15 +538,40 @@ body {
     width: fit-content;
     min-width: 100%;
   }
-  .bar {
+  .toolbar-container {
     position: sticky;
     left: 0;
     top: 0;
     width: calc(100vw - 16px);
     z-index: 1000;
     background: rgba(248, 249, 250, 0.8);
-    border-bottom: solid 1px rgb(248, 249, 250);
     backdrop-filter: blur(10px);
+    border-bottom: solid 1px #e0e0e0;
+  }
+  .tab-bar {
+    display: flex;
+    padding: 4px 8px 0;
+  }
+  .tab-bar button {
+    padding: 6px 16px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+    color: #444;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab-bar button:hover {
+    color: #188038;
+  }
+  .tab-bar button.active {
+    color: #188038;
+    border-bottom-color: #188038;
+    font-weight: 600;
+  }
+  .bar {
     --bar-button-active-color: #188038;
     --bar-button-open-color: #188038;
     --bar-button-active-bkg: #e6f4ea;

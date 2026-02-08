@@ -1121,6 +1121,111 @@ export default {
       if (this.virtualization_enabled) {
         this.virtualize_pages();
       }
+    },
+
+    // Generate PDF from document pages
+    // options: { filename: string, returnBlob: boolean }
+    async generate_pdf (options = {}) {
+      const html2canvas = (await import('html2canvas')).default;
+      const { jsPDF } = await import('jspdf');
+
+      // Show blocking overlay
+      this._paste_in_progress = true;
+      this._show_paste_overlay('Gerando PDF...');
+
+      // 1. Cancel deferred reflow and process all pending pages
+      this._cancel_deferred_reflow();
+      if (this._dirty_from_page !== null) {
+        this.fit_content_over_pages(Infinity, this._dirty_from_page);
+        this._dirty_from_page = null;
+      }
+
+      // 2. Clear page status overlays so they don't appear in capture
+      this._clear_page_statuses();
+
+      // 3. Restore all virtualized pages
+      for (const page of this.pages) {
+        if (page.nao_renderizada && page.cached_html != null) {
+          page.elt.innerHTML = page.cached_html;
+        }
+      }
+
+      // Yield to browser to render restored pages
+      await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 100)));
+
+      try {
+        const page_w_mm = this.page_format_mm[0];
+        const page_h_mm = this.page_format_mm[1];
+        const pdf = new jsPDF({ unit: 'mm', format: [page_w_mm, page_h_mm], orientation: 'portrait' });
+
+        for (const [page_idx, page] of this.pages.entries()) {
+          this._show_paste_overlay(`Gerando PDF... página ${page_idx + 1}/${this.pages.length}`);
+
+          // Temporarily reparent overlay (headers/footers) into page element for capture
+          const overlay_elt = this.pages_overlay_refs ? this.pages_overlay_refs[page.uuid] : null;
+          let overlay_original_parent = null;
+          let overlay_original_style = null;
+          if (overlay_elt && overlay_elt.parentNode) {
+            overlay_original_parent = overlay_elt.parentNode;
+            overlay_original_style = overlay_elt.getAttribute('style');
+            overlay_elt.style.position = 'absolute';
+            overlay_elt.style.left = '0';
+            overlay_elt.style.top = '0';
+            overlay_elt.style.width = '100%';
+            overlay_elt.style.height = '100%';
+            overlay_elt.style.pointerEvents = 'none';
+            page.elt.appendChild(overlay_elt);
+          }
+
+          // Capture the actual page element directly (retains all scoped CSS styles)
+          const canvas = await html2canvas(page.elt, {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            backgroundColor: '#ffffff'
+          });
+
+          // Restore overlay to its original parent
+          if (overlay_elt && overlay_original_parent) {
+            if (overlay_original_style) {
+              overlay_elt.setAttribute('style', overlay_original_style);
+            } else {
+              overlay_elt.removeAttribute('style');
+            }
+            overlay_original_parent.appendChild(overlay_elt);
+          }
+
+          // Add page to PDF
+          if (page_idx > 0) pdf.addPage([page_w_mm, page_h_mm], 'portrait');
+          const img_data = canvas.toDataURL('image/jpeg', 0.98);
+          pdf.addImage(img_data, 'JPEG', 0, 0, page_w_mm, page_h_mm);
+
+          // Yield to browser between pages
+          await new Promise(resolve => setTimeout(resolve, 0));
+        }
+
+        // Re-virtualize pages
+        if (this.virtualization_enabled) {
+          this.virtualize_pages();
+        }
+
+        this._paste_in_progress = false;
+        this._hide_paste_overlay();
+
+        if (options.returnBlob) {
+          return pdf.output('blob');
+        } else {
+          pdf.save(options.filename || 'documento.pdf');
+        }
+      } catch (err) {
+        if (this.virtualization_enabled) {
+          this.virtualize_pages();
+        }
+        this._paste_in_progress = false;
+        this._hide_paste_overlay();
+        console.error('[VDE] PDF generation failed:', err);
+        throw err;
+      }
     }
   },
 
@@ -1162,6 +1267,60 @@ body {
   /* Enable printing of background colors */
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
+}
+/* Ordered list numbering with CSS counters via ::marker */
+.editor .content ol {
+  counter-reset: item;
+}
+.editor .content ol > li {
+  counter-increment: item;
+}
+/* === DECIMAL (default): hierarchical 1. / 1.1 / 1.1.1 === */
+.editor .content ol > li::marker {
+  content: counter(item) ". ";
+}
+.editor .content ol ol > li::marker {
+  content: counters(item, ".") " ";
+}
+/* === UPPER-ROMAN: I. → a. → i. (Word style) === */
+.editor .content ol[style*="upper-roman"] > li::marker {
+  content: counter(item, upper-roman) ". ";
+}
+.editor .content ol[style*="upper-roman"] ol > li::marker {
+  content: counter(item, lower-alpha) ". ";
+}
+.editor .content ol[style*="upper-roman"] ol ol > li::marker {
+  content: counter(item, lower-roman) ". ";
+}
+/* === LOWER-ROMAN: i. → a. → 1. === */
+.editor .content ol[style*="lower-roman"] > li::marker {
+  content: counter(item, lower-roman) ". ";
+}
+.editor .content ol[style*="lower-roman"] ol > li::marker {
+  content: counter(item, lower-alpha) ". ";
+}
+.editor .content ol[style*="lower-roman"] ol ol > li::marker {
+  content: counter(item) ". ";
+}
+/* === UPPER-ALPHA: A. → a. → i. === */
+.editor .content ol[style*="upper-alpha"] > li::marker {
+  content: counter(item, upper-alpha) ". ";
+}
+.editor .content ol[style*="upper-alpha"] ol > li::marker {
+  content: counter(item, lower-alpha) ". ";
+}
+.editor .content ol[style*="upper-alpha"] ol ol > li::marker {
+  content: counter(item, lower-roman) ". ";
+}
+/* === LOWER-ALPHA: a. → i. → 1. === */
+.editor .content ol[style*="lower-alpha"] > li::marker {
+  content: counter(item, lower-alpha) ". ";
+}
+.editor .content ol[style*="lower-alpha"] ol > li::marker {
+  content: counter(item, lower-roman) ". ";
+}
+.editor .content ol[style*="lower-alpha"] ol ol > li::marker {
+  content: counter(item) ". ";
 }
 </style>
 <style scoped>
