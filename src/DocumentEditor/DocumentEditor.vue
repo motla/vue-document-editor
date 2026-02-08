@@ -174,6 +174,8 @@ export default {
     this.update_editor_width();
     this.update_css_media_style();
     this.reset_content();
+    // Measure header/footer heights after initial render (watchers don't fire on initial value)
+    this.$nextTick(() => { this._measure_hf_heights(); });
     window.addEventListener("resize", this.update_editor_width);
     window.addEventListener("click", this.process_current_text_style);
     window.addEventListener("beforeprint", this.before_print);
@@ -405,6 +407,10 @@ export default {
         // restore page in DOM in case it was removed
         if(!this.$refs.content.contains(page.elt)) this.$refs.content.appendChild(page.elt);
       }
+
+      // Pre-split pages with massive content into roughly page-sized chunks
+      // (avoids 79+ second forward-propagation when entire document is in one page)
+      this._pre_split_large_pages();
 
       // Mark all pages as dirty and defer processing to keep UI responsive
       this._paste_in_progress = true;
@@ -687,6 +693,68 @@ export default {
       }
     },
 
+    // Pre-splits pages whose content is much larger than page height into roughly page-sized chunks.
+    // This avoids the extremely slow forward-propagation that occurs when one page holds an entire
+    // large document (e.g., 100 pages worth of content in a single DOM element).
+    _pre_split_large_pages () {
+      if (!this.pages_height) return;
+
+      let did_split = false;
+
+      for (let pi = 0; pi < this.pages.length; pi++) {
+        const page = this.pages[pi];
+        if (page.template) continue;
+
+        const scroll_h = page.elt.scrollHeight;
+        const ratio = scroll_h / this.pages_height;
+        if (ratio <= 3) continue; // small overflow - normal reflow handles it fine
+
+        // Get the wrapper div (created as "<div>" + content + "</div>" in reset_content)
+        const wrapper = page.elt.firstChild;
+        if (!wrapper || !wrapper.children || wrapper.children.length < 2) continue;
+
+        const children = [...wrapper.children];
+        // Use actual page count from export if available, otherwise estimate from scrollHeight ratio
+        const est_pages = (this._import_page_count && this._import_page_count > ratio) ? this._import_page_count : Math.ceil(ratio);
+        const per_page = Math.max(1, Math.ceil(children.length / est_pages));
+        const num_new_pages = Math.ceil(children.length / per_page) - 1;
+
+        if (num_new_pages < 1) continue;
+
+        console.log(`%c[VDE pre-split] page ${pi}: ${children.length} children, ratio ${ratio.toFixed(1)}x -> ${num_new_pages + 1} pages (${per_page} children/page)`, 'color: #ff6600; font-weight: bold');
+
+        // Create new page objects
+        const new_pages = [];
+        for (let i = 0; i < num_new_pages; i++) {
+          new_pages.push({ uuid: this.new_uuid(), content_idx: page.content_idx });
+        }
+        this.pages.splice(pi + 1, 0, ...new_pages);
+        this.update_pages_elts();
+
+        // Distribute children to new pages
+        for (let g = 0; g < num_new_pages; g++) {
+          const target = this.pages[pi + 1 + g];
+          const new_wrapper = document.createElement('div');
+          const start = (g + 1) * per_page;
+          const end = Math.min((g + 2) * per_page, children.length);
+          for (let ci = start; ci < end; ci++) {
+            new_wrapper.appendChild(children[ci]); // moves DOM node from original page
+          }
+          target.elt.appendChild(new_wrapper);
+        }
+
+        pi += num_new_pages; // skip past new pages in the loop
+        did_split = true;
+      }
+
+      if (did_split) {
+        // Ensure DOM order matches pages array order
+        for (const page of this.pages) {
+          this.$refs.content.appendChild(page.elt);
+        }
+      }
+    },
+
     // Schedule background processing for dirty pages (after limited cascade)
     _schedule_deferred_reflow () {
       this._cancel_deferred_reflow();
@@ -709,33 +777,40 @@ export default {
           this._paste_in_progress = false;
           this._hide_paste_overlay();
         }
-        // Emit final content once all pages are processed
+        // Clear import page count and emit final content
+        this._import_page_count = 0;
         this.emit_new_content();
         return;
       }
 
+      // Use known page count from export for accurate progress, fall back to current count
+      const total_pages = (this._import_page_count && this._import_page_count > this.pages.length)
+        ? this._import_page_count : this.pages.length;
+
       // Update progress indicator
-      const pct = Math.round((this._dirty_from_page / this.pages.length) * 100);
+      const pct = Math.round((this._dirty_from_page / total_pages) * 100);
       if (this._paste_in_progress) {
-        this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${this.pages.length} (${pct}%)`);
+        this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${total_pages} (${pct}%)`);
       } else {
-        this._show_progress(this._dirty_from_page, this.pages.length);
+        this._show_progress(this._dirty_from_page, total_pages);
       }
 
-      console.log(`%c[VDE deferred] processing page ${this._dirty_from_page} of ${this.pages.length}`, 'color: orange');
-      // Process 1 page per frame to keep UI responsive
-      this.fit_content_over_pages(1, this._dirty_from_page);
+      console.log(`%c[VDE deferred] processing from page ${this._dirty_from_page} of ${this.pages.length} (expected ${total_pages})`, 'color: orange');
+      // During paste/import, process more pages per frame (no per-page overlay overhead)
+      // During normal editing, process 1 page to keep UI responsive
+      const batch_size = this._paste_in_progress ? 5 : 1;
+      this.fit_content_over_pages(batch_size, this._dirty_from_page);
 
       // Update status overlays
       this._update_page_statuses();
 
       // If there are more dirty pages, schedule next batch
       if (this._dirty_from_page !== null) {
-        const pct2 = Math.round((this._dirty_from_page / this.pages.length) * 100);
+        const pct2 = Math.round((this._dirty_from_page / total_pages) * 100);
         if (this._paste_in_progress) {
-          this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${this.pages.length} (${pct2}%)`);
+          this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${total_pages} (${pct2}%)`);
         } else {
-          this._show_progress(this._dirty_from_page, this.pages.length);
+          this._show_progress(this._dirty_from_page, total_pages);
         }
         this._schedule_deferred_reflow();
       } else {
@@ -744,6 +819,8 @@ export default {
           this._paste_in_progress = false;
           this._hide_paste_overlay();
         }
+        // Clear import page count
+        this._import_page_count = 0;
         // All done - emit updated content
         this.emit_new_content();
       }
@@ -818,6 +895,13 @@ export default {
         this._status_overlay_container = document.createElement('div');
         this._status_overlay_container.className = 'page-status-overlays';
         this.$refs.editor.appendChild(this._status_overlay_container);
+      }
+
+      // During paste/import operations, skip per-page overlays (paste overlay already shows progress)
+      // This avoids O(n²) DOM operations: 91 steps × 90 overlay updates each = ~8000 DOM ops
+      if (this._paste_in_progress) {
+        this._status_overlay_container.innerHTML = '';
+        return;
       }
 
       // Build a set of pages that need overlays
@@ -1228,119 +1312,6 @@ export default {
       // Re-virtualize pages after print
       if (this.virtualization_enabled) {
         this.virtualize_pages();
-      }
-    },
-
-    // Generate PDF from document pages
-    // options: { filename: string, returnBlob: boolean }
-    async generate_pdf (options = {}) {
-      // Exit header/footer editing mode if active
-      if (this.editing_hf) this.stop_editing_hf();
-
-      const html2canvas = (await import('html2canvas')).default;
-      const { jsPDF } = await import('jspdf');
-
-      // Show blocking overlay
-      this._paste_in_progress = true;
-      this._show_paste_overlay('Gerando PDF...');
-
-      // 1. Cancel deferred reflow and process all pending pages
-      this._cancel_deferred_reflow();
-      if (this._dirty_from_page !== null) {
-        this.fit_content_over_pages(Infinity, this._dirty_from_page);
-        this._dirty_from_page = null;
-      }
-
-      // 2. Clear page status overlays so they don't appear in capture
-      this._clear_page_statuses();
-
-      // 3. Restore all virtualized pages
-      for (const page of this.pages) {
-        if (page.nao_renderizada && page.cached_html != null) {
-          page.elt.innerHTML = page.cached_html;
-        }
-      }
-
-      // Yield to browser to render restored pages
-      await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 100)));
-
-      try {
-        const page_w_mm = this.page_format_mm[0];
-        const page_h_mm = this.page_format_mm[1];
-        const pdf = new jsPDF({ unit: 'mm', format: [page_w_mm, page_h_mm], orientation: 'portrait' });
-
-        for (const [page_idx, page] of this.pages.entries()) {
-          this._show_paste_overlay(`Gerando PDF... página ${page_idx + 1}/${this.pages.length}`);
-
-          // Temporarily reparent overlay (headers/footers) into page element for capture
-          const overlay_elt = this.pages_overlay_refs ? this.pages_overlay_refs[page.uuid] : null;
-          let overlay_original_parent = null;
-          let overlay_original_style = null;
-          if (overlay_elt && overlay_elt.parentNode) {
-            overlay_original_parent = overlay_elt.parentNode;
-            overlay_original_style = overlay_elt.getAttribute('style');
-            // Clear all inline styles (removes stale padding/transform from page_style)
-            // and set clean styles for capture. box-sizing: border-box is needed because
-            // the CSS rule .editor > .overlays > .overlay no longer applies after reparenting.
-            overlay_elt.setAttribute('style', '');
-            overlay_elt.style.position = 'absolute';
-            overlay_elt.style.left = '0';
-            overlay_elt.style.top = '0';
-            overlay_elt.style.width = '100%';
-            overlay_elt.style.height = '100%';
-            overlay_elt.style.boxSizing = 'border-box';
-            overlay_elt.style.pointerEvents = 'none';
-            page.elt.appendChild(overlay_elt);
-          }
-
-          // Capture the actual page element directly (retains all scoped CSS styles)
-          const canvas = await html2canvas(page.elt, {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            backgroundColor: '#ffffff'
-          });
-
-          // Restore overlay to its original parent
-          if (overlay_elt && overlay_original_parent) {
-            if (overlay_original_style) {
-              overlay_elt.setAttribute('style', overlay_original_style);
-            } else {
-              overlay_elt.removeAttribute('style');
-            }
-            overlay_original_parent.appendChild(overlay_elt);
-          }
-
-          // Add page to PDF
-          if (page_idx > 0) pdf.addPage([page_w_mm, page_h_mm], 'portrait');
-          const img_data = canvas.toDataURL('image/jpeg', 0.98);
-          pdf.addImage(img_data, 'JPEG', 0, 0, page_w_mm, page_h_mm);
-
-          // Yield to browser between pages
-          await new Promise(resolve => setTimeout(resolve, 0));
-        }
-
-        // Re-virtualize pages
-        if (this.virtualization_enabled) {
-          this.virtualize_pages();
-        }
-
-        this._paste_in_progress = false;
-        this._hide_paste_overlay();
-
-        if (options.returnBlob) {
-          return pdf.output('blob');
-        } else {
-          pdf.save(options.filename || 'documento.pdf');
-        }
-      } catch (err) {
-        if (this.virtualization_enabled) {
-          this.virtualize_pages();
-        }
-        this._paste_in_progress = false;
-        this._hide_paste_overlay();
-        console.error('[VDE] PDF generation failed:', err);
-        throw err;
       }
     },
 

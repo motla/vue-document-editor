@@ -7,7 +7,7 @@
         <button :class="{ active: current_tab === 'editar' }" @click="current_tab = 'editar'">Editar</button>
         <button :class="{ active: current_tab === 'inserir' }" @click="current_tab = 'inserir'">Inserir</button>
         <button :class="{ active: current_tab === 'configurar' }" @click="current_tab = 'configurar'">Configurar</button>
-        <button :class="{ active: current_tab === 'exportar' }" @click="current_tab = 'exportar'">Exportar</button>
+        <button :class="{ active: current_tab === 'exportar' }" @click="current_tab = 'exportar'">Importar/Exportar</button>
       </div>
       <vue-file-toolbar-menu :content="menu" class="bar" />
     </div>
@@ -46,8 +46,8 @@ export default {
       zoom_max: 5.0,
       page_format_mm: [210, 297],
       page_margins: "10mm 15mm",
-      header_content: '<strong>MYCOMPANY</strong> example.com',
-      footer_content: 'MY COMPANY - example.com',
+      header_content: '<div style="text-align: center;"><span style="font-size: 10pt;"><b><br></b></span></div><div style="text-align: center;"><span style="font-size: 10pt;"><b><br></b></span></div><div style="text-align: center;"><span style="font-size: 10pt;"><b>3DSIGNER INFORMÁTICA</b></span></div><div style="text-align: center;">www.eltonsits.com.br</div>',
+      footer_content: '<div style="text-align: center;"><span style="font-size: 10pt;">www.eltonsites.com.br</span></div>',
       current_tab: "editar",
       display: "grid", // ["grid", "vertical", "horizontal"]
       mounted: false, // will be true after this component is mounted
@@ -246,8 +246,7 @@ export default {
     // Tab "Exportar" - print, PDF, import/export
     menu_exportar () {
       return [
-        { text: "Imprimir", title: "Imprimir", icon: "print", click: () => window.print() },
-        { text: "PDF", title: "Baixar PDF", icon: "picture_as_pdf", click: () => this.$refs.editor.generate_pdf({ filename: 'documento.pdf' }) },
+        { text: "Imprimir / PDF", title: "Imprimir ou salvar como PDF", icon: "print", click: () => window.print() },
         { is: "separator" },
         { text: "Exportar JSON", title: "Exportar documento como JSON", icon: "file_download", click: () => this.exportJSON() },
         { text: "Importar JSON", title: "Importar documento de JSON", icon: "file_upload", click: () => this.importJSON() },
@@ -555,12 +554,14 @@ export default {
 
     // Export document as JSON file
     exportJSON () {
+      const editor = this.$refs.editor;
       const doc = {
         content: this.content,
         header_content: this.header_content,
         footer_content: this.footer_content,
         page_format_mm: this.page_format_mm,
-        page_margins: this.page_margins
+        page_margins: this.page_margins,
+        page_count: editor ? editor.pages.length : undefined
       };
       const json = JSON.stringify(doc, null, 2);
       const blob = new Blob([json], { type: 'application/json' });
@@ -587,6 +588,7 @@ export default {
             // Show overlay immediately before heavy processing
             const editor = this.$refs.editor;
             editor._paste_in_progress = true;
+            editor._import_page_count = doc.page_count || 0;
             editor._show_paste_overlay('Importando documento...');
             // rAF queues before next paint, setTimeout(0) runs after paint completes
             requestAnimationFrame(() => { setTimeout(() => {
@@ -691,6 +693,16 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(0, 0, 0, 0.8);
 }
+/* Toolbar horizontal scroll (mobile-friendly, like TinyMCE) */
+.toolbar-container .bar {
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.toolbar-container .bar::-webkit-scrollbar {
+  display: none;
+}
 </style>
 
 <style scoped>
@@ -711,6 +723,12 @@ body {
   .tab-bar {
     display: flex;
     padding: 4px 8px 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tab-bar::-webkit-scrollbar {
+    display: none;
   }
   .tab-bar button {
     padding: 6px 16px;
@@ -722,6 +740,8 @@ body {
     color: #444;
     border-bottom: 2px solid transparent;
     transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .tab-bar button:hover {
     color: #188038;

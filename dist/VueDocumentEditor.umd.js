@@ -3560,7 +3560,7 @@ if (typeof window !== 'undefined') {
 
 // EXTERNAL MODULE: external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
 var external_commonjs_vue_commonjs2_vue_root_Vue_ = __webpack_require__(9274);
-;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=2c07556c&scoped=true
+;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=24e4f0ab&scoped=true
 
 const _hoisted_1 = {
   class: "editor",
@@ -3571,51 +3571,99 @@ const _hoisted_2 = {
   class: "overlays",
   ref: "overlays"
 };
-const _hoisted_3 = ["innerHTML"];
-const _hoisted_4 = ["contenteditable"];
-const _hoisted_5 = {
+const _hoisted_3 = ["innerHTML", "onDblclick"];
+const _hoisted_4 = ["innerHTML", "onDblclick"];
+const _hoisted_5 = ["innerHTML"];
+const _hoisted_6 = ["contenteditable"];
+const _hoisted_7 = {
   class: "vde-progress-indicator",
   ref: "progress_indicator"
 };
-const _hoisted_6 = {
+const _hoisted_8 = {
   class: "vde-progress-text",
   ref: "progress_text"
 };
-const _hoisted_7 = {
+const _hoisted_9 = {
   class: "vde-paste-overlay",
   ref: "paste_overlay"
 };
-const _hoisted_8 = {
+const _hoisted_10 = {
   class: "vde-paste-box"
 };
-const _hoisted_9 = {
+const _hoisted_11 = {
   class: "vde-paste-text",
   ref: "paste_text"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)("div", _hoisted_1, [$props.overlay ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)("div", _hoisted_2, [((0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(true), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)(external_commonjs_vue_commonjs2_vue_root_Vue_.Fragment, null, (0,external_commonjs_vue_commonjs2_vue_root_Vue_.renderList)($data.pages, (page, page_idx) => {
+  return (0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)("div", _hoisted_1, [$props.overlay || $props.header != null || $props.footer != null ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)("div", _hoisted_2, [((0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(true), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)(external_commonjs_vue_commonjs2_vue_root_Vue_.Fragment, null, (0,external_commonjs_vue_commonjs2_vue_root_Vue_.renderList)($data.pages, (page, page_idx) => {
     return (0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)("div", {
       class: "overlay",
       key: page.uuid + '-overlay',
       ref_for: true,
       ref: elt => $data.pages_overlay_refs[page.uuid] = elt,
-      innerHTML: $props.overlay(page_idx + 1, $data.pages.length),
       style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_.normalizeStyle)($options.page_style(page_idx, false))
-    }, null, 12, _hoisted_3);
+    }, [$props.header != null ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)(external_commonjs_vue_commonjs2_vue_root_Vue_.Fragment, {
+      key: 0
+    }, [$data.editing_hf === 'header' && $data.editing_hf_page === page_idx ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)("div", {
+      key: 0,
+      class: "hf-zone hf-header hf-active",
+      style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_.normalizeStyle)($options.hf_header_style),
+      contenteditable: "true",
+      onInput: _cache[0] || (_cache[0] = $event => $options.on_hf_input('header')),
+      onKeyup: _cache[1] || (_cache[1] = (...args) => $options.process_current_text_style && $options.process_current_text_style(...args)),
+      onKeydown: _cache[2] || (_cache[2] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_.withKeys)((0,external_commonjs_vue_commonjs2_vue_root_Vue_.withModifiers)((...args) => $options.stop_editing_hf && $options.stop_editing_hf(...args), ["prevent"]), ["esc"])),
+      "data-hf-label": "Cabeçalho"
+    }, null, 36)) : ((0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)("div", {
+      key: 1,
+      class: (0,external_commonjs_vue_commonjs2_vue_root_Vue_.normalizeClass)(["hf-zone hf-header", {
+        'hf-dim': $data.editing_hf === 'footer'
+      }]),
+      style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_.normalizeStyle)($options.hf_header_style),
+      innerHTML: $props.header,
+      onDblclick: (0,external_commonjs_vue_commonjs2_vue_root_Vue_.withModifiers)($event => $options.start_editing_hf('header', page_idx), ["stop"])
+    }, null, 46, _hoisted_3))], 64)) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createCommentVNode)("", true), $props.footer != null ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)(external_commonjs_vue_commonjs2_vue_root_Vue_.Fragment, {
+      key: 1
+    }, [$data.editing_hf === 'footer' && $data.editing_hf_page === page_idx ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)("div", {
+      key: 0,
+      class: "hf-zone hf-footer hf-active",
+      style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_.normalizeStyle)($options.hf_footer_style),
+      contenteditable: "true",
+      onInput: _cache[3] || (_cache[3] = $event => $options.on_hf_input('footer')),
+      onKeyup: _cache[4] || (_cache[4] = (...args) => $options.process_current_text_style && $options.process_current_text_style(...args)),
+      onKeydown: _cache[5] || (_cache[5] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_.withKeys)((0,external_commonjs_vue_commonjs2_vue_root_Vue_.withModifiers)((...args) => $options.stop_editing_hf && $options.stop_editing_hf(...args), ["prevent"]), ["esc"])),
+      "data-hf-label": "Rodapé"
+    }, null, 36)) : ((0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)("div", {
+      key: 1,
+      class: (0,external_commonjs_vue_commonjs2_vue_root_Vue_.normalizeClass)(["hf-zone hf-footer", {
+        'hf-dim': $data.editing_hf === 'header'
+      }]),
+      style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_.normalizeStyle)($options.hf_footer_style),
+      innerHTML: $props.footer,
+      onDblclick: (0,external_commonjs_vue_commonjs2_vue_root_Vue_.withModifiers)($event => $options.start_editing_hf('footer', page_idx), ["stop"])
+    }, null, 46, _hoisted_4))], 64)) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createCommentVNode)("", true), $props.overlay ? ((0,external_commonjs_vue_commonjs2_vue_root_Vue_.openBlock)(), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementBlock)("div", {
+      key: 2,
+      innerHTML: $props.overlay(page_idx + 1, $data.pages.length),
+      style: {
+        "pointer-events": "none"
+      }
+    }, null, 8, _hoisted_5)) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createCommentVNode)("", true)], 4);
   }), 128))], 512)) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createCommentVNode)("", true), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("div", {
-    class: "content",
+    class: (0,external_commonjs_vue_commonjs2_vue_root_Vue_.normalizeClass)(["content", {
+      'hf-body-dim': !!$data.editing_hf
+    }]),
     ref: "content",
-    contenteditable: $props.editable,
+    contenteditable: $props.editable && !$data.editing_hf,
     style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_.normalizeStyle)($options.page_style(-1)),
-    onInput: _cache[0] || (_cache[0] = (...args) => $options.input && $options.input(...args)),
-    onKeyup: _cache[1] || (_cache[1] = (...args) => $options.process_current_text_style && $options.process_current_text_style(...args))
-  }, null, 44, _hoisted_4), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("div", _hoisted_5, [_cache[2] || (_cache[2] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("div", {
+    onInput: _cache[6] || (_cache[6] = (...args) => $options.input && $options.input(...args)),
+    onKeyup: _cache[7] || (_cache[7] = (...args) => $options.process_current_text_style && $options.process_current_text_style(...args)),
+    onClick: _cache[8] || (_cache[8] = (...args) => $options.on_content_click && $options.on_content_click(...args))
+  }, null, 46, _hoisted_6), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("div", _hoisted_7, [_cache[9] || (_cache[9] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("div", {
     class: "vde-progress-spinner"
-  }, null, -1)), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("span", _hoisted_6, null, 512)], 512), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("div", _hoisted_7, [(0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("div", _hoisted_8, [_cache[3] || (_cache[3] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("div", {
+  }, null, -1)), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("span", _hoisted_8, null, 512)], 512), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("div", _hoisted_9, [(0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("div", _hoisted_10, [_cache[10] || (_cache[10] = (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("div", {
     class: "vde-paste-spinner"
-  }, null, -1)), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("span", _hoisted_9, "Colando texto...", 512)])], 512)], 512);
+  }, null, -1)), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("span", _hoisted_11, "Colando texto...", 512)])], 512)], 512);
 }
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=2c07556c&scoped=true
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=24e4f0ab&scoped=true
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
 var es_array_push = __webpack_require__(4114);
@@ -3813,6 +3861,16 @@ function debounce(fn, delay) {
     },
     // Overlay function returning page headers and footers in HTML
     overlay: Function,
+    // Editable header HTML content (shared across all pages)
+    header: {
+      type: String,
+      default: undefined
+    },
+    // Editable footer HTML content (shared across all pages)
+    footer: {
+      type: String,
+      default: undefined
+    },
     // Pages format in mm (should be an array containing [width, height])
     page_format_mm: {
       type: Array,
@@ -3852,7 +3910,15 @@ function debounce(fn, delay) {
         end: 5
       },
       // range of visible pages (viewport + buffer)
-      virtualization_enabled: false // enabled after first reset_content completes
+      virtualization_enabled: false,
+      // enabled after first reset_content completes
+      editing_hf: null,
+      // null | 'header' | 'footer' - current header/footer editing mode
+      editing_hf_page: null,
+      // page index where header/footer is being edited
+      hf_top_height_mm: 0,
+      // measured header height in mm (0 = use default margin)
+      hf_bottom_height_mm: 0 // measured footer height in mm (0 = use default margin)
     };
   },
   mounted() {
@@ -3861,9 +3927,16 @@ function debounce(fn, delay) {
     this._deferred_raf_id = null;
     this._status_overlay_container = null;
     this._paste_in_progress = false;
+    this._hf_editor_el = null; // ref to contenteditable header/footer editor element
+    this._hf_measure_timer = null; // debounce timer for h/f height measurement
+
     this.update_editor_width();
     this.update_css_media_style();
     this.reset_content();
+    // Measure header/footer heights after initial render (watchers don't fire on initial value)
+    this.$nextTick(() => {
+      this._measure_hf_heights();
+    });
     window.addEventListener("resize", this.update_editor_width);
     window.addEventListener("click", this.process_current_text_style);
     window.addEventListener("beforeprint", this.before_print);
@@ -3905,6 +3978,72 @@ function debounce(fn, delay) {
       const style = document.createElement("style");
       document.head.appendChild(style);
       return style;
+    },
+    // Parse page_margins string into top/right/bottom/left values
+    parsed_margins() {
+      const m = typeof this.page_margins === 'string' ? this.page_margins : '10mm 15mm';
+      const parts = m.trim().split(/\s+/);
+      if (parts.length === 1) return {
+        top: parts[0],
+        right: parts[0],
+        bottom: parts[0],
+        left: parts[0]
+      };
+      if (parts.length === 2) return {
+        top: parts[0],
+        right: parts[1],
+        bottom: parts[0],
+        left: parts[1]
+      };
+      if (parts.length === 3) return {
+        top: parts[0],
+        right: parts[1],
+        bottom: parts[2],
+        left: parts[1]
+      };
+      return {
+        top: parts[0],
+        right: parts[1],
+        bottom: parts[2],
+        left: parts[3]
+      };
+    },
+    // Style for header zone (positioned in top margin area, grows with content)
+    hf_header_style() {
+      const m = this.parsed_margins;
+      return {
+        position: 'absolute',
+        top: '0',
+        left: '0',
+        right: '0',
+        minHeight: m.top,
+        padding: '2mm ' + m.right + ' 2mm ' + m.left,
+        boxSizing: 'border-box'
+      };
+    },
+    // Style for footer zone (positioned in bottom margin area, grows with content)
+    hf_footer_style() {
+      const m = this.parsed_margins;
+      return {
+        position: 'absolute',
+        bottom: '0',
+        left: '0',
+        right: '0',
+        minHeight: m.bottom,
+        padding: '2mm ' + m.right + ' 2mm ' + m.left,
+        boxSizing: 'border-box'
+      };
+    },
+    // Effective page margins accounting for h/f content height
+    effective_page_margins() {
+      if (typeof this.page_margins === 'function') return this.page_margins;
+      if (!this.hf_top_height_mm && !this.hf_bottom_height_mm) return this.page_margins;
+      const m = this.parsed_margins;
+      const origTop = parseFloat(m.top) || 10;
+      const origBottom = parseFloat(m.bottom) || 10;
+      const effTop = this.hf_top_height_mm ? Math.max(origTop, this.hf_top_height_mm) : origTop;
+      const effBottom = this.hf_bottom_height_mm ? Math.max(origBottom, this.hf_bottom_height_mm) : origBottom;
+      return effTop + 'mm ' + m.right + ' ' + effBottom + 'mm ' + m.left;
     }
   },
   methods: {
@@ -4006,6 +4145,7 @@ function debounce(fn, delay) {
       // Prevent launching this function multiple times
       if (this.reset_in_progress) return;
       this.reset_in_progress = true;
+      console.log(`%c[VDE] reset_content called, content.length=${this.content.length}, paste_in_progress=${this._paste_in_progress}`, 'color: cyan; font-weight: bold');
 
       // Cancel any pending deferred reflow
       this._cancel_deferred_reflow();
@@ -4047,10 +4187,14 @@ function debounce(fn, delay) {
         if (!this.$refs.content.contains(page.elt)) this.$refs.content.appendChild(page.elt);
       }
 
-      // Spread content over pages - only process first 2 pages immediately, defer the rest
+      // Pre-split pages with massive content into roughly page-sized chunks
+      // (avoids 79+ second forward-propagation when entire document is in one page)
+      this._pre_split_large_pages();
+
+      // Mark all pages as dirty and defer processing to keep UI responsive
       this._paste_in_progress = true;
       this._show_paste_overlay('Processando documento...');
-      this.fit_content_over_pages(2);
+      this._dirty_from_page = 0;
 
       // Remove the text cursor from the content, if any (its position is lost anyway)
       this.$refs.content.blur();
@@ -4064,10 +4208,12 @@ function debounce(fn, delay) {
 
       // Update statuses and schedule deferred processing for remaining pages
       this._update_page_statuses();
+      console.log(`%c[VDE] reset_content done: pages=${this.pages.length}, dirty_from=${this._dirty_from_page}, paste=${this._paste_in_progress}`, 'color: cyan');
       if (this._dirty_from_page !== null) {
         this._schedule_deferred_reflow();
       } else {
         // Small document, all done immediately
+        console.log(`%c[VDE] reset_content: no dirty pages, hiding overlay`, 'color: cyan');
         this._paste_in_progress = false;
         this._hide_paste_overlay();
       }
@@ -4312,6 +4458,62 @@ function debounce(fn, delay) {
         this._deferred_raf_id = null;
       }
     },
+    // Pre-splits pages whose content is much larger than page height into roughly page-sized chunks.
+    // This avoids the extremely slow forward-propagation that occurs when one page holds an entire
+    // large document (e.g., 100 pages worth of content in a single DOM element).
+    _pre_split_large_pages() {
+      if (!this.pages_height) return;
+      let did_split = false;
+      for (let pi = 0; pi < this.pages.length; pi++) {
+        const page = this.pages[pi];
+        if (page.template) continue;
+        const scroll_h = page.elt.scrollHeight;
+        const ratio = scroll_h / this.pages_height;
+        if (ratio <= 3) continue; // small overflow - normal reflow handles it fine
+
+        // Get the wrapper div (created as "<div>" + content + "</div>" in reset_content)
+        const wrapper = page.elt.firstChild;
+        if (!wrapper || !wrapper.children || wrapper.children.length < 2) continue;
+        const children = [...wrapper.children];
+        // Use actual page count from export if available, otherwise estimate from scrollHeight ratio
+        const est_pages = this._import_page_count && this._import_page_count > ratio ? this._import_page_count : Math.ceil(ratio);
+        const per_page = Math.max(1, Math.ceil(children.length / est_pages));
+        const num_new_pages = Math.ceil(children.length / per_page) - 1;
+        if (num_new_pages < 1) continue;
+        console.log(`%c[VDE pre-split] page ${pi}: ${children.length} children, ratio ${ratio.toFixed(1)}x -> ${num_new_pages + 1} pages (${per_page} children/page)`, 'color: #ff6600; font-weight: bold');
+
+        // Create new page objects
+        const new_pages = [];
+        for (let i = 0; i < num_new_pages; i++) {
+          new_pages.push({
+            uuid: this.new_uuid(),
+            content_idx: page.content_idx
+          });
+        }
+        this.pages.splice(pi + 1, 0, ...new_pages);
+        this.update_pages_elts();
+
+        // Distribute children to new pages
+        for (let g = 0; g < num_new_pages; g++) {
+          const target = this.pages[pi + 1 + g];
+          const new_wrapper = document.createElement('div');
+          const start = (g + 1) * per_page;
+          const end = Math.min((g + 2) * per_page, children.length);
+          for (let ci = start; ci < end; ci++) {
+            new_wrapper.appendChild(children[ci]); // moves DOM node from original page
+          }
+          target.elt.appendChild(new_wrapper);
+        }
+        pi += num_new_pages; // skip past new pages in the loop
+        did_split = true;
+      }
+      if (did_split) {
+        // Ensure DOM order matches pages array order
+        for (const page of this.pages) {
+          this.$refs.content.appendChild(page.elt);
+        }
+      }
+    },
     // Schedule background processing for dirty pages (after limited cascade)
     _schedule_deferred_reflow() {
       this._cancel_deferred_reflow();
@@ -4333,30 +4535,38 @@ function debounce(fn, delay) {
           this._paste_in_progress = false;
           this._hide_paste_overlay();
         }
-        // Emit final content once all pages are processed
+        // Clear import page count and emit final content
+        this._import_page_count = 0;
         this.emit_new_content();
         return;
       }
 
+      // Use known page count from export for accurate progress, fall back to current count
+      const total_pages = this._import_page_count && this._import_page_count > this.pages.length ? this._import_page_count : this.pages.length;
+
       // Update progress indicator
+      const pct = Math.round(this._dirty_from_page / total_pages * 100);
       if (this._paste_in_progress) {
-        this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${this.pages.length}`);
+        this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${total_pages} (${pct}%)`);
       } else {
-        this._show_progress(this._dirty_from_page, this.pages.length);
+        this._show_progress(this._dirty_from_page, total_pages);
       }
-      console.log(`%c[VDE deferred] processing page ${this._dirty_from_page} of ${this.pages.length}`, 'color: orange');
-      // Process 1 page per frame to keep UI responsive
-      this.fit_content_over_pages(1, this._dirty_from_page);
+      console.log(`%c[VDE deferred] processing from page ${this._dirty_from_page} of ${this.pages.length} (expected ${total_pages})`, 'color: orange');
+      // During paste/import, process more pages per frame (no per-page overlay overhead)
+      // During normal editing, process 1 page to keep UI responsive
+      const batch_size = this._paste_in_progress ? 5 : 1;
+      this.fit_content_over_pages(batch_size, this._dirty_from_page);
 
       // Update status overlays
       this._update_page_statuses();
 
       // If there are more dirty pages, schedule next batch
       if (this._dirty_from_page !== null) {
+        const pct2 = Math.round(this._dirty_from_page / total_pages * 100);
         if (this._paste_in_progress) {
-          this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${this.pages.length}`);
+          this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${total_pages} (${pct2}%)`);
         } else {
-          this._show_progress(this._dirty_from_page, this.pages.length);
+          this._show_progress(this._dirty_from_page, total_pages);
         }
         this._schedule_deferred_reflow();
       } else {
@@ -4365,6 +4575,8 @@ function debounce(fn, delay) {
           this._paste_in_progress = false;
           this._hide_paste_overlay();
         }
+        // Clear import page count
+        this._import_page_count = 0;
         // All done - emit updated content
         this.emit_new_content();
       }
@@ -4385,12 +4597,14 @@ function debounce(fn, delay) {
     _show_paste_overlay(text) {
       const el = this.$refs.paste_overlay;
       const txt = this.$refs.paste_text;
+      console.log(`%c[VDE overlay] SHOW: "${text}" (el=${!!el})`, 'color: magenta; font-weight: bold');
       if (el) el.style.display = 'flex';
       if (txt) txt.textContent = text;
     },
     // Hide paste overlay
     _hide_paste_overlay() {
       const el = this.$refs.paste_overlay;
+      console.log(`%c[VDE overlay] HIDE (el=${!!el})`, 'color: magenta');
       if (el) el.style.display = 'none';
     },
     // Calculate and apply page statuses, then render overlays
@@ -4428,6 +4642,13 @@ function debounce(fn, delay) {
         this._status_overlay_container = document.createElement('div');
         this._status_overlay_container.className = 'page-status-overlays';
         this.$refs.editor.appendChild(this._status_overlay_container);
+      }
+
+      // During paste/import operations, skip per-page overlays (paste overlay already shows progress)
+      // This avoids O(n²) DOM operations: 91 steps × 90 overlay updates each = ~8000 DOM ops
+      if (this._paste_in_progress) {
+        this._status_overlay_container.innerHTML = '';
+        return;
       }
 
       // Build a set of pages that need overlays
@@ -4506,6 +4727,10 @@ function debounce(fn, delay) {
         this._schedule_deferred_reflow();
       } else {
         console.log(`%c[VDE] _do_input_work: all pages clean, no deferred needed`, 'color: green');
+        if (this._paste_in_progress) {
+          this._paste_in_progress = false;
+          this._hide_paste_overlay();
+        }
       }
     },
     // Input event - debounced to prevent cascading reflows on rapid typing
@@ -4678,7 +4903,7 @@ function debounce(fn, delay) {
           top: "calc(" + top_mm + "mm + " + view_padding + "px)",
           width: this.page_format_mm[0] + "mm",
           // "height" is set below
-          padding: typeof this.page_margins == "function" ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins,
+          padding: typeof this.effective_page_margins == "function" ? this.effective_page_margins(page_idx + 1, this.pages.length) : this.effective_page_margins,
           transform: "scale(" + this.zoom + ")"
         };
         style[allow_overflow ? "minHeight" : "height"] = this.page_format_mm[1] + "mm";
@@ -4729,6 +4954,9 @@ function debounce(fn, delay) {
     },
     // Prepare content before opening the native print box
     before_print() {
+      // Exit header/footer editing mode if active
+      if (this.editing_hf) this.stop_editing_hf();
+
       // set the printing mode flag
       this.printing_mode = true;
 
@@ -4768,7 +4996,7 @@ function debounce(fn, delay) {
         //const page_clone = page_elt.cloneNode(true);
         page.elt.style = ""; // reset page style for the clone
         page.elt.style.position = "relative";
-        page.elt.style.padding = typeof this.page_margins == "function" ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins;
+        page.elt.style.padding = typeof this.effective_page_margins == "function" ? this.effective_page_margins(page_idx + 1, this.pages.length) : this.effective_page_margins;
         page.elt.style.breakBefore = page_idx ? "page" : "auto";
         page.elt.style.width = "calc(" + this.page_format_mm[0] + "mm - 2px)";
         page.elt.style.height = "calc(" + this.page_format_mm[1] + "mm - 2px)";
@@ -4837,7 +5065,12 @@ function debounce(fn, delay) {
     // Generate PDF from document pages
     // options: { filename: string, returnBlob: boolean }
     async generate_pdf(options = {}) {
-      const html2pdf = (await __webpack_require__.e(/* import() */ 833).then(__webpack_require__.t.bind(__webpack_require__, 3833, 23))).default;
+      // Exit header/footer editing mode if active
+      if (this.editing_hf) this.stop_editing_hf();
+      const html2canvas = (await __webpack_require__.e(/* import() */ 354).then(__webpack_require__.t.bind(__webpack_require__, 354, 23))).default;
+      const {
+        jsPDF
+      } = await __webpack_require__.e(/* import() */ 909).then(__webpack_require__.bind(__webpack_require__, 5909));
 
       // Show blocking overlay
       this._paste_in_progress = true;
@@ -4850,89 +5083,89 @@ function debounce(fn, delay) {
         this._dirty_from_page = null;
       }
 
-      // 2. Restore all virtualized pages
+      // 2. Clear page status overlays so they don't appear in capture
+      this._clear_page_statuses();
+
+      // 3. Restore all virtualized pages
       for (const page of this.pages) {
         if (page.nao_renderizada && page.cached_html != null) {
           page.elt.innerHTML = page.cached_html;
         }
       }
 
-      // 3. Build temporary container with cloned pages
-      const container = document.createElement('div');
-      container.style.font = window.getComputedStyle(this.$refs.editor).font;
-      for (const [page_idx, page] of this.pages.entries()) {
-        const clone = page.elt.cloneNode(true);
-        clone.style.position = 'relative';
-        clone.style.width = this.page_format_mm[0] + 'mm';
-        clone.style.height = this.page_format_mm[1] + 'mm';
-        clone.style.padding = typeof this.page_margins == 'function' ? this.page_margins(page_idx + 1, this.pages.length) : this.page_margins;
-        clone.style.boxSizing = 'border-box';
-        clone.style.overflow = 'hidden';
-        clone.style.background = 'white';
-        if (page_idx) clone.style.pageBreakBefore = 'always';
-
-        // Add overlays (headers/footers) if any
-        const overlay_elt = this.pages_overlay_refs[page.uuid];
-        if (overlay_elt) {
-          const overlay_clone = overlay_elt.cloneNode(true);
-          overlay_clone.style.position = 'absolute';
-          overlay_clone.style.left = '0';
-          overlay_clone.style.top = '0';
-          overlay_clone.style.overflow = 'hidden';
-          clone.prepend(overlay_clone);
-        }
-        container.appendChild(clone);
-        this._show_paste_overlay(`Gerando PDF... página ${page_idx + 1}/${this.pages.length}`);
-      }
-
-      // 4. Temporarily add container to DOM (required by html2canvas)
-      container.style.position = 'absolute';
-      container.style.left = '-9999px';
-      container.style.top = '0';
-      document.body.appendChild(container);
-
-      // 5. Configure and generate PDF
-      const pdf_options = {
-        margin: 0,
-        filename: options.filename || 'documento.pdf',
-        image: {
-          type: 'jpeg',
-          quality: 0.98
-        },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          logging: false
-        },
-        jsPDF: {
-          unit: 'mm',
-          format: [this.page_format_mm[0], this.page_format_mm[1]],
-          orientation: 'portrait'
-        },
-        pagebreak: {
-          mode: 'css'
-        }
-      };
+      // Yield to browser to render restored pages
+      await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 100)));
       try {
-        let result;
-        if (options.returnBlob) {
-          result = await html2pdf().set(pdf_options).from(container).outputPdf('blob');
-        } else {
-          await html2pdf().set(pdf_options).from(container).save();
+        const page_w_mm = this.page_format_mm[0];
+        const page_h_mm = this.page_format_mm[1];
+        const pdf = new jsPDF({
+          unit: 'mm',
+          format: [page_w_mm, page_h_mm],
+          orientation: 'portrait'
+        });
+        for (const [page_idx, page] of this.pages.entries()) {
+          this._show_paste_overlay(`Gerando PDF... página ${page_idx + 1}/${this.pages.length}`);
+
+          // Temporarily reparent overlay (headers/footers) into page element for capture
+          const overlay_elt = this.pages_overlay_refs ? this.pages_overlay_refs[page.uuid] : null;
+          let overlay_original_parent = null;
+          let overlay_original_style = null;
+          if (overlay_elt && overlay_elt.parentNode) {
+            overlay_original_parent = overlay_elt.parentNode;
+            overlay_original_style = overlay_elt.getAttribute('style');
+            // Clear all inline styles (removes stale padding/transform from page_style)
+            // and set clean styles for capture. box-sizing: border-box is needed because
+            // the CSS rule .editor > .overlays > .overlay no longer applies after reparenting.
+            overlay_elt.setAttribute('style', '');
+            overlay_elt.style.position = 'absolute';
+            overlay_elt.style.left = '0';
+            overlay_elt.style.top = '0';
+            overlay_elt.style.width = '100%';
+            overlay_elt.style.height = '100%';
+            overlay_elt.style.boxSizing = 'border-box';
+            overlay_elt.style.pointerEvents = 'none';
+            page.elt.appendChild(overlay_elt);
+          }
+
+          // Capture the actual page element directly (retains all scoped CSS styles)
+          const canvas = await html2canvas(page.elt, {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            backgroundColor: '#ffffff'
+          });
+
+          // Restore overlay to its original parent
+          if (overlay_elt && overlay_original_parent) {
+            if (overlay_original_style) {
+              overlay_elt.setAttribute('style', overlay_original_style);
+            } else {
+              overlay_elt.removeAttribute('style');
+            }
+            overlay_original_parent.appendChild(overlay_elt);
+          }
+
+          // Add page to PDF
+          if (page_idx > 0) pdf.addPage([page_w_mm, page_h_mm], 'portrait');
+          const img_data = canvas.toDataURL('image/jpeg', 0.98);
+          pdf.addImage(img_data, 'JPEG', 0, 0, page_w_mm, page_h_mm);
+
+          // Yield to browser between pages
+          await new Promise(resolve => setTimeout(resolve, 0));
         }
 
-        // 6. Cleanup
-        container.remove();
-
-        // 7. Re-virtualize pages
+        // Re-virtualize pages
         if (this.virtualization_enabled) {
           this.virtualize_pages();
         }
         this._paste_in_progress = false;
         this._hide_paste_overlay();
-        return result;
+        if (options.returnBlob) {
+          return pdf.output('blob');
+        } else {
+          pdf.save(options.filename || 'documento.pdf');
+        }
       } catch (err) {
-        container.remove();
         if (this.virtualization_enabled) {
           this.virtualize_pages();
         }
@@ -4940,6 +5173,124 @@ function debounce(fn, delay) {
         this._hide_paste_overlay();
         console.error('[VDE] PDF generation failed:', err);
         throw err;
+      }
+    },
+    // Start editing header or footer on a specific page
+    async start_editing_hf(mode, page_idx) {
+      this.editing_hf = mode;
+      this.editing_hf_page = page_idx;
+      await this.$nextTick();
+      const el = this.$refs.overlays && this.$refs.overlays.querySelector('.hf-active[contenteditable]');
+      if (el) {
+        const content = mode === 'header' ? this.header || '' : this.footer || '';
+        el.innerHTML = content || '<div><br></div>';
+        el.focus();
+        const sel = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        this._hf_editor_el = el;
+      }
+    },
+    // Stop editing header/footer and save content
+    stop_editing_hf() {
+      if (!this.editing_hf) return;
+      if (this._hf_measure_timer) {
+        clearTimeout(this._hf_measure_timer);
+        this._hf_measure_timer = null;
+      }
+      if (this._hf_editor_el) {
+        let html = this._hf_editor_el.innerHTML;
+        if (html === '<br>' || html === '<div><br></div>') html = '';
+        this.$emit('update:' + this.editing_hf, html);
+        this._hf_editor_el = null;
+      }
+      this.editing_hf = null;
+      this.editing_hf_page = null;
+      // Measure h/f heights and adjust margins after preview renders
+      this.$nextTick(() => {
+        this._measure_hf_heights();
+      });
+    },
+    // Handle input in header/footer editor (live sync to other pages)
+    on_hf_input(mode) {
+      if (this._hf_editor_el) {
+        let html = this._hf_editor_el.innerHTML;
+        if (html === '<br>' || html === '<div><br></div>') html = '';
+        this.$emit('update:' + mode, html);
+      }
+      // Debounced margin measurement during editing
+      if (this._hf_measure_timer) clearTimeout(this._hf_measure_timer);
+      this._hf_measure_timer = setTimeout(() => {
+        this._measure_hf_heights();
+      }, 300);
+    },
+    // Measure header/footer rendered heights and adjust effective margins if needed
+    _measure_hf_heights() {
+      const px_to_mm = 0.2645833333333;
+      const m = this.parsed_margins;
+      const origTop = parseFloat(m.top) || 10;
+      const origBottom = parseFloat(m.bottom) || 10;
+      let hMM = 0,
+        fMM = 0;
+
+      // Measure from the active editor or preview zones
+      if (this.editing_hf && this._hf_editor_el) {
+        const elMM = this._hf_editor_el.scrollHeight * px_to_mm + 1;
+        if (this.editing_hf === 'header') {
+          hMM = elMM;
+        } else {
+          fMM = elMM;
+        }
+        // Measure the other zone from preview
+        if (this.$refs.overlays) {
+          const other = this.$refs.overlays.querySelector(this.editing_hf === 'header' ? '.hf-footer:not(.hf-active)' : '.hf-header:not(.hf-active)');
+          const otherMM = other ? other.scrollHeight * px_to_mm + 1 : 0;
+          if (this.editing_hf === 'header') {
+            fMM = otherMM;
+          } else {
+            hMM = otherMM;
+          }
+        }
+      } else if (this.$refs.overlays) {
+        const hZone = this.$refs.overlays.querySelector('.hf-header');
+        const fZone = this.$refs.overlays.querySelector('.hf-footer');
+        if (hZone) hMM = hZone.scrollHeight * px_to_mm + 1;
+        if (fZone) fMM = fZone.scrollHeight * px_to_mm + 1;
+      }
+      const newTop = Math.ceil(hMM) > origTop ? Math.ceil(hMM) : 0;
+      const newBottom = Math.ceil(fMM) > origBottom ? Math.ceil(fMM) : 0;
+      if (newTop !== this.hf_top_height_mm || newBottom !== this.hf_bottom_height_mm) {
+        this.hf_top_height_mm = newTop;
+        this.hf_bottom_height_mm = newBottom;
+        // Reflow pages with new effective margins (incremental to keep UI responsive)
+        this.$nextTick(() => {
+          this.update_pages_elts();
+          this._cancel_deferred_reflow();
+          // Show progress overlay and process incrementally
+          if (!this._paste_in_progress) {
+            this._paste_in_progress = true;
+            this._show_paste_overlay('Processando documento...');
+          }
+          this.fit_content_over_pages(2);
+          this._update_page_statuses();
+          if (this._dirty_from_page !== null) {
+            this._schedule_deferred_reflow();
+          } else {
+            this.emit_new_content();
+            if (this.virtualization_enabled) this.virtualize_pages();
+            this._paste_in_progress = false;
+            this._hide_paste_overlay();
+          }
+        });
+      }
+    },
+    // Click on body content exits header/footer editing mode
+    on_content_click() {
+      if (this.editing_hf) {
+        this.stop_editing_hf();
       }
     }
   },
@@ -4974,20 +5325,40 @@ function debounce(fn, delay) {
       handler() {
         this.update_pages_elts();
       }
+    },
+    header: {
+      handler() {
+        // When header content changes externally (e.g. JSON import), re-measure heights
+        if (!this.editing_hf) {
+          this.$nextTick(() => {
+            this._measure_hf_heights();
+          });
+        }
+      }
+    },
+    footer: {
+      handler() {
+        // When footer content changes externally (e.g. JSON import), re-measure heights
+        if (!this.editing_hf) {
+          this.$nextTick(() => {
+            this._measure_hf_heights();
+          });
+        }
+      }
     }
   }
 });
 ;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js
  
-;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=2c07556c&lang=css
+;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=24e4f0ab&lang=css
 // extracted by mini-css-extract-plugin
 
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=2c07556c&lang=css
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=24e4f0ab&lang=css
 
-;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=2c07556c&scoped=true&lang=css
+;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=24e4f0ab&scoped=true&lang=css
 // extracted by mini-css-extract-plugin
 
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=2c07556c&scoped=true&lang=css
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=24e4f0ab&scoped=true&lang=css
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/dist/exportHelper.js
 var exportHelper = __webpack_require__(6262);
@@ -5000,7 +5371,7 @@ var exportHelper = __webpack_require__(6262);
 
 
 
-const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-2c07556c"]])
+const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-24e4f0ab"]])
 
 /* harmony default export */ var DocumentEditor = (__exports__);
 ;// ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
