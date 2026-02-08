@@ -111,6 +111,7 @@ const {
   on_content_click,
   onInput,
   reset_content,
+  restore_pages,
   _show_paste_overlay,
   _hide_paste_overlay,
 } = useEditor(props, emit, {
@@ -128,6 +129,7 @@ defineExpose({
   _show_paste_overlay,
   _hide_paste_overlay,
   reset_content,
+  restore_pages,
   contentEl: content,
   overlaysEl: overlays,
 })

@@ -25,6 +25,7 @@ export function createTableInteraction(ctx) {
   // Overlay elements
   let indicator = null         // the blue resize line (position:fixed)
   let handle = null            // the table resize handle (position:fixed)
+  let resizeHandle = null      // small arrow icon on border hover (position:fixed)
 
   function getZoom() {
     return ctx.zoom ? ctx.zoom.value : 1
@@ -140,6 +141,47 @@ export function createTableInteraction(ctx) {
 
   function hideHandle() {
     if (handle) handle.style.display = 'none'
+  }
+
+  // ===== Resize Handle (arrow icon on border hover, Word-style) =====
+
+  function createResizeHandle() {
+    if (resizeHandle) return resizeHandle
+    resizeHandle = document.createElement('div')
+    resizeHandle.style.cssText = 'position:fixed;z-index:10001;pointer-events:none;display:none;' +
+      'background:white;border:1px solid #1a73e8;border-radius:3px;' +
+      'color:#1a73e8;align-items:center;justify-content:center;' +
+      'box-shadow:0 1px 3px rgba(0,0,0,0.25);user-select:none;font-weight:bold'
+    document.body.appendChild(resizeHandle)
+    return resizeHandle
+  }
+
+  function showResizeHandle(type, x, y) {
+    createResizeHandle()
+    if (type === 'col') {
+      resizeHandle.textContent = '\u2194' // ↔
+      resizeHandle.style.width = '22px'
+      resizeHandle.style.height = '16px'
+      resizeHandle.style.fontSize = '14px'
+      resizeHandle.style.lineHeight = '14px'
+      resizeHandle.style.left = (x - 11) + 'px'
+      resizeHandle.style.top = (y - 8) + 'px'
+      resizeHandle.style.cursor = 'col-resize'
+    } else {
+      resizeHandle.textContent = '\u2195' // ↕
+      resizeHandle.style.width = '16px'
+      resizeHandle.style.height = '22px'
+      resizeHandle.style.fontSize = '14px'
+      resizeHandle.style.lineHeight = '20px'
+      resizeHandle.style.left = (x - 8) + 'px'
+      resizeHandle.style.top = (y - 11) + 'px'
+      resizeHandle.style.cursor = 'row-resize'
+    }
+    resizeHandle.style.display = 'flex'
+  }
+
+  function hideResizeHandle() {
+    if (resizeHandle) resizeHandle.style.display = 'none'
   }
 
   // ===== Cell Selection =====
@@ -302,20 +344,25 @@ export function createTableInteraction(ctx) {
   function onMouseMove(e) {
     if (dragState) return // during drag, don't update hover
 
+    // Detect resize edges (inside table, near cell borders)
     const edge = detectEdge(e)
+
     if (edge) {
       hoverState = edge
       if (edge.type === 'col') {
         contentEl.style.cursor = 'col-resize'
         showIndicator('col', edge.edge, edge.top, edge.height)
+        showResizeHandle('col', edge.edge, e.clientY)
       } else if (edge.type === 'row') {
         contentEl.style.cursor = 'row-resize'
         showIndicator('row', edge.left, edge.edge, edge.width)
+        showResizeHandle('row', e.clientX, edge.edge)
       }
     } else {
       hoverState = null
       contentEl.style.cursor = ''
       hideIndicator()
+      hideResizeHandle()
     }
 
     // Show/hide table resize handle
@@ -417,6 +464,7 @@ export function createTableInteraction(ctx) {
       }
     }
 
+    hideResizeHandle()
     document.addEventListener('mousemove', onDragMove)
     document.addEventListener('mouseup', onDragEnd)
     document.body.style.userSelect = 'none'
@@ -519,6 +567,7 @@ export function createTableInteraction(ctx) {
   function onScroll() {
     hideIndicator()
     hideHandle()
+    hideResizeHandle()
     hoverState = null
   }
 
@@ -552,6 +601,7 @@ export function createTableInteraction(ctx) {
     // Clean up overlays
     if (indicator) { indicator.remove(); indicator = null }
     if (handle) { handle.removeEventListener('mousedown', onHandleMouseDown); handle.remove(); handle = null }
+    if (resizeHandle) { resizeHandle.remove(); resizeHandle = null }
 
     clearSelection()
     dragState = null

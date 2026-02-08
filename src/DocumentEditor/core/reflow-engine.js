@@ -177,6 +177,56 @@ export function setupReflowEngine(ctx) {
     ctx._fit_in_progress = false
   }
 
+  // Lightweight page restore for undo/redo — bypasses reset_content entirely
+  ctx.restore_pages = function(pageHtmlArray) {
+    if (ctx._reset_in_progress) return
+    ctx._reset_in_progress = true
+    ctx._cancel_deferred_reflow()
+
+    const target_count = pageHtmlArray.length
+
+    // Adjust page count to match snapshot
+    while (state.pages.length < target_count) {
+      state.pages.push({ uuid: new_uuid(), content_idx: 0 })
+    }
+    if (state.pages.length > target_count) {
+      state.pages.length = target_count
+    }
+    ctx.update_pages_elts()
+
+    // Calculate visible range for virtualization
+    const range = state.virtualization_enabled
+      ? ctx.calculate_visible_range()
+      : { start: 0, end: state.pages.length - 1 }
+
+    // Fill pages with content
+    for (let i = 0; i < state.pages.length; i++) {
+      const page = state.pages[i]
+      const html = pageHtmlArray[i] || '<div><br></div>'
+      const is_visible = (i >= range.start && i <= range.end)
+
+      if (is_visible) {
+        page.elt.innerHTML = html
+        page.prev_innerHTML = html
+        page.nao_renderizada = false
+        page.cached_html = null
+        page.elt.classList.remove('nao-renderizada')
+      } else {
+        page.cached_html = html
+        page.prev_innerHTML = html
+        page.elt.innerHTML = ''
+        page.nao_renderizada = true
+        page.elt.classList.add('nao-renderizada')
+      }
+    }
+
+    ctx._reset_in_progress = false
+    ctx._update_page_statuses()
+
+    // Sync content to parent (sets prevent_next_content_update_from_parent automatically)
+    ctx.emit_new_content()
+  }
+
   ctx.emit_new_content = function() {
     let removed_pages_flag = false
     const new_content = props.content.map((item, content_idx) => {

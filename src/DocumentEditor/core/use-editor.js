@@ -186,6 +186,7 @@ export function useEditor(props, emit, refs) {
     on_content_click: ctx.on_content_click,
     onInput: ctx.onInput,
     reset_content: ctx.reset_content,
+    restore_pages: ctx.restore_pages,
     _show_paste_overlay: ctx._show_paste_overlay,
     _hide_paste_overlay: ctx._hide_paste_overlay,
   }

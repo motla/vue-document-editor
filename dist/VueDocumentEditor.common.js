@@ -3914,6 +3914,7 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 
 
 
+
 // Core reflow engine: reset_content, fit_content_over_pages, content emission
 
 
@@ -4106,6 +4107,57 @@ function setupReflowEngine(ctx) {
       ctx.virtualize_pages();
     }
     ctx._fit_in_progress = false;
+  };
+
+  // Lightweight page restore for undo/redo — bypasses reset_content entirely
+  ctx.restore_pages = function (pageHtmlArray) {
+    if (ctx._reset_in_progress) return;
+    ctx._reset_in_progress = true;
+    ctx._cancel_deferred_reflow();
+    const target_count = pageHtmlArray.length;
+
+    // Adjust page count to match snapshot
+    while (state.pages.length < target_count) {
+      state.pages.push({
+        uuid: new_uuid(),
+        content_idx: 0
+      });
+    }
+    if (state.pages.length > target_count) {
+      state.pages.length = target_count;
+    }
+    ctx.update_pages_elts();
+
+    // Calculate visible range for virtualization
+    const range = state.virtualization_enabled ? ctx.calculate_visible_range() : {
+      start: 0,
+      end: state.pages.length - 1
+    };
+
+    // Fill pages with content
+    for (let i = 0; i < state.pages.length; i++) {
+      const page = state.pages[i];
+      const html = pageHtmlArray[i] || '<div><br></div>';
+      const is_visible = i >= range.start && i <= range.end;
+      if (is_visible) {
+        page.elt.innerHTML = html;
+        page.prev_innerHTML = html;
+        page.nao_renderizada = false;
+        page.cached_html = null;
+        page.elt.classList.remove('nao-renderizada');
+      } else {
+        page.cached_html = html;
+        page.prev_innerHTML = html;
+        page.elt.innerHTML = '';
+        page.nao_renderizada = true;
+        page.elt.classList.add('nao-renderizada');
+      }
+    }
+    ctx._reset_in_progress = false;
+    ctx._update_page_statuses();
+
+    // Sync content to parent (sets prevent_next_content_update_from_parent automatically)
+    ctx.emit_new_content();
   };
   ctx.emit_new_content = function () {
     let removed_pages_flag = false;
@@ -4653,6 +4705,7 @@ function useEditor(props, emit, refs) {
     on_content_click: ctx.on_content_click,
     onInput: ctx.onInput,
     reset_content: ctx.reset_content,
+    restore_pages: ctx.restore_pages,
     _show_paste_overlay: ctx._show_paste_overlay,
     _hide_paste_overlay: ctx._hide_paste_overlay
   };
@@ -4736,6 +4789,7 @@ const _hoisted_5 = {
       on_content_click,
       onInput,
       reset_content,
+      restore_pages,
       _show_paste_overlay,
       _hide_paste_overlay
     } = useEditor(props, emit, {
@@ -4757,6 +4811,7 @@ const _hoisted_5 = {
       _show_paste_overlay,
       _hide_paste_overlay,
       reset_content,
+      restore_pages,
       contentEl: content,
       overlaysEl: overlays
     });
@@ -4859,15 +4914,15 @@ const _hoisted_5 = {
 });
 ;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&setup=true&lang=js
  
-;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=72b617c0&lang=css
+;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=5ea70e87&lang=css
 // extracted by mini-css-extract-plugin
 
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=72b617c0&lang=css
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=5ea70e87&lang=css
 
-;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=72b617c0&scoped=true&lang=css
+;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=5ea70e87&scoped=true&lang=css
 // extracted by mini-css-extract-plugin
 
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=72b617c0&scoped=true&lang=css
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=5ea70e87&scoped=true&lang=css
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/dist/exportHelper.js
 var exportHelper = __webpack_require__(6262);
@@ -4879,7 +4934,7 @@ var exportHelper = __webpack_require__(6262);
 
 
 
-const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(DocumentEditorvue_type_script_setup_true_lang_js, [['__scopeId',"data-v-72b617c0"]])
+const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(DocumentEditorvue_type_script_setup_true_lang_js, [['__scopeId',"data-v-5ea70e87"]])
 
 /* harmony default export */ var DocumentEditor = (__exports__);
 ;// ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
