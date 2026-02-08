@@ -15,9 +15,18 @@
 
     <!-- Items related to the document editor (widgets, ...) can be inserted here -->
 
-    <!-- Loading overlay - blocks interaction during heavy operations -->
-    <div class="vde-loading-overlay" ref="loading_overlay">
-      <div class="vde-loading-spinner"></div>
+    <!-- Deferred reflow progress indicator (bottom-left, non-blocking) -->
+    <div class="vde-progress-indicator" ref="progress_indicator">
+      <div class="vde-progress-spinner"></div>
+      <span class="vde-progress-text" ref="progress_text"></span>
+    </div>
+
+    <!-- Full-screen blocking overlay for paste operations -->
+    <div class="vde-paste-overlay" ref="paste_overlay">
+      <div class="vde-paste-box">
+        <div class="vde-paste-spinner"></div>
+        <span class="vde-paste-text" ref="paste_text">Colando texto...</span>
+      </div>
     </div>
 
   </div>
@@ -78,7 +87,7 @@ export default {
     // Display zoom. Only acts on the screen display
     zoom: {
       type: Number,
-      default: 1.0
+      default: 1
     },
 
     // "Do not break" test function: should return true on elements you don't want to be split over multiple pages but rather be moved to the next page
@@ -100,6 +109,12 @@ export default {
   },
 
   mounted () {
+    // Initialize non-reactive internal properties
+    this._dirty_from_page = null;
+    this._deferred_raf_id = null;
+    this._status_overlay_container = null;
+    this._paste_in_progress = false;
+
     this.update_editor_width();
     this.update_css_media_style();
     this.reset_content();
@@ -136,8 +151,9 @@ export default {
         this._scroll_container.removeEventListener("scroll", this._scroll_handler);
       }
     }
-    // Clear pending input timer
+    // Clear pending input timer and deferred reflow
     if (this._input_timer) clearTimeout(this._input_timer);
+    this._cancel_deferred_reflow();
   },
 
   computed: {
@@ -246,6 +262,7 @@ export default {
     on_scroll () {
       if (!this.virtualization_enabled || this.printing_mode) return;
       this.virtualize_pages();
+      this._update_page_statuses();
     },
 
     // Resets all content from the content property
@@ -253,6 +270,9 @@ export default {
       // Prevent launching this function multiple times
       if(this.reset_in_progress) return;
       this.reset_in_progress = true;
+
+      // Cancel any pending deferred reflow
+      this._cancel_deferred_reflow();
 
       // If provided content is empty, initialize it first and exit
       if(!this.content.length) {
@@ -291,8 +311,10 @@ export default {
         if(!this.$refs.content.contains(page.elt)) this.$refs.content.appendChild(page.elt);
       }
 
-      // Spread content over several pages if it overflows
-      this.fit_content_over_pages();
+      // Spread content over pages - only process first 2 pages immediately, defer the rest
+      this._paste_in_progress = true;
+      this._show_paste_overlay('Processando documento...');
+      this.fit_content_over_pages(2);
 
       // Remove the text cursor from the content, if any (its position is lost anyway)
       this.$refs.content.blur();
@@ -303,10 +325,25 @@ export default {
 
       // Clear "reset in progress" flag
       this.reset_in_progress = false;
+
+      // Update statuses and schedule deferred processing for remaining pages
+      this._update_page_statuses();
+      if (this._dirty_from_page !== null) {
+        this._schedule_deferred_reflow();
+      } else {
+        // Small document, all done immediately
+        this._paste_in_progress = false;
+        this._hide_paste_overlay();
+      }
     },
 
     // Spreads the HTML content over several pages until it fits
-    fit_content_over_pages () {
+    // max_pages: max number of pages to cascade through (default Infinity = no limit)
+    // start_from: page index to start the loop from (default 0), used for deferred reflow continuation
+    fit_content_over_pages (max_pages, start_from) {
+      if (max_pages === undefined) max_pages = Infinity;
+      if (start_from === undefined) start_from = 0;
+
       // Data variable this.pages_height must have been set before calling this function
       if(!this.pages_height) return;
 
@@ -344,16 +381,29 @@ export default {
       // Track which pages were touched during reflow (for normalize + prev_innerHTML update)
       const touched_pages = new Set();
       let pages_added_or_removed = false;
+      let cascade_truncated = false;
 
       const _perf = { t_start: performance.now(), pages_processed: 0, pages_restored: 0, pages_skipped: 0, backward: 0, forward: 0 };
 
-      // Browse every remaining page
-      let prev_page_modified_flag = false;
-      for(let page_idx = 0; page_idx < this.pages.length; page_idx++) { // page length can grow inside this loop
+      console.log(`%c[VDE fit] START: max_pages=${max_pages}, start_from=${start_from}, total_pages=${this.pages.length}`, 'color: purple; font-weight: bold');
+
+      // Browse every remaining page (starting from start_from for deferred continuation)
+      let prev_page_modified_flag = (start_from > 0); // force cascade when continuing from a previous stop
+      let cascade_count = 0;
+      for(let page_idx = start_from; page_idx < this.pages.length; page_idx++) { // page length can grow inside this loop
         const page = this.pages[page_idx];
 
         // Skip virtualized pages unless previous page pushed content forward
         if (page.nao_renderizada && !prev_page_modified_flag) { _perf.pages_skipped++; continue; }
+
+        // Check cascade limit BEFORE processing this page
+        if (max_pages !== Infinity && cascade_count >= max_pages && prev_page_modified_flag) {
+          // We've hit the cascade limit and there's still more to cascade
+          this._dirty_from_page = page_idx;
+          cascade_truncated = true;
+          console.log(`%c[VDE fit] TRUNCATED at page ${page_idx} (cascade_count=${cascade_count}, max_pages=${max_pages})`, 'color: red; font-weight: bold');
+          break;
+        }
 
         // Lazily restore this page if virtualized and cascade reached it
         if (page.nao_renderizada) {
@@ -387,6 +437,10 @@ export default {
         // check if this page, the next page, or any previous page content has been modified by the user (don't apply to template pages)
         if(!page.template && (prev_page_modified_flag || page.elt.innerHTML != page.prev_innerHTML
           || (next_page_elt && !next_page.template && !next_page.nao_renderizada && next_page_elt.innerHTML != next_page.prev_innerHTML))){
+
+          // Count this as a cascading page
+          cascade_count++;
+          console.log(`[VDE fit] processing page ${page_idx} (cascade #${cascade_count}/${max_pages}) prev_modified=${prev_page_modified_flag}`);
 
           // Snapshot next page content before reflow to detect if content actually shifted
           const next_page_html_before = (next_page_elt && !next_page.nao_renderizada) ? next_page_elt.innerHTML : null;
@@ -446,6 +500,14 @@ export default {
         }
       }
 
+      // If cascade ended naturally (not truncated), mark all pages as clean
+      if (!cascade_truncated) {
+        this._dirty_from_page = null;
+        console.log(`%c[VDE fit] END natural: cascade_count=${cascade_count}, pages_processed=${_perf.pages_processed}`, 'color: green');
+      } else {
+        console.log(`%c[VDE fit] END truncated: cascade_count=${cascade_count}, dirty_from=${this._dirty_from_page}`, 'color: red');
+      }
+
       const _t_loop_end = performance.now();
 
       // Update pages in the DOM once (not inside the loop)
@@ -497,7 +559,7 @@ export default {
           `normalize: ${(_t_normalize_end - _t_loop_end).toFixed(1)}ms | ` +
           `store: ${(_t_store_end - _t_normalize_end).toFixed(1)}ms | ` +
           `virtualize: ${(_t_virtualize_end - _t_store_end).toFixed(1)}ms | ` +
-          `pages total: ${this.pages.length}`
+          `pages total: ${this.pages.length} | truncated: ${cascade_truncated} | dirty_from: ${this._dirty_from_page}`
         );
       }
 
@@ -505,37 +567,239 @@ export default {
       this.fit_in_progress = false;
     },
 
-    // Show/hide loading overlay (direct DOM manipulation for instant display)
-    _show_loading () {
-      const el = this.$refs.loading_overlay;
-      if (el) el.style.display = 'flex';
+    // Find which page the user is currently editing (cursor position)
+    _get_editing_page_idx () {
+      const sel = document.getSelection();
+      if (!sel || !sel.anchorNode) return 0;
+      let node = sel.anchorNode;
+      while (node && node.parentElement) {
+        if (node.dataset && node.dataset.isVDEPage !== undefined) {
+          const idx = this.pages.findIndex(p => p.elt === node);
+          return idx >= 0 ? idx : 0;
+        }
+        node = node.parentElement;
+      }
+      return 0;
     },
-    _hide_loading () {
-      const el = this.$refs.loading_overlay;
+
+    // Cancel any pending deferred reflow
+    _cancel_deferred_reflow () {
+      if (this._deferred_raf_id) {
+        cancelAnimationFrame(this._deferred_raf_id);
+        this._deferred_raf_id = null;
+      }
+    },
+
+    // Schedule background processing for dirty pages (after limited cascade)
+    _schedule_deferred_reflow () {
+      this._cancel_deferred_reflow();
+      this._deferred_raf_id = requestAnimationFrame(() => {
+        setTimeout(() => {
+          this._deferred_raf_id = null;
+          this._deferred_reflow_step();
+        }, 0);
+      });
+    },
+
+    // Process one page per frame in the background to keep UI responsive
+    _deferred_reflow_step () {
+      if (this._dirty_from_page === null || this._dirty_from_page >= this.pages.length) {
+        this._dirty_from_page = null;
+        console.log(`%c[VDE deferred] all done, no more dirty pages`, 'color: green; font-weight: bold');
+        this._update_page_statuses();
+        this._hide_progress();
+        if (this._paste_in_progress) {
+          this._paste_in_progress = false;
+          this._hide_paste_overlay();
+        }
+        // Emit final content once all pages are processed
+        this.emit_new_content();
+        return;
+      }
+
+      // Update progress indicator
+      if (this._paste_in_progress) {
+        this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${this.pages.length}`);
+      } else {
+        this._show_progress(this._dirty_from_page, this.pages.length);
+      }
+
+      console.log(`%c[VDE deferred] processing page ${this._dirty_from_page} of ${this.pages.length}`, 'color: orange');
+      // Process 1 page per frame to keep UI responsive
+      this.fit_content_over_pages(1, this._dirty_from_page);
+
+      // Update status overlays
+      this._update_page_statuses();
+
+      // If there are more dirty pages, schedule next batch
+      if (this._dirty_from_page !== null) {
+        if (this._paste_in_progress) {
+          this._show_paste_overlay(`Processando página ${this._dirty_from_page + 1} de ${this.pages.length}`);
+        } else {
+          this._show_progress(this._dirty_from_page, this.pages.length);
+        }
+        this._schedule_deferred_reflow();
+      } else {
+        this._hide_progress();
+        if (this._paste_in_progress) {
+          this._paste_in_progress = false;
+          this._hide_paste_overlay();
+        }
+        // All done - emit updated content
+        this.emit_new_content();
+      }
+    },
+
+    // Show progress indicator in bottom-left corner
+    _show_progress (current_page, total_pages) {
+      const el = this.$refs.progress_indicator;
+      const txt = this.$refs.progress_text;
+      if (el) el.style.display = 'flex';
+      if (txt) txt.textContent = `Atualizando página ${current_page + 1}/${total_pages}`;
+    },
+
+    // Hide progress indicator
+    _hide_progress () {
+      const el = this.$refs.progress_indicator;
       if (el) el.style.display = 'none';
     },
 
-    // Run the heavy reflow + emit work after input
+    // Show full-screen blocking overlay for paste operations
+    _show_paste_overlay (text) {
+      const el = this.$refs.paste_overlay;
+      const txt = this.$refs.paste_text;
+      if (el) el.style.display = 'flex';
+      if (txt) txt.textContent = text;
+    },
+
+    // Hide paste overlay
+    _hide_paste_overlay () {
+      const el = this.$refs.paste_overlay;
+      if (el) el.style.display = 'none';
+    },
+
+    // Calculate and apply page statuses, then render overlays
+    _update_page_statuses () {
+      const editing_idx = this._get_editing_page_idx();
+      const visible = this.calculate_visible_range();
+
+      for (let i = 0; i < this.pages.length; i++) {
+        const page = this.pages[i];
+        let status;
+
+        if (this._dirty_from_page === null || i < this._dirty_from_page) {
+          // Page already processed
+          if (i === editing_idx || i === editing_idx + 1) {
+            status = 'editing';
+          } else {
+            status = 'ready';
+          }
+        } else {
+          // Page is dirty (needs reprocessing)
+          if (i >= visible.start && i <= visible.end) {
+            status = 'loading';
+          } else {
+            status = 'await';
+          }
+        }
+
+        page.pg_status = status;
+      }
+
+      // Render visual overlays
+      this._render_page_status_overlays();
+    },
+
+    // Manage status overlay DOM elements positioned over pages
+    _render_page_status_overlays () {
+      // Create container if it doesn't exist
+      if (!this._status_overlay_container) {
+        this._status_overlay_container = document.createElement('div');
+        this._status_overlay_container.className = 'page-status-overlays';
+        this.$refs.editor.appendChild(this._status_overlay_container);
+      }
+
+      // Build a set of pages that need overlays
+      const overlay_pages = this.pages.filter(p => p.pg_status === 'loading' || p.pg_status === 'await');
+      const overlay_uuids = new Set(overlay_pages.map(p => p.uuid));
+
+      // Remove overlays for pages that no longer need them
+      const existing_overlays = [...this._status_overlay_container.children];
+      for (const el of existing_overlays) {
+        if (!overlay_uuids.has(el.dataset.pageUuid)) {
+          el.remove();
+        }
+      }
+
+      // Create/update overlays for pages that need them
+      for (const [page_idx, page] of this.pages.entries()) {
+        if (page.pg_status !== 'loading' && page.pg_status !== 'await') continue;
+
+        let overlay_el = this._status_overlay_container.querySelector(`[data-page-uuid="${page.uuid}"]`);
+
+        if (!overlay_el) {
+          overlay_el = document.createElement('div');
+          overlay_el.className = 'page-status-overlay';
+          overlay_el.dataset.pageUuid = page.uuid;
+          this._status_overlay_container.appendChild(overlay_el);
+        }
+
+        // Update class for loading vs await
+        overlay_el.classList.toggle('pg-loading', page.pg_status === 'loading');
+        overlay_el.classList.toggle('pg-await', page.pg_status === 'await');
+
+        // Update inner content
+        if (page.pg_status === 'loading' && !overlay_el.querySelector('.status-spinner')) {
+          overlay_el.innerHTML = '<div class="status-spinner"></div>';
+        } else if (page.pg_status === 'await' && !overlay_el.querySelector('.status-await-icon')) {
+          overlay_el.innerHTML = '<div class="status-await-icon"></div>';
+        }
+
+        // Position overlay to match the page using page_style
+        const style = this.page_style(page_idx, false);
+        overlay_el.style = this.css_to_string(style);
+        overlay_el.style.overflow = 'hidden';
+      }
+    },
+
+    // Clear all page status overlays (e.g., before print)
+    _clear_page_statuses () {
+      if (this._status_overlay_container) {
+        this._status_overlay_container.innerHTML = '';
+      }
+      for (const page of this.pages) {
+        page.pg_status = 'ready';
+      }
+    },
+
+    // Run the reflow + emit work after input (limited to 2 pages for instant response)
     _do_input_work () {
       const t0 = performance.now();
-      this.fit_content_over_pages();
+      // Cancel any pending deferred reflow before starting new one
+      this._cancel_deferred_reflow();
+      console.log(`%c[VDE] _do_input_work: calling fit_content_over_pages(max_pages=2, start_from=0)`, 'color: blue; font-weight: bold');
+      this.fit_content_over_pages(2); // only process 2 pages immediately!
       const t1 = performance.now();
+      console.log(`%c[VDE] _do_input_work: fit done in ${(t1-t0).toFixed(1)}ms | dirty_from_page=${this._dirty_from_page} | total_pages=${this.pages.length}`, 'color: blue');
       this.emit_new_content();
       const t2 = performance.now();
       if(this._last_input_type != "insertText") this.process_current_text_style();
       const t3 = performance.now();
 
       const total = t3 - t0;
-
-      // If this operation was slow, show loading proactively for the next input
-      if (total > 1000) {
-        this._next_input_needs_loading = true;
-      } else {
-        this._next_input_needs_loading = false;
-      }
-
       if (total > 50) {
         console.warn(`[VDE perf] input total: ${total.toFixed(1)}ms | fit: ${(t1-t0).toFixed(1)}ms | emit: ${(t2-t1).toFixed(1)}ms | style: ${(t3-t2).toFixed(1)}ms`);
+      }
+
+      // Update page status overlays
+      this._update_page_statuses();
+
+      // Schedule background processing for remaining dirty pages
+      if (this._dirty_from_page !== null) {
+        console.log(`%c[VDE] _do_input_work: scheduling deferred reflow from page ${this._dirty_from_page}`, 'color: orange');
+        this._schedule_deferred_reflow();
+      } else {
+        console.log(`%c[VDE] _do_input_work: all pages clean, no deferred needed`, 'color: green');
       }
     },
 
@@ -546,32 +810,26 @@ export default {
       // Store the input type for deferred processing
       this._last_input_type = e.inputType;
 
-      // Cancel any pending deferred reflow
+      // Cancel any pending input timer
       if (this._input_timer) clearTimeout(this._input_timer);
 
-      // Detect heavy operations: paste, drop, or previous input was slow
-      let is_heavy = e.inputType !== "insertText" || this._next_input_needs_loading;
-     
-       if(e.inputType == 'insertParagraph' || e.inputType == 'deleteContentBackward' || e.inputType == 'deleteContentForward'){
-        is_heavy = false;
-       }
+      // Detect paste operation
+      const is_paste = e.inputType === 'insertFromPaste' || e.inputType === 'insertFromDrop';
 
-console.log(e.inputType)
-      if (is_heavy) {
-        // Show loading immediately, then yield to the browser so it paints
-        // the overlay before the synchronous heavy work blocks the thread
-        this._show_loading();
+      if (is_paste) {
+        // Show blocking overlay immediately, then yield to browser to paint it
+        this._paste_in_progress = true;
+        this._show_paste_overlay('Colando texto...');
         this._input_timer = setTimeout(() => {
           this._input_timer = null;
           requestAnimationFrame(() => {
             setTimeout(() => {
               this._do_input_work();
-              this._hide_loading();
             }, 0);
           });
         }, 10);
       } else {
-        // Fast path for regular typing: no loading overhead
+        // Normal typing: debounce, no blocking overlay
         this._input_timer = setTimeout(() => {
           this._input_timer = null;
           this._do_input_work();
@@ -759,6 +1017,16 @@ console.log(e.inputType)
     before_print () {
       // set the printing mode flag
       this.printing_mode = true;
+
+      // Cancel deferred reflow and process all remaining dirty pages
+      this._cancel_deferred_reflow();
+      if (this._dirty_from_page !== null) {
+        this.fit_content_over_pages(Infinity, this._dirty_from_page);
+        this._dirty_from_page = null;
+      }
+
+      // Clear status overlays for printing
+      this._clear_page_statuses();
 
       // Restore all virtualized pages before printing
       for (const page of this.pages) {
@@ -967,28 +1235,106 @@ body {
   overflow: hidden;
   z-index: 1;
 }
-.editor > .vde-loading-overlay {
+.editor > .page-status-overlays {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  min-width: 100%;
+  pointer-events: none;
+}
+.editor > .page-status-overlays > .page-status-overlay {
+  position: absolute;
+  box-sizing: border-box;
+  left: 50%;
+  transform-origin: center top;
+  transition: left 0.3s, top 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 2;
+  border-radius: var(--page-border-radius);
+  pointer-events: none;
+}
+.page-status-overlay.pg-loading {
+  background: rgba(255, 255, 255, 0.6);
+}
+.page-status-overlay.pg-await {
+  background: rgba(240, 240, 240, 0.7);
+}
+.page-status-overlay .status-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  animation: vde-spin 0.7s linear infinite;
+}
+.page-status-overlay .status-await-icon {
+  width: 30px;
+  height: 30px;
+  border: 3px dashed rgba(0, 0, 0, 0.15);
+  border-radius: 50%;
+}
+@keyframes vde-spin {
+  to { transform: rotate(360deg); }
+}
+.editor > .vde-progress-indicator {
+  display: none;
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  pointer-events: none;
+}
+.editor > .vde-progress-indicator > .vde-progress-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: vde-spin 0.7s linear infinite;
+}
+.editor > .vde-paste-overlay {
   display: none;
   position: fixed;
   left: 0;
   top: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.5);
   z-index: 9999;
   align-items: center;
   justify-content: center;
   cursor: wait;
 }
-.editor > .vde-loading-overlay > .vde-loading-spinner {
-  width: 36px;
-  height: 36px;
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-top-color: rgba(0, 0, 0, 0.5);
+.editor > .vde-paste-overlay > .vde-paste-box {
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 20px 32px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 15px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.editor > .vde-paste-overlay .vde-paste-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
   border-radius: 50%;
   animation: vde-spin 0.7s linear infinite;
-}
-@keyframes vde-spin {
-  to { transform: rotate(360deg); }
 }
 </style>
