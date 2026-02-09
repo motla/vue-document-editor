@@ -65,10 +65,20 @@ export function setupDeferredReflow(ctx) {
   }
 
   ctx._deferred_reflow_step = function() {
+    const is_blocking = state._paste_in_progress || ctx._print_pending
+
+    // All pages processed — finish up
     if (ctx._dirty_from_page === null || ctx._dirty_from_page >= state.pages.length) {
       ctx._dirty_from_page = null
       ctx._update_page_statuses()
       ctx._hide_progress()
+      if (ctx._print_pending) {
+        ctx._print_pending = false
+        ctx._hide_paste_overlay()
+        ctx.emit_new_content()
+        setTimeout(() => { window.print() }, 100)
+        return
+      }
       if (state._paste_in_progress) {
         state._paste_in_progress = false
         ctx._hide_paste_overlay()
@@ -77,27 +87,53 @@ export function setupDeferredReflow(ctx) {
       ctx.emit_new_content()
       return
     }
+
+    // Show progress
     const total_pages = (state._import_page_count && state._import_page_count > state.pages.length)
       ? state._import_page_count : state.pages.length
     const pct = Math.round((ctx._dirty_from_page / total_pages) * 100)
     if (state._paste_in_progress) {
       ctx._show_paste_overlay(`Processando página ${ctx._dirty_from_page + 1} de ${total_pages} (${pct}%)`)
+    } else if (ctx._print_pending) {
+      ctx._show_paste_overlay(`Preparando para impressão: página ${ctx._dirty_from_page + 1} de ${total_pages} (${pct}%)`)
     } else {
       ctx._show_progress(ctx._dirty_from_page, total_pages)
     }
-    const batch_size = state._paste_in_progress ? 5 : 1
+
+    // Process batch (5 pages for paste/print, 1 for normal editing)
+    const batch_size = is_blocking ? 5 : 1
     ctx.fit_content_over_pages(batch_size, ctx._dirty_from_page)
     ctx._update_page_statuses()
+
     if (ctx._dirty_from_page !== null) {
+      // Lazy reflow: stop if dirty pages are beyond visible range (not during paste/print)
+      if (!is_blocking) {
+        const range = ctx.calculate_visible_range()
+        if (ctx._dirty_from_page > range.end + 5) {
+          ctx._hide_progress()
+          ctx.emit_new_content()
+          ctx._update_page_statuses()
+          return
+        }
+      }
       const pct2 = Math.round((ctx._dirty_from_page / total_pages) * 100)
       if (state._paste_in_progress) {
         ctx._show_paste_overlay(`Processando página ${ctx._dirty_from_page + 1} de ${total_pages} (${pct2}%)`)
+      } else if (ctx._print_pending) {
+        ctx._show_paste_overlay(`Preparando para impressão: página ${ctx._dirty_from_page + 1} de ${total_pages} (${pct2}%)`)
       } else {
         ctx._show_progress(ctx._dirty_from_page, total_pages)
       }
       ctx._schedule_deferred_reflow()
     } else {
       ctx._hide_progress()
+      if (ctx._print_pending) {
+        ctx._print_pending = false
+        ctx._hide_paste_overlay()
+        ctx.emit_new_content()
+        setTimeout(() => { window.print() }, 100)
+        return
+      }
       if (state._paste_in_progress) {
         state._paste_in_progress = false
         ctx._hide_paste_overlay()

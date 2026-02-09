@@ -94,6 +94,7 @@ export function useEditor(props, emit, refs) {
     _page_body: null,
     _reset_in_progress: false,
     _fit_in_progress: false,
+    _print_pending: false,
   }
 
   // ─── Setup Sub-modules ────────────────────────────────────────────
@@ -134,6 +135,7 @@ export function useEditor(props, emit, refs) {
   // ─── Lifecycle ────────────────────────────────────────────────────
   let _scroll_handler = null
   let _scroll_container = null
+  let _keydown_handler = null
 
   onMounted(() => {
     ctx.update_editor_width()
@@ -151,6 +153,47 @@ export function useEditor(props, emit, refs) {
     } else {
       _scroll_container.addEventListener("scroll", _scroll_handler)
     }
+    _keydown_handler = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        e.preventDefault()
+        ctx._prepare_and_print()
+      }
+      // Tab key: first-line indent for regular text, indent/outdent for lists
+      if (e.key === 'Tab' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        const sel = document.getSelection()
+        if (!sel || !sel.focusNode) return
+        // Skip if cursor is in a table (table plugin handles Tab for cell navigation)
+        let node = sel.focusNode.nodeType === Node.TEXT_NODE ? sel.focusNode.parentElement : sel.focusNode
+        while (node) {
+          if (node.tagName === 'TABLE') return
+          if (node.dataset && node.dataset.isVDEPage !== undefined) break
+          node = node.parentElement
+        }
+        // Lists: use browser indent/outdent
+        if (state.current_text_style && state.current_text_style.isList) {
+          e.preventDefault()
+          document.execCommand(e.shiftKey ? 'outdent' : 'indent')
+          return
+        }
+        // Regular text: apply text-indent (first-line indent)
+        e.preventDefault()
+        let el = sel.focusNode.nodeType === Node.TEXT_NODE ? sel.focusNode.parentElement : sel.focusNode
+        while (el) {
+          if (el.dataset && el.dataset.isVDEPage !== undefined) break
+          const display = window.getComputedStyle(el).display
+          if (display !== 'inline' && display !== 'inline-block') {
+            if (el.parentElement && el.parentElement.dataset && el.parentElement.dataset.isVDEPage !== undefined) break
+            const current = parseFloat(el.style.textIndent) || 0
+            const newVal = Math.max(0, current + (e.shiftKey ? -40 : 40))
+            el.style.textIndent = newVal ? newVal + 'px' : ''
+            el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'formatIndent' }))
+            return
+          }
+          el = el.parentElement
+        }
+      }
+    }
+    window.addEventListener("keydown", _keydown_handler)
   })
 
   onBeforeUpdate(() => {
@@ -169,6 +212,7 @@ export function useEditor(props, emit, refs) {
         _scroll_container.removeEventListener("scroll", _scroll_handler)
       }
     }
+    if (_keydown_handler) window.removeEventListener("keydown", _keydown_handler)
     if (ctx._input_timer) clearTimeout(ctx._input_timer)
     ctx._cancel_deferred_reflow()
   })

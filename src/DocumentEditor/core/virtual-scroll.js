@@ -77,5 +77,12 @@ export function setupVirtualScroll(ctx) {
     if (!state.virtualization_enabled || state.printing_mode) return
     ctx.virtualize_pages()
     ctx._update_page_statuses()
+    // Resume lazy reflow if dirty pages are now near the viewport
+    if (ctx._dirty_from_page !== null && !state._paste_in_progress && !ctx._deferred_raf_id) {
+      const range = ctx.calculate_visible_range()
+      if (ctx._dirty_from_page <= range.end + 5) {
+        ctx._schedule_deferred_reflow()
+      }
+    }
   }
 }

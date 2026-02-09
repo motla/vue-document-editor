@@ -32,7 +32,16 @@ export function setupInputHandler(ctx) {
 
   ctx._do_input_work = function() {
     ctx._cancel_deferred_reflow()
-    ctx.fit_content_over_pages(2)
+    const prev_dirty = ctx._dirty_from_page
+    ctx.fit_content_over_pages(5)
+    // Preserve dirty state from previous incomplete reflow
+    if (prev_dirty !== null) {
+      if (ctx._dirty_from_page === null) {
+        ctx._dirty_from_page = prev_dirty
+      } else {
+        ctx._dirty_from_page = Math.min(ctx._dirty_from_page, prev_dirty)
+      }
+    }
     ctx.emit_new_content()
     if(ctx._last_input_type != "insertText") ctx.process_current_text_style()
     ctx._update_page_statuses()

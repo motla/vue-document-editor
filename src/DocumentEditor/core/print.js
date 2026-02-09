@@ -4,6 +4,19 @@ import { css_to_string } from './utils.js'
 export function setupPrint(ctx) {
   const { state, props, refs } = ctx
 
+  // Async print preparation: processes all dirty pages with progress overlay, then prints
+  ctx._prepare_and_print = function() {
+    if (state._paste_in_progress) return
+    if (ctx._dirty_from_page === null) {
+      window.print()
+      return
+    }
+    ctx._print_pending = true
+    ctx._show_paste_overlay('Preparando documento para impressão...')
+    ctx._cancel_deferred_reflow()
+    ctx._schedule_deferred_reflow()
+  }
+
   ctx.before_print = function() {
     if (state.editing_hf) ctx.stop_editing_hf()
     state.printing_mode = true

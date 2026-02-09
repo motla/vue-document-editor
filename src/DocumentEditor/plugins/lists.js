@@ -35,6 +35,98 @@ export function createListsPlugin(ctx) {
     else if (isBulletedList(s)) document.execCommand('insertUnorderedList')
   }
 
+  // Find the nearest block element suitable for indentation (not the page wrapper)
+  function findIndentableBlock(node) {
+    let el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node
+    while (el) {
+      if (el.dataset && el.dataset.isVDEPage !== undefined) return null
+      const display = window.getComputedStyle(el).display
+      if (display !== 'inline' && display !== 'inline-block') {
+        // Skip the page's direct wrapper div
+        if (el.parentElement && el.parentElement.dataset && el.parentElement.dataset.isVDEPage !== undefined) return null
+        return el
+      }
+      el = el.parentElement
+    }
+    return null
+  }
+
+  // Apply margin-left change to all selected block elements
+  function changeBlockIndent(delta) {
+    const sel = window.getSelection()
+    if (!sel.rangeCount) return
+
+    const blocks = []
+    const seen = new Set()
+    function addBlock(node) {
+      const block = findIndentableBlock(node)
+      if (block && !seen.has(block)) { seen.add(block); blocks.push(block) }
+    }
+
+    if (sel.isCollapsed) {
+      addBlock(sel.focusNode)
+    } else {
+      const range = sel.getRangeAt(0)
+      addBlock(range.startContainer)
+      addBlock(range.endContainer)
+      // Include sibling blocks between start and end
+      if (blocks.length === 2 && blocks[0] !== blocks[1]) {
+        let el = blocks[0].nextElementSibling
+        while (el && el !== blocks[1]) {
+          addBlock(el)
+          el = el.nextElementSibling
+        }
+      }
+    }
+
+    if (!blocks.length) return
+    for (const block of blocks) {
+      const current = parseInt(block.style.marginLeft) || 0
+      const newVal = Math.max(0, current + delta)
+      block.style.marginLeft = newVal ? newVal + 'px' : ''
+    }
+    // Trigger reflow via input event
+    blocks[0].dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'formatIndent' }))
+  }
+
+  function increaseIndent() {
+    const s = ctx.current_text_style.value
+    if (s && s.isList) {
+      document.execCommand("indent")
+    } else {
+      changeBlockIndent(40)
+    }
+  }
+
+  function decreaseIndent() {
+    const s = ctx.current_text_style.value
+    if (s && s.isList) {
+      document.execCommand("outdent")
+    } else {
+      changeBlockIndent(-40)
+    }
+  }
+
+  // Toggle first-line indent (text-indent) on the current block
+  function toggleFirstLineIndent() {
+    const sel = window.getSelection()
+    if (!sel || !sel.focusNode) return
+    const block = findIndentableBlock(sel.focusNode)
+    if (!block) return
+    const current = parseFloat(block.style.textIndent) || 0
+    block.style.textIndent = current > 0 ? '' : '40px'
+    block.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'formatIndent' }))
+  }
+
+  // Check if current block has first-line indent
+  function hasFirstLineIndent() {
+    const sel = window.getSelection()
+    if (!sel || !sel.focusNode) return false
+    const block = findIndentableBlock(sel.focusNode)
+    if (!block) return false
+    return (parseFloat(block.style.textIndent) || 0) > 0
+  }
+
   return {
     name: 'lists',
     tab: 'editar',
@@ -45,6 +137,7 @@ export function createListsPlugin(ctx) {
       const numbered = isNumberedList(s)
       const bulleted = isBulletedList(s)
       const curType = (s && s.isList) ? s.listStyleType : ''
+      const firstLineActive = !dis && hasFirstLineIndent()
 
       return [
         { icon: "format_list_numbered", title: "Lista numerada", active: numbered, disabled: dis, chevron: true,
@@ -65,8 +158,9 @@ export function createListsPlugin(ctx) {
             { html: "○ &nbsp;&nbsp;Círculo", active: curType === 'circle', click: () => applyBulletedList('circle') },
             { html: "■ &nbsp;&nbsp;Quadrado", active: curType === 'square', click: () => applyBulletedList('square') },
           ], menu_width: 160 },
-        { icon: "format_indent_decrease", title: "Diminuir recuo", disabled: dis, click: () => document.execCommand("outdent") },
-        { icon: "format_indent_increase", title: "Aumentar recuo", disabled: dis, click: () => document.execCommand("indent") },
+        { icon: "format_indent_decrease", title: "Diminuir recuo", disabled: dis, click: decreaseIndent },
+        { icon: "format_indent_increase", title: "Aumentar recuo", disabled: dis, click: increaseIndent },
+        { icon: "keyboard_tab", title: "Recuo na primeira linha (Tab)", active: firstLineActive, disabled: dis, click: toggleFirstLineIndent },
       ]
     }
   }
