@@ -1,5 +1,5 @@
 import { reactive, computed, watch, onMounted, onBeforeUpdate, onBeforeUnmount, nextTick } from 'vue'
-import { debounce } from './utils.js'
+import { debounce, css_length_to_px } from './utils.js'
 import { setupPageLayout } from './page-layout.js'
 import { setupVirtualScroll } from './virtual-scroll.js'
 import { setupOverlays } from './overlays.js'
@@ -8,6 +8,7 @@ import { setupReflowEngine } from './reflow-engine.js'
 import { setupInputHandler } from './input-handler.js'
 import { setupPrint } from './print.js'
 import { setupHeaderFooter } from './header-footer.js'
+import { setupRuler } from './ruler.js'
 
 export function useEditor(props, emit, refs) {
   // ─── Reactive State ───────────────────────────────────────────────
@@ -106,6 +107,7 @@ export function useEditor(props, emit, refs) {
   setupInputHandler(ctx)
   setupPrint(ctx)
   setupHeaderFooter(ctx)
+  setupRuler(ctx)
 
   // ─── Watchers ─────────────────────────────────────────────────────
   watch(() => props.content, () => {
@@ -138,12 +140,18 @@ export function useEditor(props, emit, refs) {
   let _keydown_handler = null
 
   onMounted(() => {
+    console.log('[EDITOR] onMounted: starting initialization')
+    console.log('[EDITOR] onMounted: ctx.process_current_text_style is', typeof ctx.process_current_text_style)
+    console.log('[EDITOR] onMounted: ctx.update_pages_elts is', typeof ctx.update_pages_elts)
+    console.log('[EDITOR] onMounted: ctx._init_ruler is', typeof ctx._init_ruler)
+    ctx._init_ruler()
     ctx.update_editor_width()
     ctx.update_css_media_style()
     ctx.reset_content()
     nextTick(() => { ctx._measure_hf_heights() })
     window.addEventListener("resize", ctx.update_editor_width)
     window.addEventListener("click", ctx.process_current_text_style)
+    console.log('[EDITOR] onMounted: click listener registered for process_current_text_style')
     window.addEventListener("beforeprint", ctx.before_print)
     window.addEventListener("afterprint", ctx.after_print)
     _scroll_handler = debounce(() => ctx.on_scroll(), 100)
@@ -182,8 +190,7 @@ export function useEditor(props, emit, refs) {
           if (el.dataset && el.dataset.isVDEPage !== undefined) break
           const display = window.getComputedStyle(el).display
           if (display !== 'inline' && display !== 'inline-block') {
-            if (el.parentElement && el.parentElement.dataset && el.parentElement.dataset.isVDEPage !== undefined) break
-            const current = parseFloat(el.style.textIndent) || 0
+            const current = css_length_to_px(el.style.textIndent)
             const newVal = Math.max(0, current + (e.shiftKey ? -40 : 40))
             el.style.textIndent = newVal ? newVal + 'px' : ''
             el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'formatIndent' }))

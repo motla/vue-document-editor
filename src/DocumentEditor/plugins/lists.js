@@ -1,3 +1,5 @@
+import { css_length_to_px } from '../core/utils.js'
+
 export function createListsPlugin(ctx) {
   function isNumberedList(s) {
     return s && s.isList && ['decimal', 'upper-roman', 'lower-roman', 'upper-alpha', 'lower-alpha'].includes(s.listStyleType)
@@ -35,15 +37,13 @@ export function createListsPlugin(ctx) {
     else if (isBulletedList(s)) document.execCommand('insertUnorderedList')
   }
 
-  // Find the nearest block element suitable for indentation (not the page wrapper)
+  // Find the nearest block element suitable for indentation (not the page itself)
   function findIndentableBlock(node) {
     let el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node
     while (el) {
       if (el.dataset && el.dataset.isVDEPage !== undefined) return null
       const display = window.getComputedStyle(el).display
       if (display !== 'inline' && display !== 'inline-block') {
-        // Skip the page's direct wrapper div
-        if (el.parentElement && el.parentElement.dataset && el.parentElement.dataset.isVDEPage !== undefined) return null
         return el
       }
       el = el.parentElement
@@ -54,7 +54,8 @@ export function createListsPlugin(ctx) {
   // Apply margin-left change to all selected block elements
   function changeBlockIndent(delta) {
     const sel = window.getSelection()
-    if (!sel.rangeCount) return
+    console.log('[LISTS] changeBlockIndent(%d): rangeCount=%d, focusNode=', delta, sel.rangeCount, sel.focusNode)
+    if (!sel.rangeCount) { console.warn('[LISTS] changeBlockIndent: no range!'); return }
 
     const blocks = []
     const seen = new Set()
@@ -79,9 +80,10 @@ export function createListsPlugin(ctx) {
       }
     }
 
-    if (!blocks.length) return
+    console.log('[LISTS] changeBlockIndent: found %d blocks', blocks.length, blocks)
+    if (!blocks.length) { console.warn('[LISTS] changeBlockIndent: no indentable blocks found!'); return }
     for (const block of blocks) {
-      const current = parseInt(block.style.marginLeft) || 0
+      const current = css_length_to_px(block.style.marginLeft)
       const newVal = Math.max(0, current + delta)
       block.style.marginLeft = newVal ? newVal + 'px' : ''
     }
@@ -91,6 +93,7 @@ export function createListsPlugin(ctx) {
 
   function increaseIndent() {
     const s = ctx.current_text_style.value
+    console.log('[LISTS] increaseIndent called, current_text_style=', !!s, s ? { isList: s.isList } : null)
     if (s && s.isList) {
       document.execCommand("indent")
     } else {
@@ -100,6 +103,7 @@ export function createListsPlugin(ctx) {
 
   function decreaseIndent() {
     const s = ctx.current_text_style.value
+    console.log('[LISTS] decreaseIndent called, current_text_style=', !!s, s ? { isList: s.isList } : null)
     if (s && s.isList) {
       document.execCommand("outdent")
     } else {
@@ -113,7 +117,7 @@ export function createListsPlugin(ctx) {
     if (!sel || !sel.focusNode) return
     const block = findIndentableBlock(sel.focusNode)
     if (!block) return
-    const current = parseFloat(block.style.textIndent) || 0
+    const current = css_length_to_px(block.style.textIndent)
     block.style.textIndent = current > 0 ? '' : '40px'
     block.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'formatIndent' }))
   }
@@ -124,7 +128,7 @@ export function createListsPlugin(ctx) {
     if (!sel || !sel.focusNode) return false
     const block = findIndentableBlock(sel.focusNode)
     if (!block) return false
-    return (parseFloat(block.style.textIndent) || 0) > 0
+    return css_length_to_px(block.style.textIndent) > 0
   }
 
   return {

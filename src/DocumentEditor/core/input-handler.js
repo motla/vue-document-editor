@@ -25,9 +25,16 @@ export function setupInputHandler(ctx) {
           }
           parent = parent.parentElement
         }
+      } else {
+        console.log('[STYLE] process_current_text_style: element not contentEditable', element, 'isContentEditable=', element && element.isContentEditable)
       }
+    } else {
+      console.log('[STYLE] process_current_text_style: no focusNode in selection')
     }
     state.current_text_style = style
+    if (!style) {
+      console.log('[STYLE] process_current_text_style: style set to FALSE (buttons will be disabled)')
+    }
   }
 
   ctx._do_input_work = function() {

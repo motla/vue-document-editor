@@ -19,7 +19,7 @@
       :overlay="overlay"
       :zoom="zoom"
       :page_format_mm="page_format_mm"
-      :page_margins="page_margins"
+      v-model:page_margins="page_margins"
       :display="display" />
 
   </div>

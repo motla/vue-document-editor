@@ -1,6 +1,9 @@
 <template>
   <div class="editor" ref="editor">
 
+    <!-- Ruler bar — Word-style horizontal ruler above pages -->
+    <div class="vde-ruler" ref="ruler_bar" v-show="editable && !state.editing_hf"></div>
+
     <!-- Page overlays (headers, footers, page numbers, ...) -->
     <div v-if="overlay || header != null || footer != null" class="overlays" ref="overlays">
       <div v-for="(page, page_idx) in state.pages" class="overlay" :key="page.uuid+'-overlay'" :ref="(elt) => (state.pages_overlay_refs[page.uuid] = elt)"
@@ -87,7 +90,7 @@ const props = defineProps({
   do_not_break: Function
 })
 
-const emit = defineEmits(['update:content', 'update:header', 'update:footer'])
+const emit = defineEmits(['update:content', 'update:header', 'update:footer', 'update:page_margins'])
 
 // Template refs
 const editor = ref(null)
@@ -97,6 +100,7 @@ const progress_indicator = ref(null)
 const progress_text = ref(null)
 const paste_overlay = ref(null)
 const paste_text = ref(null)
+const ruler_bar = ref(null)
 
 // Composable
 const {
@@ -117,7 +121,8 @@ const {
 } = useEditor(props, emit, {
   editor, content, overlays,
   progress_indicator, progress_text,
-  paste_overlay, paste_text
+  paste_overlay, paste_text,
+  ruler_bar
 })
 
 // Expose for parent (Demo.vue) access via $refs.editor
@@ -194,6 +199,19 @@ body {
 }
 .editor .content ol[style*="lower-alpha"] ol ol > li::marker {
   content: counter(item) ". ";
+}
+/* === Ruler drag guide (appended to body, must be global) === */
+.vde-ruler-guide {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(26, 115, 232, 0.5);
+  z-index: 10000;
+  pointer-events: none;
+}
+.vde-ruler-guide-margin {
+  background: rgba(232, 26, 26, 0.5);
 }
 /* === Table wrapper (scrollable container) === */
 .editor .content .vde-table-wrapper {
@@ -444,4 +462,95 @@ body {
 .editor > .content.hf-body-dim > :deep(.page) {
   opacity: 0.4;
 }
+/* ── Ruler bar ───────────────────────────────────────────────── */
+.editor > .vde-ruler {
+  position: sticky;
+  top: 72px;
+  z-index: 10;
+  height: 25px;
+  background: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+  overflow: hidden;
+  user-select: none;
+}
+@media print { .vde-ruler { display: none !important; } }
+.editor > .vde-ruler :deep(.vde-ruler-track) {
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+.editor > .vde-ruler :deep(.vde-ruler-margin) {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: #d0d0d0;
+  cursor: col-resize;
+}
+.editor > .vde-ruler :deep(.vde-ruler-margin-left) { left: 0; }
+.editor > .vde-ruler :deep(.vde-ruler-margin-right) { right: 0; }
+.editor > .vde-ruler :deep(.vde-ruler-ticks) {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.editor > .vde-ruler :deep(.vde-tick) {
+  position: absolute;
+  bottom: 0;
+  width: 1px;
+  background: #999;
+}
+.editor > .vde-ruler :deep(.vde-tick-cm) { height: 10px; }
+.editor > .vde-ruler :deep(.vde-tick-half) { height: 6px; background: #aaa; }
+.editor > .vde-ruler :deep(.vde-tick-label) {
+  position: absolute;
+  top: 2px;
+  transform: translateX(-50%);
+  font-size: 8px;
+  color: #777;
+  line-height: 1;
+  font-family: sans-serif;
+  pointer-events: none;
+}
+.editor > .vde-ruler :deep(.vde-ruler-marker) {
+  position: absolute;
+  cursor: pointer;
+  z-index: 2;
+}
+.editor > .vde-ruler :deep(.vde-marker-first-line) {
+  top: 0;
+  width: 0; height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #555;
+  margin-left: -6px;
+}
+.editor > .vde-ruler :deep(.vde-marker-first-line:hover) { border-top-color: #1a73e8; }
+.editor > .vde-ruler :deep(.vde-marker-left-indent) {
+  bottom: 8px;
+  width: 0; height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 8px solid #555;
+  margin-left: -6px;
+}
+.editor > .vde-ruler :deep(.vde-marker-left-indent:hover) { border-bottom-color: #1a73e8; }
+.editor > .vde-ruler :deep(.vde-marker-left-rect) {
+  bottom: 0;
+  width: 12px; height: 8px;
+  background: #555;
+  margin-left: -6px;
+}
+.editor > .vde-ruler :deep(.vde-marker-left-rect:hover) { background: #1a73e8; }
+.editor > .vde-ruler :deep(.vde-marker-right-indent) {
+  bottom: 0;
+  width: 0; height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 8px solid #555;
+  margin-left: -6px;
+}
+.editor > .vde-ruler :deep(.vde-marker-right-indent:hover) { border-bottom-color: #1a73e8; }
 </style>
